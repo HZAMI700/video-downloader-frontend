@@ -1,13 +1,31 @@
 import { CapabilitiesResponse, MediaMetadata, DownloadJob } from './types';
 
+export const DEFAULT_BACKEND_URL = 'http://node5.botkeep.cloud:41076';
+
 export function getBackendBaseUrl(): string {
-  const url = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+  const url = process.env.NEXT_PUBLIC_BACKEND_URL || DEFAULT_BACKEND_URL;
   return url.replace(/\/+$/, '');
 }
 
+/**
+ * Returns the effective API endpoint prefix.
+ * If the frontend is loaded over HTTPS (like on Vercel) and the backend is HTTP,
+ * we use the same-origin Next.js rewrite '/api/backend' to prevent browser Mixed-Content blocking.
+ */
+function getApiEndpoint(subpath: string): string {
+  const configured = getBackendBaseUrl();
+  const cleanSubpath = subpath.replace(/^\/+/, '');
+
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && configured.startsWith('http://')) {
+    return `/api/backend/${cleanSubpath}`;
+  }
+
+  return `${configured}/api/${cleanSubpath}`;
+}
+
 export async function fetchCapabilities(): Promise<CapabilitiesResponse> {
-  const baseUrl = getBackendBaseUrl();
-  const res = await fetch(`${baseUrl}/api/capabilities`, {
+  const endpoint = getApiEndpoint('capabilities');
+  const res = await fetch(endpoint, {
     method: 'GET',
     headers: { 'Accept': 'application/json' },
   });
@@ -21,8 +39,8 @@ export async function fetchCapabilities(): Promise<CapabilitiesResponse> {
 }
 
 export async function fetchMetadata(url: string): Promise<MediaMetadata> {
-  const baseUrl = getBackendBaseUrl();
-  const res = await fetch(`${baseUrl}/api/metadata`, {
+  const endpoint = getApiEndpoint('metadata');
+  const res = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -40,8 +58,8 @@ export async function fetchMetadata(url: string): Promise<MediaMetadata> {
 }
 
 export async function createDownloadJob(url: string, formatId: string): Promise<{ job_id: string; status: string; message: string }> {
-  const baseUrl = getBackendBaseUrl();
-  const res = await fetch(`${baseUrl}/api/downloads`, {
+  const endpoint = getApiEndpoint('downloads');
+  const res = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -59,8 +77,8 @@ export async function createDownloadJob(url: string, formatId: string): Promise<
 }
 
 export async function fetchJobStatus(jobId: string): Promise<DownloadJob> {
-  const baseUrl = getBackendBaseUrl();
-  const res = await fetch(`${baseUrl}/api/downloads/${jobId}`, {
+  const endpoint = getApiEndpoint(`downloads/${jobId}`);
+  const res = await fetch(endpoint, {
     method: 'GET',
     headers: { 'Accept': 'application/json' },
   });
@@ -74,14 +92,13 @@ export async function fetchJobStatus(jobId: string): Promise<DownloadJob> {
 }
 
 export function buildFileDownloadUrl(jobId: string): string {
-  const baseUrl = getBackendBaseUrl();
-  return `${baseUrl}/api/downloads/${jobId}/file`;
+  return getApiEndpoint(`downloads/${jobId}/file`);
 }
 
 export async function deleteDownloadJob(jobId: string): Promise<void> {
-  const baseUrl = getBackendBaseUrl();
+  const endpoint = getApiEndpoint(`downloads/${jobId}`);
   try {
-    await fetch(`${baseUrl}/api/downloads/${jobId}`, {
+    await fetch(endpoint, {
       method: 'DELETE',
     });
   } catch (e) {

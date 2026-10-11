@@ -15,6 +15,15 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
   },
+  async rewrites() {
+    const backend = (process.env.NEXT_PUBLIC_BACKEND_URL || 'http://node5.botkeep.cloud:41076').replace(/\/+$/, '');
+    return [
+      {
+        source: '/api/backend/:path*',
+        destination: `${backend}/api/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

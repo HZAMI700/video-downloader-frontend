@@ -30,7 +30,7 @@ npm install
 ### 3. Environment Configuration
 Create a `.env.local` file in the root of `video-downloader-frontend`:
 ```ini
-NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+NEXT_PUBLIC_BACKEND_URL=http://node5.botkeep.cloud:41076
 ```
 
 ### 4. Run Development Server
@@ -65,11 +65,7 @@ Follow these step-by-step instructions to deploy to Vercel:
 ### Step 3: Configure Environment Variables
 In the **Environment Variables** section on Vercel:
 - **Key:** `NEXT_PUBLIC_BACKEND_URL`
-- **Value:** Your deployed Botkeep backend public HTTPS URL:
-  ```
-  https://your-backend.botkeep.app
-  ```
-  *(Replace with the actual URL provided in your Botkeep Cloud dashboard)*
+- **Value:** `http://node5.botkeep.cloud:41076`
 
 ### Step 4: Deploy
 Click **"Deploy"**. Vercel will build and deploy the application globally to edge nodes in under a minute.
