@@ -7,6 +7,7 @@ import { ReadyContainer } from '../components/ReadyContainer';
 import { FeatureCards } from '../components/FeatureCards';
 import { FaqSection } from '../components/FaqSection';
 import { Footer } from '../components/Footer';
+import { AuroraBackground } from '../components/AuroraBackground';
 import {
   fetchCapabilities,
   fetchMetadata,
@@ -147,7 +148,8 @@ export default function Home() {
   };
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen">
+    <div className="flex-1 flex flex-col min-h-screen relative overflow-x-hidden">
+      <AuroraBackground />
       <Navbar
         capabilities={capabilities}
         loadingCapabilities={loadingCapabilities}

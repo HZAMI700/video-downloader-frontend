@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Loader2, Download, CheckCircle, RefreshCw, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Loader2, Download, CheckCircle, RefreshCw, Smartphone, Monitor } from 'lucide-react';
 import { MediaMetadata, DownloadJob } from '../lib/types';
 import { buildFileDownloadUrl } from '../lib/api';
 
@@ -20,15 +21,42 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
   onDownloadFormat,
   onReset,
 }) => {
-  // Demo data matching screenshot if user hasn't analyzed a video yet
+  // Demo data matching original screenshot if user hasn't analyzed a video yet
   const defaultThumbnail = 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop';
   const defaultTitle = 'Amazing Japan Travel Guide 2026';
-  const defaultDuration = '12:34';
 
   const isReal = !!metadata;
   const title = metadata?.title || defaultTitle;
   const thumbnail = metadata?.thumbnail || defaultThumbnail;
-  const duration = metadata?.duration_formatted || defaultDuration;
+  // Real duration only — never invent fake duration when real media is present
+  const duration = isReal ? metadata.duration_formatted : '12:34';
+
+  // Detect 9:16 vertical portrait format (Instagram Reels, TikTok, YouTube Shorts)
+  const [isVertical, setIsVertical] = useState<boolean>(() => {
+    if (!metadata) return false;
+    const p = (metadata.platform || '').toLowerCase();
+    const url = (metadata.original_url || '').toLowerCase();
+    return p.includes('instagram') || p.includes('tiktok') || url.includes('/reel') || url.includes('/shorts') || url.includes('tiktok.com');
+  });
+
+  useEffect(() => {
+    if (!metadata) {
+      setIsVertical(false);
+      return;
+    }
+    const p = (metadata.platform || '').toLowerCase();
+    const url = (metadata.original_url || '').toLowerCase();
+    const verticalUrl = p.includes('instagram') || p.includes('tiktok') || url.includes('/reel') || url.includes('/shorts') || url.includes('tiktok.com');
+    setIsVertical(verticalUrl);
+  }, [metadata]);
+
+  // Handle image load to check natural aspect ratio
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    if (img.naturalHeight > img.naturalWidth * 1.05) {
+      setIsVertical(true);
+    }
+  };
 
   // Formats to display
   const formats = metadata?.formats && metadata.formats.length > 0
@@ -55,7 +83,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
       ];
 
   const formatSize = (bytes?: number) => {
-    if (!bytes || bytes <= 0) return '80 MB';
+    if (!bytes || bytes <= 0) return 'HD Quality';
     const mb = bytes / (1024 * 1024);
     if (mb >= 1000) {
       return `${(mb / 1024).toFixed(1)} GB`;
@@ -63,16 +91,37 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
     return `${Math.round(mb)} MB`;
   };
 
+  const cleanLabel = (label: string) => {
+    if (label.toLowerCase().includes('best video quality')) {
+      return 'MP4 (Original Quality)';
+    }
+    return label;
+  };
+
   return (
-    <div className="w-full max-w-4xl mx-auto px-2 space-y-3">
-      {/* Header text exactly like screenshot: "Downloaded/Ready - Container to show how the UX works" */}
+    <motion.div
+      className="w-full max-w-4xl mx-auto px-2 space-y-3"
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+    >
+      {/* Header text */}
       <div className="text-left px-2 flex items-center justify-between">
-        <p className="text-sm font-bold text-slate-900 tracking-tight">
-          Downloaded/Ready{' '}
-          <span className="font-normal text-slate-500">
-            {isReal ? '— Media processed & ready to save' : '— Container to show how the UX works'}
-          </span>
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-bold text-slate-900 tracking-tight">
+            Downloaded/Ready{' '}
+            <span className="font-normal text-slate-500">
+              {isReal ? '— Media processed & ready to save' : '— Container to show how the UX works'}
+            </span>
+          </p>
+
+          {isReal && isVertical && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-50 text-purple-600 border border-purple-200">
+              <Smartphone className="w-3 h-3" />
+              <span>9:16 Vertical Reel</span>
+            </span>
+          )}
+        </div>
 
         {isReal && onReset && (
           <button
@@ -85,14 +134,22 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
         )}
       </div>
 
-      {/* Main Container Card matching screenshot */}
-      <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-7 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col md:flex-row items-center gap-6 md:gap-8">
-        {/* Left Column: Video Thumbnail Preview */}
-        <div className="w-full md:w-[45%] shrink-0">
-          <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-900 shadow-md group">
+      {/* Main Container Card */}
+      <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-7 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col md:flex-row items-center gap-6 md:gap-8 transition-all duration-300">
+        
+        {/* Left Column: Video Thumbnail Preview (Responsive 9:16 or 16:9) */}
+        <div className={`shrink-0 ${isVertical ? 'w-full sm:w-auto flex justify-center' : 'w-full md:w-[45%]'}`}>
+          <div
+            className={`relative rounded-2xl overflow-hidden bg-slate-950 shadow-md group transition-all duration-300 ${
+              isVertical
+                ? 'w-[190px] sm:w-[210px] md:w-[220px] aspect-[9/16] max-h-[380px]'
+                : 'w-full aspect-video'
+            }`}
+          >
             <img
               src={thumbnail}
               alt={title}
+              onLoad={handleImageLoad}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               onError={(e) => {
                 (e.target as HTMLElement).style.display = 'none';
@@ -100,23 +157,30 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
             />
 
             {/* Dark gradient overlay for title legibility */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4">
-              <h3 className="text-white font-extrabold text-base sm:text-lg leading-snug line-clamp-2 drop-shadow-md">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent flex flex-col justify-end p-3.5 sm:p-4">
+              <h3 className="text-white font-extrabold text-sm sm:text-base leading-snug line-clamp-2 drop-shadow-md">
                 {title}
               </h3>
             </div>
 
-            {/* Duration pill in bottom right */}
+            {/* Duration pill in bottom right (only if real duration exists) */}
             {duration && (
               <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md px-2 py-0.5 rounded-md text-[11px] font-bold text-white shadow">
                 {duration}
               </div>
             )}
+
+            {/* Platform Tag */}
+            {metadata?.platform && (
+              <div className="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
+                {metadata.platform}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Right Column: Format Download Rows matching screenshot */}
-        <div className="w-full md:w-[55%] flex flex-col justify-center space-y-4">
+        {/* Right Column: Format Download Rows */}
+        <div className="flex-1 w-full flex flex-col justify-center space-y-4">
           {formats.slice(0, 4).map((f) => {
             const isThisRowActive = activeJob && activeJob.format_id === f.format_id;
             const isCompleted = isThisRowActive && activeJob.status === 'completed';
@@ -131,10 +195,10 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
                 {/* Format label & File size */}
                 <div className="flex items-center gap-2 text-sm sm:text-base">
                   <span className="font-bold text-slate-900">
-                    {f.label}
+                    {cleanLabel(f.label)}
                   </span>
                   <span className="text-slate-400 font-bold">•</span>
-                  <span className="text-slate-500 font-medium text-sm">
+                  <span className="text-slate-500 font-medium text-xs sm:text-sm">
                     {formatSize(f.approx_size_bytes)}
                   </span>
                 </div>
@@ -142,14 +206,16 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
                 {/* Right Action Button */}
                 <div>
                   {isCompleted ? (
-                    <a
+                    <motion.a
                       href={buildFileDownloadUrl(activeJob.job_id)}
                       download
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
                       className="px-5 sm:px-6 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-95 shadow-md shadow-emerald-500/20 flex items-center gap-1.5 transition-all"
                     >
                       <CheckCircle className="w-4 h-4" />
                       <span>Save File</span>
-                    </a>
+                    </motion.a>
                   ) : isProcessing ? (
                     <button
                       disabled
@@ -159,21 +225,25 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
                       <span>{activeJob.progress_percent > 0 ? `${activeJob.progress_percent.toFixed(0)}%` : 'Queued...'}</span>
                     </button>
                   ) : isFailed ? (
-                    <button
+                    <motion.button
                       onClick={() => onDownloadFormat(f.format_id)}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
                       className="px-5 py-2 rounded-xl font-bold text-xs text-white bg-red-600 hover:bg-red-500 flex items-center gap-1 shadow-md"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
                       <span>Retry</span>
-                    </button>
+                    </motion.button>
                   ) : (
-                    <button
+                    <motion.button
                       onClick={() => onDownloadFormat(f.format_id)}
                       disabled={isStartingJob}
-                      className="px-6 sm:px-7 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] hover:opacity-95 shadow-md shadow-purple-500/25 active:scale-95 transition-all disabled:opacity-50"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      className="px-6 sm:px-7 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] hover:opacity-95 shadow-md shadow-purple-500/25 transition-all disabled:opacity-50"
                     >
                       Download
-                    </button>
+                    </motion.button>
                   )}
                 </div>
               </div>
@@ -183,14 +253,16 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
           {/* Active Job Progress indicator if currently working */}
           {activeJob && (activeJob.status === 'processing' || activeJob.status === 'queued') && (
             <div className="pt-2">
-              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] transition-all duration-300"
-                  style={{ width: `${Math.max(5, activeJob.progress_percent)}%` }}
+              <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden p-0.5">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] rounded-full"
+                  initial={{ width: '5%' }}
+                  animate={{ width: `${Math.max(5, activeJob.progress_percent)}%` }}
+                  transition={{ duration: 0.3 }}
                 />
               </div>
-              <p className="text-[11px] text-slate-500 mt-1 flex justify-between">
-                <span>Downloading &amp; Muxing with FFmpeg...</span>
+              <p className="text-[11px] text-slate-500 mt-1.5 flex justify-between">
+                <span>Processing media with FFmpeg on Botkeep...</span>
                 <span className="font-semibold text-purple-600">{activeJob.progress_percent.toFixed(0)}%</span>
               </p>
             </div>
@@ -203,6 +275,6 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
