@@ -2,10 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Navbar } from '../components/Navbar';
-import { UrlForm } from '../components/UrlForm';
-import { VideoInfoCard } from '../components/VideoInfoCard';
-import { DownloadJobProgress } from '../components/DownloadJobProgress';
-import { SupportedPlatforms } from '../components/SupportedPlatforms';
+import { HeroInput } from '../components/HeroInput';
+import { ReadyContainer } from '../components/ReadyContainer';
+import { FeatureCards } from '../components/FeatureCards';
 import { FaqSection } from '../components/FaqSection';
 import { Footer } from '../components/Footer';
 import {
@@ -13,20 +12,18 @@ import {
   fetchMetadata,
   createDownloadJob,
   fetchJobStatus,
-  getBackendBaseUrl,
 } from '../lib/api';
 import { CapabilitiesResponse, MediaMetadata, DownloadJob } from '../lib/types';
 
 export default function Home() {
   const [capabilities, setCapabilities] = useState<CapabilitiesResponse | null>(null);
   const [loadingCapabilities, setLoadingCapabilities] = useState<boolean>(true);
-  const [capabilitiesError, setCapabilitiesError] = useState<string | null>(null);
 
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<MediaMetadata | null>(null);
 
-  const [isStartingDownload, setIsStartingDownload] = useState<boolean>(false);
+  const [isStartingJob, setIsStartingJob] = useState<boolean>(false);
   const [activeJob, setActiveJob] = useState<DownloadJob | null>(null);
 
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
@@ -40,12 +37,9 @@ export default function Home() {
         const caps = await fetchCapabilities();
         if (isMounted) {
           setCapabilities(caps);
-          setCapabilitiesError(null);
         }
-      } catch (err: any) {
-        if (isMounted) {
-          setCapabilitiesError(err.message || 'Could not connect to backend');
-        }
+      } catch (err) {
+        // Fallback gracefully
       } finally {
         if (isMounted) {
           setLoadingCapabilities(false);
@@ -71,18 +65,18 @@ export default function Home() {
   const handleAnalyze = async (url: string) => {
     setIsAnalyzing(true);
     setAnalyzeError(null);
-    setMetadata(null);
     setActiveJob(null);
 
     if (pollingRef.current) {
       clearInterval(pollingRef.current);
+      pollingRef.current = null;
     }
 
     try {
       const data = await fetchMetadata(url);
       setMetadata(data);
     } catch (err: any) {
-      setAnalyzeError(err.message || 'Failed to retrieve media metadata.');
+      setAnalyzeError(err.message || 'Failed to retrieve video details. Please ensure the link is public.');
     } finally {
       setIsAnalyzing(false);
     }
@@ -105,15 +99,20 @@ export default function Home() {
           }
         }
       } catch (err) {
-        // Continue polling or let user retry
+        // Continue polling until resolved
       }
     }, 1000);
   };
 
-  const handleSelectDownload = async (formatId: string) => {
-    if (!metadata) return;
+  const handleDownloadFormat = async (formatId: string) => {
+    // If no media is currently loaded, prompt with sample or message
+    if (!metadata) {
+      setAnalyzeError('Please paste a YouTube, TikTok, Facebook, or Instagram video URL above first.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
 
-    setIsStartingDownload(true);
+    setIsStartingJob(true);
     setAnalyzeError(null);
 
     try {
@@ -133,7 +132,7 @@ export default function Home() {
     } catch (err: any) {
       setAnalyzeError(err.message || 'Failed to start download job.');
     } finally {
-      setIsStartingDownload(false);
+      setIsStartingJob(false);
     }
   };
 
@@ -147,75 +146,37 @@ export default function Home() {
     setAnalyzeError(null);
   };
 
-  const handleRetry = () => {
-    if (metadata && activeJob) {
-      handleSelectDownload(activeJob.format_id);
-    } else {
-      handleReset();
-    }
-  };
-
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col min-h-screen">
       <Navbar
         capabilities={capabilities}
         loadingCapabilities={loadingCapabilities}
-        capabilitiesError={capabilitiesError}
       />
 
-      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-16 w-full space-y-12">
-        {/* HERO SECTION */}
-        <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold">
-            <span>Universal Cloud Media Extraction</span>
-          </div>
+      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-10 w-full space-y-10 md:space-y-12">
+        {/* HERO AND SEARCH INPUT */}
+        <HeroInput
+          onAnalyze={handleAnalyze}
+          isLoading={isAnalyzing}
+          error={analyzeError}
+        />
 
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">
-            Download Any Video in{' '}
-            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Full HD Quality
-            </span>
-          </h1>
+        {/* READY CONTAINER / DOWNLOAD OPTIONS */}
+        <ReadyContainer
+          metadata={metadata}
+          activeJob={activeJob}
+          isStartingJob={isStartingJob}
+          onDownloadFormat={handleDownloadFormat}
+          onReset={handleReset}
+        />
 
-          <p className="text-sm md:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Convert and extract videos and audio from YouTube, TikTok, Instagram, Twitter/X, and hundreds more.
-            Direct streaming powered by FastAPI and yt-dlp.
-          </p>
-        </div>
-
-        {/* INPUT OR ACTIVE STAGES */}
-        <div className="w-full space-y-8">
-          {!metadata && !activeJob && (
-            <UrlForm
-              onAnalyze={handleAnalyze}
-              isLoading={isAnalyzing}
-              error={analyzeError}
-            />
-          )}
-
-          {metadata && !activeJob && (
-            <VideoInfoCard
-              metadata={metadata}
-              onSelectDownload={handleSelectDownload}
-              onReset={handleReset}
-              isStartingDownload={isStartingDownload}
-            />
-          )}
-
-          {activeJob && (
-            <DownloadJobProgress
-              job={activeJob}
-              onReset={handleReset}
-              onRetry={handleRetry}
-            />
-          )}
-        </div>
-
-        {/* SUPPORTED PLATFORMS */}
-        <SupportedPlatforms />
+        {/* 3 FEATURE CARDS (Ultra Fast, No Watermarks, Safe & Secure) */}
+        <FeatureCards />
 
         {/* FAQ SECTION */}
-        <FaqSection />
+        <div className="pt-6">
+          <FaqSection />
+        </div>
       </main>
 
       <Footer />

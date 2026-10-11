@@ -8,14 +8,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: '#090d16',
-        card: '#0f172a',
-        primary: {
-          50: '#eef2ff',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
+        background: '#F8FAFC',
+        card: '#FFFFFF',
+        brand: {
+          purple: '#8B5CF6',
+          cyan: '#06B6D4',
+          blue: '#3B82F6',
         },
+      },
+      boxShadow: {
+        'glow': '0 0 25px -5px rgba(139, 92, 246, 0.3), 0 0 25px -5px rgba(6, 182, 212, 0.3)',
       },
     },
   },

@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'VidStream Pro — Fast & Secure Video Downloader',
-  description: 'Universal media downloader powered by FastAPI, yt-dlp, and Next.js. Deployed on Vercel and Botkeep Cloud.',
+  title: 'GrabVid — Download Any Video in Seconds',
+  description: 'The fastest way to save video and audio from YouTube, TikTok, Instagram, Facebook, and 100+ other platforms. Free, safe, and unlimited.',
 };
 
 export default function RootLayout({
@@ -12,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-[#090d16] text-slate-100 antialiased min-h-screen flex flex-col">
+    <html lang="en">
+      <body className="bg-[#f8fafc] text-slate-900 antialiased min-h-screen flex flex-col">
         {children}
       </body>
     </html>
