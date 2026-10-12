@@ -1,70 +1,65 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, HelpCircle } from 'lucide-react';
-
-const faqs = [
-  {
-    q: 'Which video platforms are supported?',
-    a: 'GrabVid supports YouTube, TikTok, Instagram, Facebook, Twitter/X, Vimeo, Reddit, and 100+ other web media sites using our high-performance Python FastAPI and yt-dlp backend.',
-  },
-  {
-    q: 'How does the Vercel + Botkeep architecture work?',
-    a: 'The frontend website is hosted globally on Vercel’s high-speed Edge CDN. The media processing backend runs on Botkeep Cloud powered by Python FastAPI and yt-dlp. Your browser communicates securely with the Botkeep API for extraction and file delivery.',
-  },
-  {
-    q: 'What quality options are available?',
-    a: 'We offer MP4 1080p Full HD, MP4 720p HD, and crystal clear MP3 320kbps audio. FFmpeg is active on the server to merge high-resolution video and audio streams seamlessly.',
-  },
-  {
-    q: 'Are downloaded media files stored permanently?',
-    a: 'No. We adhere to strict privacy and resource management standards. Active files are stored in a sandboxed temporary directory and automatically deleted after 15 minutes or upon manual cleanup.',
-  },
-  {
-    q: 'What is the maximum file size limit?',
-    a: 'By default, downloads are bounded to 500 MB to prevent resource exhaustion and ensure high-speed processing for all users.',
-  },
-];
+import { faqs } from '../lib/faqs';
 
 export const FaqSection: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="how-it-works" className="w-full max-w-4xl mx-auto py-8 px-2">
-      <div className="text-center space-y-2 mb-6">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-xs font-semibold border border-purple-200">
-          <HelpCircle className="w-3.5 h-3.5" />
-          <span>FAQ &amp; How It Works</span>
+    <section id="faq" className="w-full max-w-4xl mx-auto py-12 px-2">
+      <div className="text-center space-y-3 mb-10">
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-xs">
+          <HelpCircle className="w-3.5 h-3.5 text-purple-600" />
+          <span>Frequently Asked Questions</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Frequently Asked Questions</h2>
+        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+          Common Questions About <span className="bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] bg-clip-text text-transparent">Playzy</span>
+        </h2>
+        <p className="text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
+          Everything you need to know about downloading videos from TikTok, Pinterest, Facebook, and Instagram.
+        </p>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3.5">
         {faqs.map((faq, idx) => {
           const isOpen = openIndex === idx;
           return (
-            <div
+            <motion.div
               key={idx}
-              className="rounded-2xl border border-slate-200/80 bg-white/90 shadow-sm overflow-hidden transition"
+              initial={false}
+              className="rounded-2xl border border-slate-200/80 bg-white/90 shadow-sm overflow-hidden transition-all duration-200 hover:border-purple-200"
             >
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : idx)}
                 className="w-full p-4 sm:p-5 text-left flex items-center justify-between text-sm sm:text-base font-bold text-slate-800 hover:text-purple-600 transition"
               >
-                <span>{faq.q}</span>
+                <span className="pr-4">{faq.q}</span>
                 <ChevronDown
-                  className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-4 ${
+                  className={`w-4 h-4 text-slate-400 transition-transform duration-300 shrink-0 ${
                     isOpen ? 'rotate-180 text-purple-600' : ''
                   }`}
                 />
               </button>
-              {isOpen && (
-                <div className="px-4 pb-4 sm:px-5 sm:pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
-                  {faq.a}
-                </div>
-              )}
-            </div>
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    key="content"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                  >
+                    <div className="px-4 pb-5 sm:px-5 sm:pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3.5 font-normal">
+                      {faq.a}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           );
         })}
       </div>

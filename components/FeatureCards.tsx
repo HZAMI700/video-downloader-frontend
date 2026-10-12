@@ -2,74 +2,62 @@
 
 import React from 'react';
 import { Zap, Wand2, Shield } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { SpotlightCard } from './SpotlightCard';
 
 const features = [
   {
     title: 'Ultra Fast Speed',
-    description: 'Unlimited bandwidth for instant high-speed downloads.',
+    description: 'Direct high-throughput pipeline for instantaneous video and audio downloads.',
     icon: Zap,
     iconBg: 'bg-purple-100/90 text-purple-600',
-    hoverBorder: 'hover:border-purple-200',
+    spotlight: 'rgba(168, 85, 247, 0.15)',
     iconFill: true,
   },
   {
     title: 'No Watermarks',
-    description: 'Save videos in their clean original resolution and bitrate.',
+    description: 'Save TikTok, Reels, and Pinterest videos in their pristine original bitrate and frame rate.',
     icon: Wand2,
     iconBg: 'bg-pink-100/90 text-pink-600',
-    hoverBorder: 'hover:border-pink-200',
+    spotlight: 'rgba(236, 72, 153, 0.15)',
     iconFill: false,
   },
   {
     title: 'Safe & Secure',
-    description: 'Zero malware, no tracking cookies, and SSRF-hardened.',
+    description: 'Zero malware, zero tracking cookies, and SSRF-hardened infrastructure.',
     icon: Shield,
     iconBg: 'bg-cyan-100/90 text-cyan-600',
-    hoverBorder: 'hover:border-cyan-200',
+    spotlight: 'rgba(6, 182, 212, 0.15)',
     iconFill: true,
   },
 ];
 
 export const FeatureCards: React.FC = () => {
   return (
-    <div className="w-full max-w-4xl mx-auto px-2 pt-6">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
-        {features.map((item, index) => {
+    <section id="features" className="w-full max-w-5xl mx-auto px-2 pt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        {features.map((item) => {
           const Icon = item.icon;
           return (
-            <motion.div
+            <SpotlightCard
               key={item.title}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              whileHover={{
-                y: -4,
-                scale: 1.02,
-                transition: { type: 'spring', stiffness: 400, damping: 25 },
-              }}
-              className={`bg-white/85 backdrop-blur-sm rounded-2xl p-5 border border-slate-100/90 shadow-sm hover:shadow-lg transition-all flex items-start gap-4 cursor-default ${item.hoverBorder}`}
+              spotlightColor={item.spotlight}
+              className="flex items-start gap-4 p-5 sm:p-6"
             >
-              <motion.div
-                whileHover={{ rotate: [0, -8, 8, 0], scale: 1.1 }}
-                transition={{ duration: 0.3 }}
-                className={`w-11 h-11 rounded-xl ${item.iconBg} flex items-center justify-center shrink-0 shadow-sm`}
-              >
+              <div className={`w-11 h-11 rounded-2xl ${item.iconBg} flex items-center justify-center shrink-0 shadow-xs`}>
                 <Icon className={`w-5 h-5 ${item.iconFill ? 'fill-current' : ''}`} />
-              </motion.div>
+              </div>
               <div>
-                <h4 className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight">
+                <h3 className="font-black text-sm sm:text-base text-slate-900 tracking-tight">
                   {item.title}
-                </h4>
+                </h3>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                   {item.description}
                 </p>
               </div>
-            </motion.div>
+            </SpotlightCard>
           );
         })}
       </div>
-    </div>
+    </section>
   );
 };
-

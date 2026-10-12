@@ -31,7 +31,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center space-y-8 pt-4 sm:pt-8">
+    <div id="download-input" className="w-full max-w-4xl mx-auto flex flex-col items-center text-center space-y-8 pt-4 sm:pt-8 scroll-mt-24">
       {/* Headlines */}
       <motion.div
         className="space-y-4 max-w-3xl"
@@ -42,11 +42,11 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-900 leading-tight">
           Download{' '}
           <ShinyText text="Any Video" speed={3.5} />{' '}
-          in Seconds
+          with <span className="bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] bg-clip-text text-transparent">Playzy</span>
         </h1>
 
         <p className="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
-          The fastest way to save video and audio from TikTok, Pinterest, Facebook, Instagram, YouTube, and 100+ other platforms. Free, safe, and unlimited.
+          The fastest free online tool to download videos from TikTok, Pinterest, Facebook, Instagram Reels, and YouTube without watermarks. 100% free, secure &amp; unlimited.
         </p>
       </motion.div>
 

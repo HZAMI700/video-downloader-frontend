@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Navbar } from '../components/Navbar';
 import { HeroInput } from '../components/HeroInput';
 import { ReadyContainer } from '../components/ReadyContainer';
+import { HowItWorks } from '../components/HowItWorks';
+import { PlatformShowcase } from '../components/PlatformShowcase';
 import { FeatureCards } from '../components/FeatureCards';
 import { FaqSection } from '../components/FaqSection';
 import { Footer } from '../components/Footer';
@@ -171,6 +173,12 @@ export default function Home() {
           onDownloadFormat={handleDownloadFormat}
           onReset={handleReset}
         />
+
+        {/* 3-STEP HOW IT WORKS */}
+        <HowItWorks />
+
+        {/* SUPPORTED PLATFORMS SHOWCASE */}
+        <PlatformShowcase />
 
         {/* 3 FEATURE CARDS (Ultra Fast, No Watermarks, Safe & Secure) */}
         <FeatureCards />
