@@ -46,7 +46,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
         </h1>
 
         <p className="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
-          The fastest way to save video and audio from YouTube, TikTok, Instagram, Facebook, and 100+ other platforms. Free, safe, and unlimited.
+          The fastest way to save video and audio from TikTok, Pinterest, Facebook, Instagram, YouTube, and 100+ other platforms. Free, safe, and unlimited.
         </p>
       </motion.div>
 
@@ -150,9 +150,16 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
           </motion.div>
 
           {/* Facebook */}
-          <motion.div whileHover={{ scale: 1.15 }} className="w-8 h-8 rounded-full bg-[#1877F2] flex items-center justify-center text-white shadow-sm cursor-pointer">
+          <motion.div whileHover={{ scale: 1.15 }} className="w-8 h-8 rounded-full bg-[#1877F2] flex items-center justify-center text-white shadow-sm cursor-pointer" title="Facebook">
             <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
               <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.625c-.202.324-.266.793-.266 1.493v1.758h4.033l-.547 3.667h-3.486v7.98c5.441-.758 9.666-5.438 9.666-11.085 0-6.223-5.044-11.267-11.267-11.267C5.044 1.339 0 6.383 0 12.606c0 5.647 4.225 10.327 9.666 11.085z"/>
+            </svg>
+          </motion.div>
+
+          {/* Pinterest */}
+          <motion.div whileHover={{ scale: 1.15 }} className="w-8 h-8 rounded-full bg-[#E60023] flex items-center justify-center text-white shadow-sm cursor-pointer" title="Pinterest">
+            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M12 0a12 12 0 0 0-4.37 23.17c-.07-.94-.13-2.39.03-3.42.15-.98 1.01-4.28 1.01-4.28s-.26-.52-.26-1.28c0-1.2.7-2.1 1.57-2.1.74 0 1.1.55 1.1 1.22 0 .74-.47 1.86-.72 2.89-.2.86.43 1.56 1.28 1.56 1.54 0 2.73-1.62 2.73-3.96 0-2.07-1.49-3.52-3.62-3.52-2.47 0-3.92 1.85-3.92 3.76 0 .74.29 1.54.64 1.98.07.09.08.16.06.25-.07.28-.22.89-.25 1.01-.04.17-.14.21-.32.13-1.19-.55-1.93-2.29-1.93-3.69 0-3 2.18-5.76 6.29-5.76 3.3 0 5.87 2.35 5.87 5.5 0 3.28-2.07 5.92-4.94 5.92-.97 0-1.87-.5-2.18-1.09l-.59 2.27c-.22.83-.8 1.87-1.19 2.51A11.98 11.98 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0z"/>
             </svg>
           </motion.div>
 

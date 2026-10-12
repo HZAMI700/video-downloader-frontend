@@ -108,7 +108,7 @@ export default function Home() {
   const handleDownloadFormat = async (formatId: string) => {
     // If no media is currently loaded, prompt with sample or message
     if (!metadata) {
-      setAnalyzeError('Please paste a YouTube, TikTok, Facebook, or Instagram video URL above first.');
+      setAnalyzeError('Please paste a TikTok, Pinterest, Facebook, Instagram, or YouTube video URL above first.');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }

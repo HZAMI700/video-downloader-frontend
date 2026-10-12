@@ -31,12 +31,21 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
   // Real duration only — never invent fake duration when real media is present
   const duration = isReal ? metadata.duration_formatted : '12:34';
 
-  // Detect 9:16 vertical portrait format (Instagram Reels, TikTok, YouTube Shorts)
+  // Detect 9:16 vertical portrait format (Instagram Reels, TikTok, YouTube Shorts, Pinterest Video Pins)
   const [isVertical, setIsVertical] = useState<boolean>(() => {
     if (!metadata) return false;
     const p = (metadata.platform || '').toLowerCase();
     const url = (metadata.original_url || '').toLowerCase();
-    return p.includes('instagram') || p.includes('tiktok') || url.includes('/reel') || url.includes('/shorts') || url.includes('tiktok.com');
+    return (
+      p.includes('instagram') ||
+      p.includes('tiktok') ||
+      p.includes('pinterest') ||
+      url.includes('/reel') ||
+      url.includes('/shorts') ||
+      url.includes('tiktok.com') ||
+      url.includes('pin.it') ||
+      url.includes('pinterest.')
+    );
   });
 
   useEffect(() => {
@@ -46,7 +55,16 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
     }
     const p = (metadata.platform || '').toLowerCase();
     const url = (metadata.original_url || '').toLowerCase();
-    const verticalUrl = p.includes('instagram') || p.includes('tiktok') || url.includes('/reel') || url.includes('/shorts') || url.includes('tiktok.com');
+    const verticalUrl = (
+      p.includes('instagram') ||
+      p.includes('tiktok') ||
+      p.includes('pinterest') ||
+      url.includes('/reel') ||
+      url.includes('/shorts') ||
+      url.includes('tiktok.com') ||
+      url.includes('pin.it') ||
+      url.includes('pinterest.')
+    );
     setIsVertical(verticalUrl);
   }, [metadata]);
 
