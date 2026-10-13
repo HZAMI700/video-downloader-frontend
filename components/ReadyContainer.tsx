@@ -280,7 +280,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
                 />
               </div>
               <p className="text-[11px] text-slate-500 mt-1.5 flex justify-between">
-                <span>Processing media with FFmpeg on Botkeep...</span>
+                <span>Processing and preparing your download...</span>
                 <span className="font-semibold text-purple-600">{activeJob.progress_percent.toFixed(0)}%</span>
               </p>
             </div>
