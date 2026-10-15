@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Download, CheckCircle, RefreshCw, Smartphone, Monitor } from 'lucide-react';
+import { Loader2, Download, CheckCircle, RefreshCw, Smartphone, Monitor, Play } from 'lucide-react';
 import { MediaMetadata, DownloadJob } from '../lib/types';
 import { buildFileDownloadUrl } from '../lib/api';
+import { EmbeddedPlayer } from './EmbeddedPlayer';
 
 interface ReadyContainerProps {
   metadata?: MediaMetadata | null;
@@ -66,7 +67,10 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
       url.includes('pinterest.')
     );
     setIsVertical(verticalUrl);
+    setIsPlayingStream(false);
   }, [metadata]);
+
+  const [isPlayingStream, setIsPlayingStream] = useState<boolean>(false);
 
   // Handle image load to check natural aspect ratio
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -155,7 +159,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
       {/* Main Container Card */}
       <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-7 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col md:flex-row items-center gap-6 md:gap-8 transition-all duration-300">
         
-        {/* Left Column: Video Thumbnail Preview (Responsive 9:16 or 16:9) */}
+        {/* Left Column: Video Thumbnail Preview or Embedded Stream Player */}
         <div className={`shrink-0 ${isVertical ? 'w-full sm:w-auto flex justify-center' : 'w-full md:w-[45%]'}`}>
           <div
             className={`relative rounded-2xl overflow-hidden bg-slate-950 shadow-md group transition-all duration-300 ${
@@ -164,35 +168,55 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
                 : 'w-full aspect-video'
             }`}
           >
-            <img
-              src={thumbnail}
-              alt={title}
-              onLoad={handleImageLoad}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
-              }}
-            />
+            {isPlayingStream ? (
+              <EmbeddedPlayer
+                metadata={metadata}
+                isVertical={isVertical}
+                onClose={() => setIsPlayingStream(false)}
+              />
+            ) : (
+              <>
+                <img
+                  src={thumbnail}
+                  alt={title}
+                  onLoad={handleImageLoad}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
 
-            {/* Dark gradient overlay for title legibility */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent flex flex-col justify-end p-3.5 sm:p-4">
-              <h3 className="text-white font-extrabold text-sm sm:text-base leading-snug line-clamp-2 drop-shadow-md">
-                {title}
-              </h3>
-            </div>
+                {/* Center Play Button Overlay */}
+                <button
+                  type="button"
+                  onClick={() => setIsPlayingStream(true)}
+                  className="absolute inset-0 m-auto w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/95 hover:bg-white text-purple-700 shadow-2xl shadow-purple-900/40 flex items-center justify-center backdrop-blur-md group-hover:scale-110 active:scale-95 transition-all duration-200 z-10"
+                  title="Play embedded stream via Cloudflare Ad-Clear Proxy"
+                >
+                  <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current ml-0.5 text-purple-600" />
+                </button>
 
-            {/* Duration pill in bottom right (only if real duration exists) */}
-            {duration && (
-              <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md px-2 py-0.5 rounded-md text-[11px] font-bold text-white shadow">
-                {duration}
-              </div>
-            )}
+                {/* Dark gradient overlay for title legibility */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent flex flex-col justify-end p-3.5 sm:p-4 pointer-events-none">
+                  <h3 className="text-white font-extrabold text-sm sm:text-base leading-snug line-clamp-2 drop-shadow-md">
+                    {title}
+                  </h3>
+                </div>
 
-            {/* Platform Tag */}
-            {metadata?.platform && (
-              <div className="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
-                {metadata.platform}
-              </div>
+                {/* Duration pill in bottom right (only if real duration exists) */}
+                {duration && (
+                  <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md px-2 py-0.5 rounded-md text-[11px] font-bold text-white shadow pointer-events-none">
+                    {duration}
+                  </div>
+                )}
+
+                {/* Platform Tag */}
+                {metadata?.platform && (
+                  <div className="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-md pointer-events-none">
+                    {metadata.platform}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

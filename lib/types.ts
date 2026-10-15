@@ -15,7 +15,7 @@ export interface CapabilitiesResponse {
 
 export interface FormatOption {
   format_id: string;
-  type: 'video' | 'audio';
+  type: 'video' | 'audio' | 'image';
   label: string;
   resolution: string;
   ext: string;
@@ -23,6 +23,7 @@ export interface FormatOption {
   requires_ffmpeg: boolean;
   available: boolean;
   approx_size_bytes?: number;
+  direct_url?: string;
 }
 
 export interface MediaMetadata {
@@ -37,6 +38,7 @@ export interface MediaMetadata {
   original_url: string;
   formats: FormatOption[];
   ffmpeg_available: boolean;
+  direct_media_url?: string;
 }
 
 export type JobStatus = 'queued' | 'processing' | 'completed' | 'failed';
