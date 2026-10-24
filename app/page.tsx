@@ -1,7 +1,14 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Navbar } from '../components/Navbar';
+import { Menu, Sparkles, DownloadCloud, FileAudio } from 'lucide-react';
+import { AppSidebar, ToolId } from '../components/AppSidebar';
+import { AudioTranscriber } from '../components/Transcriber/AudioTranscriber';
+import { PodcastGenerator } from '../components/Transcriber/PodcastGenerator';
+import { TextToSpeechTool } from '../components/Transcriber/TextToSpeechTool';
+import { WorkspaceHistory } from '../components/Transcriber/WorkspaceHistory';
+
+// Existing Video Downloader Components
 import { HeroInput } from '../components/HeroInput';
 import { ReadyContainer } from '../components/ReadyContainer';
 import { HowItWorks } from '../components/HowItWorks';
@@ -9,8 +16,7 @@ import { PlatformShowcase } from '../components/PlatformShowcase';
 import { FeatureCards } from '../components/FeatureCards';
 import { FaqSection } from '../components/FaqSection';
 import { Footer } from '../components/Footer';
-import { AuroraBackground } from '../components/AuroraBackground';
-import { AudioTranscriber } from '../components/Transcriber/AudioTranscriber';
+
 import {
   fetchCapabilities,
   fetchMetadata,
@@ -20,38 +26,36 @@ import {
 import { CapabilitiesResponse, MediaMetadata, DownloadJob } from '../lib/types';
 
 export default function Home() {
+  // Sidebar state
+  const [activeTool, setActiveTool] = useState<ToolId>('transcriber');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Existing Video Downloader state
   const [capabilities, setCapabilities] = useState<CapabilitiesResponse | null>(null);
   const [loadingCapabilities, setLoadingCapabilities] = useState<boolean>(true);
-  const [currentMode, setCurrentMode] = useState<'downloader' | 'transcriber'>('downloader');
-
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<MediaMetadata | null>(null);
-
   const [isStartingJob, setIsStartingJob] = useState<boolean>(false);
   const [activeJob, setActiveJob] = useState<DownloadJob | null>(null);
 
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Load capabilities once on mount
+  // Load backend capabilities once
   useEffect(() => {
     let isMounted = true;
     async function loadCaps() {
       try {
         setLoadingCapabilities(true);
         const caps = await fetchCapabilities();
-        if (isMounted) {
-          setCapabilities(caps);
-        }
+        if (isMounted) setCapabilities(caps);
       } catch (err) {
-        // Fallback gracefully
+        // Fallback
       } finally {
-        if (isMounted) {
-          setLoadingCapabilities(false);
-        }
+        if (isMounted) setLoadingCapabilities(false);
       }
     }
-
     loadCaps();
     return () => {
       isMounted = false;
@@ -104,15 +108,14 @@ export default function Home() {
           }
         }
       } catch (err) {
-        // Continue polling until resolved
+        // Continue polling
       }
     }, 1000);
   };
 
   const handleDownloadFormat = async (formatId: string) => {
-    // If no media is currently loaded, prompt with sample or message
     if (!metadata) {
-      setAnalyzeError('Please paste a TikTok, Pinterest, Facebook, Instagram, or YouTube video URL above first.');
+      setAnalyzeError('Please paste a video URL above first.');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -152,54 +155,117 @@ export default function Home() {
   };
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen relative overflow-x-hidden">
-      <AuroraBackground />
-      <Navbar
-        capabilities={capabilities}
-        loadingCapabilities={loadingCapabilities}
-        activeTab={currentMode}
-        onTabChange={setCurrentMode}
+    <div className="min-h-screen bg-[#fbfbfe] text-slate-900 flex flex-col lg:flex-row font-sans">
+      {/* Target Platform Left Sidebar */}
+      <AppSidebar
+        activeTool={activeTool}
+        onSelectTool={setActiveTool}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        isMobileOpen={isMobileSidebarOpen}
+        onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
-      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-10 w-full space-y-10 md:space-y-12">
-        {currentMode === 'transcriber' ? (
-          <AudioTranscriber />
-        ) : (
-          <>
-            {/* HERO AND SEARCH INPUT */}
-            <HeroInput
-              onAnalyze={handleAnalyze}
-              isLoading={isAnalyzing}
-              error={analyzeError}
-            />
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+        {/* Top Navbar Header */}
+        <header className="h-16 border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIsMobileSidebarOpen(true)}
+              aria-label="Open Navigation Menu"
+              className="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
 
-            {/* READY CONTAINER / DOWNLOAD OPTIONS */}
-            <ReadyContainer
-              metadata={metadata}
-              activeJob={activeJob}
-              isStartingJob={isStartingJob}
-              onDownloadFormat={handleDownloadFormat}
-              onReset={handleReset}
-            />
+            <span className="text-sm font-bold text-slate-700 hidden sm:inline-block">
+              {activeTool === 'video-downloader'
+                ? 'Playzy Video Downloader'
+                : activeTool === 'podcast-generator'
+                ? 'AI Podcast Generator'
+                : activeTool === 'text-to-speech' || activeTool === 'voice-generator' || activeTool === 'voice-changer'
+                ? 'AI Voice Studio'
+                : activeTool === 'workspace'
+                ? 'Local Workspace'
+                : 'Audio Transcriber AI'}
+            </span>
+          </div>
 
-            {/* 3-STEP HOW IT WORKS */}
-            <HowItWorks />
+          {/* Quick switcher to/from Video Downloader */}
+          <div className="flex items-center gap-2">
+            {activeTool === 'video-downloader' ? (
+              <button
+                type="button"
+                onClick={() => setActiveTool('transcriber')}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-800 text-xs font-bold transition-all"
+              >
+                <FileAudio className="w-4 h-4" />
+                <span>Switch to AI Transcriber</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setActiveTool('video-downloader')}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all"
+              >
+                <DownloadCloud className="w-4 h-4 text-purple-600" />
+                <span className="hidden sm:inline">Playzy Video Downloader</span>
+                <span className="sm:hidden">Downloader</span>
+              </button>
+            )}
 
-            {/* SUPPORTED PLATFORMS SHOWCASE */}
-            <PlatformShowcase />
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>No Login Required</span>
+            </span>
+          </div>
+        </header>
 
-            {/* 3 FEATURE CARDS (Ultra Fast, No Watermarks, Safe & Secure) */}
-            <FeatureCards />
+        {/* Dynamic Main Body Content */}
+        <main className="flex-1 p-4 sm:p-6 md:p-10 max-w-6xl mx-auto w-full space-y-8">
+          {activeTool === 'video-downloader' ? (
+            /* Full Existing Video Downloader Experience (Preserved completely) */
+            <div className="space-y-10 md:space-y-12">
+              <HeroInput
+                onAnalyze={handleAnalyze}
+                isLoading={isAnalyzing}
+                error={analyzeError}
+              />
 
-            {/* FAQ SECTION */}
-            <div className="pt-6">
-              <FaqSection />
+              <ReadyContainer
+                metadata={metadata}
+                activeJob={activeJob}
+                isStartingJob={isStartingJob}
+                onDownloadFormat={handleDownloadFormat}
+                onReset={handleReset}
+              />
+
+              <HowItWorks />
+              <PlatformShowcase />
+              <FeatureCards />
+              <div className="pt-6">
+                <FaqSection />
+              </div>
             </div>
-          </>
-        )}
-      </main>
+          ) : activeTool === 'podcast-generator' ? (
+            /* AI Podcast Studio */
+            <PodcastGenerator />
+          ) : activeTool === 'text-to-speech' || activeTool === 'voice-generator' || activeTool === 'voice-changer' ? (
+            /* AI Voice Studio */
+            <TextToSpeechTool />
+          ) : activeTool === 'workspace' ? (
+            /* Local Workspace History */
+            <WorkspaceHistory />
+          ) : (
+            /* Audio & Video Transcriber + Tools Matching Screenshot */
+            <AudioTranscriber toolId={activeTool} />
+          )}
+        </main>
 
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 }
