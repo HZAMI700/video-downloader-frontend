@@ -1,17 +1,24 @@
 'use client';
 
 import React from 'react';
-import { Play, Sparkles } from 'lucide-react';
+import { Play, Sparkles, DownloadCloud, FileAudio } from 'lucide-react';
 import { CapabilitiesResponse } from '../lib/types';
 
 interface NavbarProps {
   capabilities?: CapabilitiesResponse | null;
   loadingCapabilities?: boolean;
+  activeTab?: 'downloader' | 'transcriber';
+  onTabChange?: (tab: 'downloader' | 'transcriber') => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ capabilities, loadingCapabilities }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  capabilities,
+  loadingCapabilities,
+  activeTab = 'downloader',
+  onTabChange,
+}) => {
   return (
-    <header className="w-full bg-white/75 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
+    <header className="w-full bg-white/75 dark:bg-gray-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 dark:border-white/10 transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
         {/* Brand Logo: Playzy */}
         <div className="flex items-center gap-2">
@@ -31,31 +38,65 @@ export const Navbar: React.FC<NavbarProps> = ({ capabilities, loadingCapabilitie
           )}
         </div>
 
-        {/* Center Nav Links */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
-          <a href="#how-it-works" className="hover:text-purple-600 transition-colors">
-            How It Works
-          </a>
-          <a href="#supported-sites" className="hover:text-purple-600 transition-colors">
-            Supported Sites
-          </a>
-          <a href="#features" className="hover:text-purple-600 transition-colors">
-            Features
-          </a>
-          <a href="#faq" className="hover:text-purple-600 transition-colors">
-            FAQ
-          </a>
-        </nav>
+        {/* Center Mode Switcher Tabs */}
+        {onTabChange && (
+          <div className="flex p-1 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl shadow-inner">
+            <button
+              type="button"
+              onClick={() => onTabChange('downloader')}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                activeTab === 'downloader'
+                  ? 'bg-white dark:bg-white/15 text-purple-600 dark:text-white shadow-sm'
+                  : 'text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <DownloadCloud className="w-4 h-4" />
+              <span>Downloader</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onTabChange('transcriber')}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                activeTab === 'transcriber'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-black shadow-md shadow-emerald-500/20'
+                  : 'text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <FileAudio className="w-4 h-4" />
+              <span>AI Transcriber</span>
+              <span className="hidden sm:inline-block px-1.5 py-0.2 rounded text-[10px] uppercase font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                New
+              </span>
+            </button>
+          </div>
+        )}
 
-        {/* Right CTA Buttons */}
+        {/* Right CTA / Links */}
         <div className="flex items-center gap-3">
-          <a
-            href="#download-input"
-            className="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] hover:opacity-95 shadow-md shadow-purple-500/20 transition-all transform active:scale-95 flex items-center gap-1.5"
+          <nav className="hidden lg:flex items-center gap-6 text-xs font-semibold text-slate-600 dark:text-gray-400">
+            <a href="#how-it-works" className="hover:text-purple-600 transition-colors">
+              How It Works
+            </a>
+            <a href="#features" className="hover:text-purple-600 transition-colors">
+              Features
+            </a>
+            <a href="#faq" className="hover:text-purple-600 transition-colors">
+              FAQ
+            </a>
+          </nav>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (onTabChange) {
+                onTabChange(activeTab === 'downloader' ? 'transcriber' : 'downloader');
+              }
+            }}
+            className="px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] hover:opacity-95 shadow-md shadow-purple-500/20 transition-all transform active:scale-95 flex items-center gap-1.5"
           >
-            <Sparkles className="w-4 h-4" />
-            <span>Start Free</span>
-          </a>
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{activeTab === 'downloader' ? 'Transcribe AI' : 'Download Video'}</span>
+          </button>
         </div>
       </div>
     </header>

@@ -10,6 +10,7 @@ import { FeatureCards } from '../components/FeatureCards';
 import { FaqSection } from '../components/FaqSection';
 import { Footer } from '../components/Footer';
 import { AuroraBackground } from '../components/AuroraBackground';
+import { AudioTranscriber } from '../components/Transcriber/AudioTranscriber';
 import {
   fetchCapabilities,
   fetchMetadata,
@@ -21,6 +22,7 @@ import { CapabilitiesResponse, MediaMetadata, DownloadJob } from '../lib/types';
 export default function Home() {
   const [capabilities, setCapabilities] = useState<CapabilitiesResponse | null>(null);
   const [loadingCapabilities, setLoadingCapabilities] = useState<boolean>(true);
+  const [currentMode, setCurrentMode] = useState<'downloader' | 'transcriber'>('downloader');
 
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
@@ -155,38 +157,46 @@ export default function Home() {
       <Navbar
         capabilities={capabilities}
         loadingCapabilities={loadingCapabilities}
+        activeTab={currentMode}
+        onTabChange={setCurrentMode}
       />
 
       <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-10 w-full space-y-10 md:space-y-12">
-        {/* HERO AND SEARCH INPUT */}
-        <HeroInput
-          onAnalyze={handleAnalyze}
-          isLoading={isAnalyzing}
-          error={analyzeError}
-        />
+        {currentMode === 'transcriber' ? (
+          <AudioTranscriber />
+        ) : (
+          <>
+            {/* HERO AND SEARCH INPUT */}
+            <HeroInput
+              onAnalyze={handleAnalyze}
+              isLoading={isAnalyzing}
+              error={analyzeError}
+            />
 
-        {/* READY CONTAINER / DOWNLOAD OPTIONS */}
-        <ReadyContainer
-          metadata={metadata}
-          activeJob={activeJob}
-          isStartingJob={isStartingJob}
-          onDownloadFormat={handleDownloadFormat}
-          onReset={handleReset}
-        />
+            {/* READY CONTAINER / DOWNLOAD OPTIONS */}
+            <ReadyContainer
+              metadata={metadata}
+              activeJob={activeJob}
+              isStartingJob={isStartingJob}
+              onDownloadFormat={handleDownloadFormat}
+              onReset={handleReset}
+            />
 
-        {/* 3-STEP HOW IT WORKS */}
-        <HowItWorks />
+            {/* 3-STEP HOW IT WORKS */}
+            <HowItWorks />
 
-        {/* SUPPORTED PLATFORMS SHOWCASE */}
-        <PlatformShowcase />
+            {/* SUPPORTED PLATFORMS SHOWCASE */}
+            <PlatformShowcase />
 
-        {/* 3 FEATURE CARDS (Ultra Fast, No Watermarks, Safe & Secure) */}
-        <FeatureCards />
+            {/* 3 FEATURE CARDS (Ultra Fast, No Watermarks, Safe & Secure) */}
+            <FeatureCards />
 
-        {/* FAQ SECTION */}
-        <div className="pt-6">
-          <FaqSection />
-        </div>
+            {/* FAQ SECTION */}
+            <div className="pt-6">
+              <FaqSection />
+            </div>
+          </>
+        )}
       </main>
 
       <Footer />

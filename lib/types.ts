@@ -60,3 +60,27 @@ export interface DownloadJob {
   created_at: number;
   completed_at?: number;
 }
+
+export interface TranscriptionSegment {
+  id: number;
+  start: number;
+  end: number;
+  text: string;
+  speaker?: string;
+}
+
+export interface TranscriptionJob {
+  job_id: string;
+  source_type: 'file' | 'url';
+  filename: string;
+  status: 'queued' | 'processing' | 'completed' | 'failed';
+  progress: number;
+  stage: string;
+  error?: string;
+  text: string;
+  segments: TranscriptionSegment[];
+  duration: number;
+  language: string;
+  created_at: number;
+  completed_at?: number;
+}

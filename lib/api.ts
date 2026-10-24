@@ -1,4 +1,4 @@
-import { CapabilitiesResponse, MediaMetadata, DownloadJob } from './types';
+import { CapabilitiesResponse, MediaMetadata, DownloadJob, TranscriptionJob } from './types';
 
 export const DEFAULT_BACKEND_URL = 'http://node5.botkeep.cloud:41076';
 
@@ -104,4 +104,70 @@ export async function deleteDownloadJob(jobId: string): Promise<void> {
   } catch (e) {
     // Ignore cleanup errors on frontend
   }
+}
+
+export async function uploadAndTranscribeFile(
+  file: File,
+  language: string = 'auto',
+  diarization: boolean = false
+): Promise<{ job_id: string; status: string; filename: string }> {
+  const endpoint = getApiEndpoint('transcribe/upload');
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('language', language);
+  formData.append('diarization', String(diarization));
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Upload failed (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export async function transcribeMediaUrl(
+  url: string,
+  language: string = 'auto',
+  diarization: boolean = false
+): Promise<{ job_id: string; status: string; url: string }> {
+  const endpoint = getApiEndpoint('transcribe/url');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({ url, language, diarization }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Transcription request failed (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export async function fetchTranscriptionStatus(jobId: string): Promise<TranscriptionJob> {
+  const endpoint = getApiEndpoint(`transcribe/${jobId}`);
+  const res = await fetch(endpoint, {
+    method: 'GET',
+    headers: { 'Accept': 'application/json' },
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Failed to fetch transcription status (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export function getTranscriptionExportUrl(jobId: string, format: 'txt' | 'srt' | 'vtt'): string {
+  return getApiEndpoint(`transcribe/${jobId}/export?format=${format}`);
 }
