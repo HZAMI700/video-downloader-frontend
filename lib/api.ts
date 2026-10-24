@@ -123,6 +123,11 @@ export async function uploadAndTranscribeFile(
   });
 
   if (!res.ok) {
+    if (res.status === 413) {
+      throw new Error(
+        'File exceeds the upload limit. For large video or audio files, click the "Link" button to transcribe directly from any URL, or choose a smaller audio file.'
+      );
+    }
     const errorData = await res.json().catch(() => ({}));
     throw new Error(errorData.detail || `Upload failed (${res.status})`);
   }
