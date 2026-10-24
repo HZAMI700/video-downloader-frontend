@@ -176,3 +176,106 @@ export async function fetchTranscriptionStatus(jobId: string): Promise<Transcrip
 export function getTranscriptionExportUrl(jobId: string, format: 'txt' | 'srt' | 'vtt'): string {
   return getApiEndpoint(`transcribe/${jobId}/export?format=${format}`);
 }
+
+export async function translateTranscriptText(
+  text: string,
+  targetLanguage: string,
+  sourceLanguage: string = 'auto'
+): Promise<{ original_text: string; translated_text: string; target_language: string }> {
+  const endpoint = getApiEndpoint('transcribe/translate');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({
+      text,
+      target_language: targetLanguage,
+      source_language: sourceLanguage,
+    }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Translation failed (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export async function processAudioBoost(file: File, boostPercent: number): Promise<Blob> {
+  const endpoint = getApiEndpoint('audio/boost');
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('boost_percent', String(boostPercent));
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Volume boost failed (${res.status})`);
+  }
+
+  return res.blob();
+}
+
+export async function processVocalRemover(file: File, mode: 'instrumental' | 'vocals'): Promise<Blob> {
+  const endpoint = getApiEndpoint('audio/vocal-remover');
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('mode', mode);
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Vocal separation failed (${res.status})`);
+  }
+
+  return res.blob();
+}
+
+export async function processAudioClean(file: File): Promise<Blob> {
+  const endpoint = getApiEndpoint('audio/clean');
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Voice cleaner failed (${res.status})`);
+  }
+
+  return res.blob();
+}
+
+export async function processVoiceChange(file: File, preset: string): Promise<Blob> {
+  const endpoint = getApiEndpoint('audio/voice-change');
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('preset', preset);
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Voice changer failed (${res.status})`);
+  }
+
+  return res.blob();
+}
+

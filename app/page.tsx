@@ -7,6 +7,10 @@ import { AudioTranscriber } from '../components/Transcriber/AudioTranscriber';
 import { PodcastGenerator } from '../components/Transcriber/PodcastGenerator';
 import { TextToSpeechTool } from '../components/Transcriber/TextToSpeechTool';
 import { WorkspaceHistory } from '../components/Transcriber/WorkspaceHistory';
+import { MediaToMp3Converter } from '../components/Tools/MediaToMp3Converter';
+import { AudioTranslator } from '../components/Tools/AudioTranslator';
+import { AiVoiceStudio } from '../components/Tools/AiVoiceStudio';
+import { AudioDspStudio } from '../components/Tools/AudioDspStudio';
 
 // Existing Video Downloader Components
 import { HeroInput } from '../components/HeroInput';
@@ -185,8 +189,16 @@ export default function Home() {
                 ? 'Playzy Video Downloader'
                 : activeTool === 'podcast-generator'
                 ? 'AI Podcast Generator'
-                : activeTool === 'text-to-speech' || activeTool === 'voice-generator' || activeTool === 'voice-changer'
+                : activeTool === 'youtube-to-mp3'
+                ? 'YouTube to MP3 Converter'
+                : activeTool === 'tiktok-to-mp3'
+                ? 'TikTok to MP3 Converter'
+                : activeTool === 'audio-translator' || activeTool === 'english-to-tamil'
+                ? 'Free AI Audio Translator'
+                : activeTool === 'ai-voice-generator' || activeTool === 'ai-voice-clone'
                 ? 'AI Voice Studio'
+                : activeTool === 'volume-booster' || activeTool === 'ai-vocal-remover' || activeTool === 'ai-voice-cleaner' || activeTool === 'ai-voice-changer' || activeTool === 'background-noise-remover' || activeTool === 'background-music-remover'
+                ? 'Audio DSP Studio'
                 : activeTool === 'workspace'
                 ? 'Local Workspace'
                 : 'Audio Transcriber AI'}
@@ -249,12 +261,31 @@ export default function Home() {
                 <FaqSection />
               </div>
             </div>
+          ) : activeTool === 'youtube-to-mp3' ||
+            activeTool === 'tiktok-to-mp3' ||
+            activeTool === 'video-to-mp3' ||
+            activeTool === 'mp4-to-mp3' ||
+            activeTool === 'youtube-to-wav' ||
+            activeTool === 'extract-audio' ? (
+            /* Dedicated Media to MP3 & Audio Extractors */
+            <MediaToMp3Converter toolId={activeTool} />
+          ) : activeTool === 'audio-translator' || activeTool === 'english-to-tamil' ? (
+            /* Dedicated AI Audio Translator */
+            <AudioTranslator toolId={activeTool} />
+          ) : activeTool === 'ai-voice-generator' || activeTool === 'ai-voice-clone' || activeTool === 'text-to-speech' ? (
+            /* Dedicated AI Voice Studio */
+            <AiVoiceStudio toolId={activeTool} />
+          ) : activeTool === 'volume-booster' ||
+            activeTool === 'ai-vocal-remover' ||
+            activeTool === 'ai-voice-cleaner' ||
+            activeTool === 'ai-voice-changer' ||
+            activeTool === 'background-noise-remover' ||
+            activeTool === 'background-music-remover' ? (
+            /* Dedicated Audio DSP Studio */
+            <AudioDspStudio toolId={activeTool} />
           ) : activeTool === 'podcast-generator' ? (
             /* AI Podcast Studio */
             <PodcastGenerator />
-          ) : activeTool === 'text-to-speech' || activeTool === 'voice-generator' || activeTool === 'voice-changer' ? (
-            /* AI Voice Studio */
-            <TextToSpeechTool />
           ) : activeTool === 'workspace' ? (
             /* Local Workspace History */
             <WorkspaceHistory />

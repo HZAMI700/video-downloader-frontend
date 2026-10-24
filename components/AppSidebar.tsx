@@ -40,9 +40,15 @@ export type ToolId =
   | 'english-to-tamil'
   | 'voice-to-text'
   | 'speech-transcriber'
+  | 'ai-voice-generator'
+  | 'ai-voice-clone'
+  | 'volume-booster'
+  | 'ai-voice-cleaner'
+  | 'ai-vocal-remover'
+  | 'ai-voice-changer'
+  | 'background-noise-remover'
+  | 'background-music-remover'
   | 'text-to-speech'
-  | 'voice-generator'
-  | 'voice-changer'
   | 'workspace'
   | 'video-downloader';
 
@@ -241,7 +247,7 @@ export function AppSidebar({
             )}
           </div>
 
-          {/* Collapsible Section: AI Voice */}
+          {/* Collapsible Section: AI Voice Matching User Screenshot */}
           <div className="pt-2">
             {!isCollapsed ? (
               <button
@@ -250,7 +256,7 @@ export function AppSidebar({
                 className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-50 transition-colors"
               >
                 <span className="flex items-center gap-2">
-                  <Wand2 className="w-3.5 h-3.5" />
+                  <Volume2 className="w-3.5 h-3.5 text-purple-600" />
                   <span>AI Voice</span>
                 </span>
                 {isAiVoiceOpen ? (
@@ -259,30 +265,67 @@ export function AppSidebar({
                   <ChevronDown className="w-3.5 h-3.5" />
                 )}
               </button>
-            ) : null}
+            ) : (
+              <div className="w-full h-px bg-slate-200 my-2" />
+            )}
 
             {(isAiVoiceOpen || isCollapsed) && (
               <div className="mt-1 space-y-0.5">
                 <SidebarNavButton
-                  icon={<Volume2 className="w-4 h-4 text-indigo-500" />}
-                  label="Text to Speech (TTS)"
-                  isActive={activeTool === 'text-to-speech'}
-                  isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('text-to-speech')}
-                />
-                <SidebarNavButton
-                  icon={<Sparkles className="w-4 h-4 text-purple-500" />}
+                  icon={<Sparkles className="w-4 h-4 text-purple-600" />}
                   label="AI Voice Generator"
-                  isActive={activeTool === 'voice-generator'}
+                  isActive={activeTool === 'ai-voice-generator'}
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('voice-generator')}
+                  onClick={() => handleItemClick('ai-voice-generator')}
                 />
                 <SidebarNavButton
-                  icon={<Radio className="w-4 h-4 text-teal-500" />}
-                  label="Voice Changer"
-                  isActive={activeTool === 'voice-changer'}
+                  icon={<Mic className="w-4 h-4 text-indigo-500" />}
+                  label="AI Voice Clone"
+                  isActive={activeTool === 'ai-voice-clone'}
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('voice-changer')}
+                  onClick={() => handleItemClick('ai-voice-clone')}
+                />
+                <SidebarNavButton
+                  icon={<Volume2 className="w-4 h-4 text-amber-500" />}
+                  label="Volume Booster"
+                  isActive={activeTool === 'volume-booster'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('volume-booster')}
+                />
+                <SidebarNavButton
+                  icon={<Sparkles className="w-4 h-4 text-emerald-500" />}
+                  label="AI Voice Cleaner"
+                  isActive={activeTool === 'ai-voice-cleaner'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('ai-voice-cleaner')}
+                />
+                <SidebarNavButton
+                  icon={<Disc className="w-4 h-4 text-rose-500" />}
+                  label="AI Vocal Remover"
+                  isActive={activeTool === 'ai-vocal-remover'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('ai-vocal-remover')}
+                />
+                <SidebarNavButton
+                  icon={<Wand2 className="w-4 h-4 text-cyan-500" />}
+                  label="AI Voice Changer"
+                  isActive={activeTool === 'ai-voice-changer'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('ai-voice-changer')}
+                />
+                <SidebarNavButton
+                  icon={<Radio className="w-4 h-4 text-blue-500" />}
+                  label="Background Noise Remover"
+                  isActive={activeTool === 'background-noise-remover'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('background-noise-remover')}
+                />
+                <SidebarNavButton
+                  icon={<Music2 className="w-4 h-4 text-violet-500" />}
+                  label="Background Music Remover"
+                  isActive={activeTool === 'background-music-remover'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('background-music-remover')}
                 />
               </div>
             )}
