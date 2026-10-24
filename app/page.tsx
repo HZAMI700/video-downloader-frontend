@@ -11,6 +11,7 @@ import { MediaToMp3Converter } from '../components/Tools/MediaToMp3Converter';
 import { AudioTranslator } from '../components/Tools/AudioTranslator';
 import { AiVoiceStudio } from '../components/Tools/AiVoiceStudio';
 import { AudioDspStudio } from '../components/Tools/AudioDspStudio';
+import { QuillBotAiStudio } from '../components/Tools/QuillBotAiStudio';
 
 // Existing Video Downloader Components
 import { HeroInput } from '../components/HeroInput';
@@ -199,6 +200,24 @@ export default function Home() {
                 ? 'AI Voice Studio'
                 : activeTool === 'volume-booster' || activeTool === 'ai-vocal-remover' || activeTool === 'ai-voice-cleaner' || activeTool === 'ai-voice-changer' || activeTool === 'background-noise-remover' || activeTool === 'background-music-remover'
                 ? 'Audio DSP Studio'
+                : activeTool === 'ai-chat'
+                ? 'QuillBot AI Chat'
+                : activeTool === 'paraphrasing-tool'
+                ? 'QuillBot Paraphrasing Tool'
+                : activeTool === 'grammar-checker'
+                ? 'QuillBot Grammar Checker'
+                : activeTool === 'ai-image-generator'
+                ? 'QuillBot AI Image Generator'
+                : activeTool === 'summarizer'
+                ? 'QuillBot Summarizer'
+                : activeTool === 'ai-humanizer'
+                ? 'QuillBot AI Humanizer'
+                : activeTool === 'translator'
+                ? 'QuillBot Translator'
+                : activeTool === 'plagiarism-checker'
+                ? 'QuillBot Plagiarism Checker'
+                : activeTool === 'ai-section'
+                ? 'QuillBot AI Writing Suite'
                 : activeTool === 'workspace'
                 ? 'Local Workspace'
                 : 'Audio Transcriber AI'}
@@ -286,6 +305,17 @@ export default function Home() {
             activeTool === 'background-music-remover' ? (
             /* Dedicated Audio DSP Studio */
             <AudioDspStudio toolId={activeTool} />
+          ) : activeTool === 'ai-section' ||
+            activeTool === 'ai-chat' ||
+            activeTool === 'paraphrasing-tool' ||
+            activeTool === 'grammar-checker' ||
+            activeTool === 'ai-image-generator' ||
+            activeTool === 'summarizer' ||
+            activeTool === 'ai-humanizer' ||
+            activeTool === 'translator' ||
+            activeTool === 'plagiarism-checker' ? (
+            /* Dedicated QuillBot AI Tools Suite Matching User Screenshot */
+            <QuillBotAiStudio toolId={activeTool} onSelectTool={(t) => setActiveTool(t)} />
           ) : activeTool === 'podcast-generator' ? (
             /* AI Podcast Studio */
             <PodcastGenerator />

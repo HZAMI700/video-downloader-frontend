@@ -24,6 +24,14 @@ import {
   CheckCircle2,
   Sliders,
   Wand2,
+  MessageSquare,
+  RefreshCw,
+  CheckCheck,
+  Image as ImageIcon,
+  AlignLeft,
+  UserCheck,
+  FileSearch,
+  Cpu,
 } from 'lucide-react';
 
 export type ToolId =
@@ -49,6 +57,15 @@ export type ToolId =
   | 'background-noise-remover'
   | 'background-music-remover'
   | 'text-to-speech'
+  | 'ai-section'
+  | 'ai-chat'
+  | 'paraphrasing-tool'
+  | 'grammar-checker'
+  | 'ai-image-generator'
+  | 'summarizer'
+  | 'ai-humanizer'
+  | 'translator'
+  | 'plagiarism-checker'
   | 'workspace'
   | 'video-downloader';
 
@@ -69,7 +86,8 @@ export function AppSidebar({
   isMobileOpen,
   onCloseMobile,
 }: AppSidebarProps) {
-  const [isAudioToolsOpen, setIsAudioToolsOpen] = useState(true);
+  const [isAiSectionOpen, setIsAiSectionOpen] = useState(true);
+  const [isAudioToolsOpen, setIsAudioToolsOpen] = useState(false);
   const [isAiVoiceOpen, setIsAiVoiceOpen] = useState(false);
 
   const handleItemClick = (toolId: ToolId) => {
@@ -162,6 +180,95 @@ export function AppSidebar({
             isCollapsed={isCollapsed}
             onClick={() => handleItemClick('recorder-transcriber')}
           />
+
+          {/* Collapsible Section: AI Section (QuillBot AI Tools Matching Screenshot) */}
+          <div className="pt-2">
+            {!isCollapsed ? (
+              <button
+                type="button"
+                onClick={() => setIsAiSectionOpen(!isAiSectionOpen)}
+                className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-slate-900 rounded-lg bg-emerald-50/70 hover:bg-emerald-100/60 border border-emerald-200/80 transition-colors"
+              >
+                <span className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="text-emerald-950 font-extrabold">AI Section</span>
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-600 text-white leading-none">
+                    8 Tools
+                  </span>
+                  {isAiSectionOpen ? (
+                    <ChevronUp className="w-3.5 h-3.5 text-emerald-700" />
+                  ) : (
+                    <ChevronDown className="w-3.5 h-3.5 text-emerald-700" />
+                  )}
+                </div>
+              </button>
+            ) : (
+              <div className="w-full h-px bg-slate-200 my-2" />
+            )}
+
+            {(isAiSectionOpen || isCollapsed) && (
+              <div className="mt-1 space-y-0.5">
+                <SidebarNavButton
+                  icon={<MessageSquare className="w-4 h-4 text-blue-500" />}
+                  label="AI Chat"
+                  isActive={activeTool === 'ai-chat'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('ai-chat')}
+                />
+                <SidebarNavButton
+                  icon={<RefreshCw className="w-4 h-4 text-emerald-600" />}
+                  label="Paraphrasing tool"
+                  isActive={activeTool === 'paraphrasing-tool'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('paraphrasing-tool')}
+                />
+                <SidebarNavButton
+                  icon={<CheckCheck className="w-4 h-4 text-rose-500" />}
+                  label="Grammar Checker"
+                  isActive={activeTool === 'grammar-checker'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('grammar-checker')}
+                />
+                <SidebarNavButton
+                  icon={<ImageIcon className="w-4 h-4 text-amber-500" />}
+                  label="AI Image Generator"
+                  isActive={activeTool === 'ai-image-generator'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('ai-image-generator')}
+                />
+                <SidebarNavButton
+                  icon={<AlignLeft className="w-4 h-4 text-purple-500" />}
+                  label="Summarizer"
+                  isActive={activeTool === 'summarizer'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('summarizer')}
+                />
+                <SidebarNavButton
+                  icon={<UserCheck className="w-4 h-4 text-teal-600" />}
+                  label="AI Humanizer"
+                  isActive={activeTool === 'ai-humanizer'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('ai-humanizer')}
+                />
+                <SidebarNavButton
+                  icon={<Languages className="w-4 h-4 text-slate-600" />}
+                  label="Translator"
+                  isActive={activeTool === 'translator'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('translator')}
+                />
+                <SidebarNavButton
+                  icon={<FileSearch className="w-4 h-4 text-orange-500" />}
+                  label="Plagiarism Checker"
+                  isActive={activeTool === 'plagiarism-checker'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleItemClick('plagiarism-checker')}
+                />
+              </div>
+            )}
+          </div>
 
           {/* Collapsible Section: Audio Tools */}
           <div className="pt-2">

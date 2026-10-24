@@ -303,4 +303,143 @@ export async function convertMediaFile(
   return res.blob();
 }
 
+// -------------------------------------------------------------
+// QuillBot AI Suite Client APIs
+// -------------------------------------------------------------
+export async function runParaphrase(
+  text: string,
+  mode: string = 'standard',
+  synonyms: string = 'medium'
+): Promise<{ original_text: string; paraphrased_text: string; mode: string; synonyms: string }> {
+  const endpoint = getApiEndpoint('ai/paraphrase');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ text, mode, synonyms }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Paraphrase failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function runGrammarCheck(
+  text: string
+): Promise<{
+  original_text: string;
+  corrected_text: string;
+  errors: Array<{ original: string; suggestion: string; type: string; explanation: string }>;
+  total_errors: number;
+}> {
+  const endpoint = getApiEndpoint('ai/grammar-check');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ text }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Grammar check failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function runSummarize(
+  text: string,
+  format: string = 'paragraph',
+  length: string = 'medium'
+): Promise<{
+  original_text: string;
+  summary: string;
+  original_word_count: number;
+  summary_word_count: number;
+  reduction_percent: number;
+}> {
+  const endpoint = getApiEndpoint('ai/summarize');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ text, format, length }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Summarize failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function runHumanize(
+  text: string,
+  tone: string = 'balanced'
+): Promise<{
+  original_text: string;
+  humanized_text: string;
+  original_ai_score: number;
+  humanized_ai_score: number;
+  human_score: number;
+  tone: string;
+}> {
+  const endpoint = getApiEndpoint('ai/humanize');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ text, tone }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `AI Humanizer failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function runAiChat(
+  messages: Array<{ role: string; content: string }>,
+  systemPrompt?: string
+): Promise<{ reply: string; model: string }> {
+  const endpoint = getApiEndpoint('ai/chat');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ messages, system_prompt: systemPrompt }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `AI Chat failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function runPlagiarismCheck(
+  text: string
+): Promise<{
+  original_text: string;
+  total_words: number;
+  total_sentences: number;
+  originality_percent: number;
+  matched_percent: number;
+  scanned_sources: number;
+  flagged_phrases: Array<{ phrase: string; similarity: number; reason: string }>;
+  summary: string;
+}> {
+  const endpoint = getApiEndpoint('ai/plagiarism-check');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ text }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Plagiarism check failed (${res.status})`);
+  }
+  return res.json();
+}
+
+
 
