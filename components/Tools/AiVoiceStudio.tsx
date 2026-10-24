@@ -52,6 +52,8 @@ export function AiVoiceStudio({ toolId }: AiVoiceStudioProps) {
   const [sampleAudio, setSampleAudio] = useState<File | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
+  const [isCloneDragOver, setIsCloneDragOver] = useState(false);
+  const [isScriptDragOver, setIsScriptDragOver] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
@@ -61,7 +63,46 @@ export function AiVoiceStudio({ toolId }: AiVoiceStudioProps) {
   const [error, setError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const scriptFileInputRef = useRef<HTMLInputElement | null>(null);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
+  const handleScriptFileDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsScriptDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (typeof event.target?.result === 'string') {
+          setScriptText(event.target.result);
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const handleScriptFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (typeof event.target?.result === 'string') {
+          setScriptText(event.target.result);
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const handleSampleAudioDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsCloneDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      setSampleAudio(file);
+      setRecordedBlob(null);
+    }
+  };
 
   // Micro recording for clone
   const handleStartRecord = async () => {
@@ -196,17 +237,26 @@ export function AiVoiceStudio({ toolId }: AiVoiceStudioProps) {
   return (
     <div className="w-full max-w-4xl mx-auto space-y-8 animate-fadeIn">
       {/* Hidden File Input for Voice Clone */}
+      {/* Hidden File Inputs */}
       <input
         ref={fileInputRef}
         type="file"
-        accept="audio/*"
+        accept="audio/*,.mp3,.wav,.m4a,.ogg"
         className="hidden"
         onChange={(e) => {
           if (e.target.files && e.target.files[0]) {
             setSampleAudio(e.target.files[0]);
+            setRecordedBlob(null);
             setError(null);
           }
         }}
+      />
+      <input
+        ref={scriptFileInputRef}
+        type="file"
+        accept=".txt,.srt,.vtt,.md,.csv"
+        className="hidden"
+        onChange={handleScriptFileInput}
       />
 
       {/* Header */}
@@ -262,15 +312,27 @@ export function AiVoiceStudio({ toolId }: AiVoiceStudioProps) {
       {/* Main Workspace Card */}
       <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/40 p-6 sm:p-10 space-y-6">
         {activeTab === 'clone' ? (
-          /* Voice Clone Ingest Area */
-          <div className="p-6 rounded-2xl bg-purple-50/40 border border-purple-200/80 space-y-5 animate-fadeIn">
+          /* Voice Clone Ingest Area with Drag & Drop */
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              setIsCloneDragOver(true);
+            }}
+            onDragLeave={() => setIsCloneDragOver(false)}
+            onDrop={handleSampleAudioDrop}
+            className={`p-6 rounded-2xl border-2 border-dashed space-y-5 transition-all ${
+              isCloneDragOver
+                ? 'border-purple-600 bg-purple-100/70 scale-[1.01] shadow-lg shadow-purple-500/10'
+                : 'border-purple-200/80 bg-purple-50/40'
+            }`}
+          >
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-extrabold text-slate-900">
-                  Step 1: Provide Voice Sample (10-30 seconds)
+                  {isCloneDragOver ? 'Release to drop voice sample!' : 'Step 1: Provide Voice Sample (10-30 seconds)'}
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Speak clearly into your microphone or upload an audio clip of the target speaker.
+                  Speak clearly into your microphone, or drag & drop an audio sample (.mp3, .wav, .m4a) below.
                 </p>
               </div>
               <span className="px-2.5 py-1 text-[10px] font-extrabold uppercase bg-purple-200 text-purple-800 rounded-md">
@@ -293,14 +355,14 @@ export function AiVoiceStudio({ toolId }: AiVoiceStudioProps) {
                 <span>{isRecording ? 'Stop Recording' : 'Record Voice Sample'}</span>
               </button>
 
-              {/* Upload File Button */}
+              {/* Upload / Drop File Button */}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs transition-colors"
               >
                 <UploadCloud className="w-4 h-4 text-purple-600" />
-                <span>Upload Sample Audio</span>
+                <span>Browse or Drop Audio File</span>
               </button>
             </div>
 
@@ -342,10 +404,30 @@ export function AiVoiceStudio({ toolId }: AiVoiceStudioProps) {
           </div>
         )}
 
-        {/* Script Text Area */}
-        <div className="space-y-2">
+        {/* Script Text Area with File Drop Support */}
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsScriptDragOver(true);
+          }}
+          onDragLeave={() => setIsScriptDragOver(false)}
+          onDrop={handleScriptFileDrop}
+          className={`space-y-2 p-2 rounded-2xl transition-all ${
+            isScriptDragOver ? 'ring-2 ring-purple-600 bg-purple-50/60' : ''
+          }`}
+        >
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold text-slate-700">Enter Script to Synthesize:</label>
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-bold text-slate-700">Enter Script to Synthesize:</label>
+              <button
+                type="button"
+                onClick={() => scriptFileInputRef.current?.click()}
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-600 hover:text-purple-800 underline decoration-purple-300 transition-colors"
+              >
+                <UploadCloud className="w-3 h-3" />
+                <span>Upload/Drop .txt script</span>
+              </button>
+            </div>
             <span className="text-[11px] text-slate-400 font-medium">
               {scriptText.trim().split(/\s+/).filter(Boolean).length} words
             </span>
@@ -354,7 +436,11 @@ export function AiVoiceStudio({ toolId }: AiVoiceStudioProps) {
             rows={4}
             value={scriptText}
             onChange={(e) => setScriptText(e.target.value)}
-            placeholder="Type or paste your voiceover script here..."
+            placeholder={
+              isScriptDragOver
+                ? 'Drop your .txt or .srt file here to load script text...'
+                : 'Type or paste your voiceover script here, or drop a text file...'
+            }
             className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-100 transition-all resize-none shadow-inner"
           />
         </div>

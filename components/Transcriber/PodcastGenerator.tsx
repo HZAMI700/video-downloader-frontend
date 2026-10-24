@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Radio, Sparkles, Play, Pause, Download, Copy, Check, Users, BookOpen } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Radio, Sparkles, Play, Pause, Download, Copy, Check, Users, BookOpen, UploadCloud, FileText } from 'lucide-react';
 
 export function PodcastGenerator() {
   const [topic, setTopic] = useState('');
@@ -11,6 +11,40 @@ export function PodcastGenerator() {
   const [generatedScript, setGeneratedScript] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [droppedFileName, setDroppedFileName] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleFileDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      readDocFile(file);
+    }
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      readDocFile(e.target.files[0]);
+    }
+  };
+
+  const readDocFile = (file: File) => {
+    setDroppedFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result;
+      if (typeof text === 'string') {
+        const cleaned = text.trim();
+        // Take first 120 chars as topic
+        const sampleTopic = cleaned.split('\n')[0].replace(/^#+\s*/, '').slice(0, 80);
+        setTopic(sampleTopic || file.name.replace(/\.[^/.]+$/, ''));
+      }
+    };
+    reader.readAsText(file);
+  };
 
   const handleGenerate = () => {
     if (!topic.trim()) return;
@@ -100,7 +134,53 @@ export function PodcastGenerator() {
         </p>
       </div>
 
+      {/* Hidden File Input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".txt,.md,.srt,.vtt,.pdf,.doc,.docx"
+        className="hidden"
+        onChange={handleFileInput}
+      />
+
       <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xl shadow-purple-500/5 space-y-6">
+        {/* File Drop Area for Topic / Script Notes */}
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragOver(true);
+          }}
+          onDragLeave={() => setIsDragOver(false)}
+          onDrop={handleFileDrop}
+          onClick={() => fileInputRef.current?.click()}
+          className={`flex items-center justify-between p-4 rounded-2xl border-2 border-dashed cursor-pointer transition-all ${
+            isDragOver
+              ? 'border-purple-600 bg-purple-50 scale-[1.01]'
+              : 'border-slate-200 hover:border-purple-300 bg-slate-50/50'
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+              <UploadCloud className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-800">
+                {droppedFileName
+                  ? `Notes loaded: ${droppedFileName}`
+                  : isDragOver
+                  ? 'Release to load notes file!'
+                  : 'Drop notes, transcript, or document (.txt, .md, .srt)'}
+              </p>
+              <p className="text-[11px] text-slate-400">
+                {droppedFileName ? 'Click or drop another file to replace' : 'Auto-extracts topic and key talking points'}
+              </p>
+            </div>
+          </div>
+          <span className="text-[11px] font-bold px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 shadow-xs">
+            Browse File
+          </span>
+        </div>
+
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">

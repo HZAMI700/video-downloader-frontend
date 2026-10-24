@@ -279,3 +279,28 @@ export async function processVoiceChange(file: File, preset: string): Promise<Bl
   return res.blob();
 }
 
+export async function convertMediaFile(
+  file: File,
+  targetFormat: string = 'mp3',
+  bitrate: string = '320k'
+): Promise<Blob> {
+  const endpoint = getApiEndpoint('audio/convert');
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('target_format', targetFormat);
+  formData.append('bitrate', bitrate);
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `File conversion failed (${res.status})`);
+  }
+
+  return res.blob();
+}
+
+

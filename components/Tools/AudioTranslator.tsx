@@ -65,6 +65,7 @@ export function AudioTranslator({ toolId = 'audio-translator' }: AudioTranslator
 
   const [copiedOriginal, setCopiedOriginal] = useState(false);
   const [copiedTranslated, setCopiedTranslated] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
   const [activeTab, setActiveTab] = useState<'split' | 'subtitles'>('split');
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -296,8 +297,26 @@ export function AudioTranslator({ toolId = 'audio-translator' }: AudioTranslator
           </div>
         </div>
 
-        {/* Upload or Link Area */}
-        <div className="flex flex-col items-center justify-center text-center p-8 rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-300 transition-colors bg-slate-50/40 space-y-4">
+        {/* Upload or Link Area with Full Drag & Drop Support */}
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragOver(true);
+          }}
+          onDragLeave={() => setIsDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragOver(false);
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+              handleFileUpload(e.dataTransfer.files[0]);
+            }
+          }}
+          className={`flex flex-col items-center justify-center text-center p-8 rounded-2xl border-2 border-dashed transition-all space-y-4 ${
+            isDragOver
+              ? 'border-blue-500 bg-blue-50/70 scale-[1.01] shadow-lg shadow-blue-500/10'
+              : 'border-slate-200 hover:border-blue-300 bg-slate-50/40'
+          }`}
+        >
           <div
             onClick={() => fileInputRef.current?.click()}
             className="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/25 cursor-pointer transform hover:scale-105 transition-all"
@@ -307,10 +326,12 @@ export function AudioTranslator({ toolId = 'audio-translator' }: AudioTranslator
 
           <div className="space-y-1">
             <h3 className="text-base sm:text-lg font-bold text-slate-900">
-              Upload Audio File or Paste Media Link to Translate
+              {isDragOver
+                ? 'Release to drop & translate audio file!'
+                : 'Upload Audio File or Paste Media Link to Translate'}
             </h3>
             <p className="text-xs text-slate-400">
-              Supports MP3, WAV, M4A, AAC, MP4, MOV up to 100 MB
+              Drag and drop any audio or video file, or paste URL • Supports MP3, WAV, M4A, AAC, MP4 up to 100 MB
             </p>
           </div>
 

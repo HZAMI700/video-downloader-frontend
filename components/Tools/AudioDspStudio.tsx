@@ -40,6 +40,7 @@ export function AudioDspStudio({ toolId }: AudioDspStudioProps) {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [resultAudioUrl, setResultAudioUrl] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState<boolean>(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
@@ -177,11 +178,27 @@ export function AudioDspStudio({ toolId }: AudioDspStudioProps) {
 
       {/* Main Workspace Card */}
       <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/40 p-6 sm:p-10 space-y-8">
-        {/* File Ingest Drop Zone */}
+        {/* File Ingest Drop Zone with Drag and Drop */}
         <div
           onClick={() => fileInputRef.current?.click()}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragOver(true);
+          }}
+          onDragLeave={() => setIsDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragOver(false);
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+              setSelectedFile(e.dataTransfer.files[0]);
+              setResultAudioUrl(null);
+              setErrorMessage(null);
+            }
+          }}
           className={`flex flex-col items-center justify-center text-center p-8 rounded-2xl border-2 border-dashed cursor-pointer transition-all ${
-            selectedFile
+            isDragOver
+              ? 'border-purple-500 bg-purple-50/70 scale-[1.01] shadow-lg shadow-purple-500/10'
+              : selectedFile
               ? 'border-purple-500 bg-purple-50/30'
               : 'border-slate-300 hover:border-purple-400 bg-slate-50/50'
           }`}
@@ -192,14 +209,21 @@ export function AudioDspStudio({ toolId }: AudioDspStudioProps) {
             {meta.icon}
           </div>
 
-          {selectedFile ? (
+          {isDragOver ? (
+            <div className="space-y-1">
+              <p className="text-sm font-extrabold text-purple-700">
+                Release file to drop into {meta.badge}!
+              </p>
+              <p className="text-xs text-purple-500">Supports all standard audio & video formats</p>
+            </div>
+          ) : selectedFile ? (
             <div className="space-y-1">
               <span className="text-xs font-bold text-purple-700 uppercase tracking-wider block">
                 Selected File
               </span>
               <p className="text-sm font-extrabold text-slate-900">{selectedFile.name}</p>
               <p className="text-xs text-slate-500">
-                {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • Click to change file
+                {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • Click or drop another file to change
               </p>
             </div>
           ) : (

@@ -1,19 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Loader2, X, AlertCircle } from 'lucide-react';
+import { ChevronRight, Loader2, X, AlertCircle, UploadCloud } from 'lucide-react';
 import { ShinyText } from './ShinyText';
 
 interface HeroInputProps {
   onAnalyze: (url: string) => void;
   isLoading: boolean;
   error?: string | null;
+  onFileDrop?: (file: File) => void;
 }
 
-export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, error }) => {
+export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, error, onFileDrop }) => {
   const [url, setUrl] = useState('');
   const [clientValidationNotice, setClientValidationNotice] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +53,19 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
         </p>
       </motion.div>
 
+      {/* Hidden File Input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="video/*,audio/*,.mp4,.mov,.mkv,.webm,.mp3"
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files && e.target.files[0] && onFileDrop) {
+            onFileDrop(e.target.files[0]);
+          }
+        }}
+      />
+
       {/* Input Box with Colorful Glowing Outline matching screenshot */}
       <motion.div
         className="w-full max-w-3xl px-2"
@@ -57,9 +73,30 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
       >
-        <form onSubmit={handleSubmit} className="relative">
+        <form
+          onSubmit={handleSubmit}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragOver(true);
+          }}
+          onDragLeave={() => setIsDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragOver(false);
+            if (e.dataTransfer.files && e.dataTransfer.files[0] && onFileDrop) {
+              onFileDrop(e.dataTransfer.files[0]);
+            }
+          }}
+          className="relative"
+        >
           {/* Glowing gradient background border with animated breathing glow */}
-          <div className="rounded-2xl sm:rounded-3xl p-[2.5px] bg-gradient-to-r from-pink-400/80 via-purple-500/80 to-cyan-400/80 shadow-2xl shadow-indigo-500/20 transition-all duration-300 hover:shadow-indigo-500/30">
+          <div
+            className={`rounded-2xl sm:rounded-3xl p-[2.5px] transition-all duration-300 ${
+              isDragOver
+                ? 'bg-gradient-to-r from-purple-600 via-pink-500 to-amber-400 shadow-2xl scale-[1.01]'
+                : 'bg-gradient-to-r from-pink-400/80 via-purple-500/80 to-cyan-400/80 shadow-2xl shadow-indigo-500/20 hover:shadow-indigo-500/30'
+            }`}
+          >
             <div className="flex items-center bg-white rounded-[14px] sm:rounded-[22px] p-2 sm:p-2.5">
               <input
                 type="url"
@@ -68,7 +105,11 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
                   setUrl(e.target.value);
                   if (clientValidationNotice) setClientValidationNotice(null);
                 }}
-                placeholder="Paste video, playlist, or audio link here..."
+                placeholder={
+                  isDragOver
+                    ? 'Release video file to convert & download...'
+                    : 'Paste video, playlist, or audio link here...'
+                }
                 required
                 disabled={isLoading}
                 className="w-full bg-transparent px-4 sm:px-5 py-2.5 sm:py-3 text-slate-800 placeholder-slate-400 focus:outline-none text-sm sm:text-base md:text-lg font-normal"
@@ -110,6 +151,17 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
             </div>
           </div>
         </form>
+
+        {/* File Drop Option Link */}
+        {onFileDrop && (
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="mt-2.5 text-center text-xs text-slate-400 hover:text-purple-600 cursor-pointer font-medium transition-colors flex items-center justify-center gap-1.5"
+          >
+            <UploadCloud className="w-3.5 h-3.5" />
+            <span>Or drag & drop local video or audio file to convert</span>
+          </div>
+        )}
 
         {/* Validation or backend error notice */}
         <AnimatePresence>

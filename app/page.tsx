@@ -244,6 +244,9 @@ export default function Home() {
                 onAnalyze={handleAnalyze}
                 isLoading={isAnalyzing}
                 error={analyzeError}
+                onFileDrop={(file) => {
+                  setActiveTool('mp4-to-mp3');
+                }}
               />
 
               <ReadyContainer
