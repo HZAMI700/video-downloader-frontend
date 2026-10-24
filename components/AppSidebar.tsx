@@ -2,37 +2,36 @@
 
 import React, { useState } from 'react';
 import {
-  Youtube,
-  Radio,
-  Languages,
-  Disc,
-  FolderOpen,
-  Globe,
-  ChevronDown,
-  ChevronUp,
+  Sparkles,
   PanelLeftClose,
   PanelLeft,
-  Music2,
-  Film,
-  FileVideo,
-  FileAudio,
-  Scissors,
-  Mic,
-  Volume2,
-  Sparkles,
-  DownloadCloud,
-  CheckCircle2,
-  Sliders,
-  Wand2,
+  ChevronUp,
+  ChevronDown,
   MessageSquare,
   RefreshCw,
   CheckCheck,
   Image as ImageIcon,
   AlignLeft,
   UserCheck,
+  Languages,
   FileSearch,
-  Cpu,
+  FileAudio,
+  Youtube,
+  Radio,
+  Disc,
+  Music2,
+  FileVideo,
+  Scissors,
+  Mic,
+  Volume2,
+  Wand2,
+  DownloadCloud,
+  FolderOpen,
+  CheckCircle2,
+  Globe,
+  Sliders,
 } from 'lucide-react';
+import { CategoryId } from '../lib/categories';
 
 export type ToolId =
   | 'transcriber'
@@ -70,7 +69,9 @@ export type ToolId =
   | 'video-downloader';
 
 interface AppSidebarProps {
-  activeTool: ToolId;
+  activeCategory: CategoryId;
+  activeTool: ToolId | null;
+  onSelectCategory: (categoryId: CategoryId) => void;
   onSelectTool: (toolId: ToolId) => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
@@ -79,7 +80,9 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({
+  activeCategory,
   activeTool,
+  onSelectCategory,
   onSelectTool,
   isCollapsed,
   onToggleCollapse,
@@ -87,11 +90,16 @@ export function AppSidebar({
   onCloseMobile,
 }: AppSidebarProps) {
   const [isAiSectionOpen, setIsAiSectionOpen] = useState(true);
-  const [isAudioToolsOpen, setIsAudioToolsOpen] = useState(false);
-  const [isAiVoiceOpen, setIsAiVoiceOpen] = useState(false);
+  const [isAudioToolsOpen, setIsAudioToolsOpen] = useState(true);
+  const [isAiVoiceOpen, setIsAiVoiceOpen] = useState(true);
 
-  const handleItemClick = (toolId: ToolId) => {
+  const handleToolClick = (toolId: ToolId, categoryId: CategoryId) => {
     onSelectTool(toolId);
+    onCloseMobile();
+  };
+
+  const handleCategoryClick = (categoryId: CategoryId) => {
+    onSelectCategory(categoryId);
     onCloseMobile();
   };
 
@@ -100,386 +108,534 @@ export function AppSidebar({
       {/* Mobile Backdrop */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 lg:hidden"
           onClick={onCloseMobile}
         />
       )}
 
-      {/* Sidebar Container */}
+      {/* Apple Dark Sidebar Container */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 h-screen z-50 bg-white border-r border-slate-200/90 flex flex-col transition-all duration-300 ease-in-out ${
-          isCollapsed ? 'w-20' : 'w-72'
-        } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+        className={`apple-sidebar-dark text-zinc-300 w-full lg:w-[276px] shrink-0 rounded-[26px] px-3.5 py-4 flex flex-col justify-between select-none transition-all duration-300 z-50 ${
+          isCollapsed ? 'lg:w-[84px]' : 'lg:w-[276px]'
+        } ${
+          isMobileOpen
+            ? 'fixed inset-y-2 left-2 z-50 w-[290px] shadow-2xl'
+            : 'hidden lg:flex'
+        }`}
       >
-        {/* Sidebar Header / Brand */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 flex-shrink-0">
-          <div
-            className="flex items-center gap-2.5 cursor-pointer overflow-hidden"
-            onClick={() => handleItemClick('transcriber')}
-          >
-            {/* Colorful wave brand icon matching screenshot */}
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-500 to-cyan-400 flex items-center justify-center text-white shadow-md shadow-purple-500/20 flex-shrink-0">
-              <Sparkles className="w-5 h-5 fill-current" />
+        <div className="overflow-y-auto custom-scrollbar pr-0.5 space-y-4">
+          {/* macOS Window Controls + Header */}
+          <div className="flex items-center justify-between px-2 pt-1 pb-2">
+            <div className="flex items-center gap-3">
+              {/* macOS window traffic light dots */}
+              <div className="flex items-center gap-1.5 mr-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] border border-[#E0443E]/60 inline-block" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] border border-[#DEA123]/60 inline-block" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 inline-block" />
+              </div>
+
+              {!isCollapsed && (
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => handleCategoryClick('ai-section')}
+                >
+                  <div className="w-7 h-7 rounded-[10px] bg-gradient-to-tr from-indigo-600 via-violet-500 to-fuchsia-400 flex items-center justify-center shadow-md shadow-indigo-500/30">
+                    <Sparkles className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <div className="leading-none">
+                    <span className="font-bold text-[14px] text-white">Audio Transcriber </span>
+                    <span className="font-extrabold text-[14px] bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+                      AI
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
-            {!isCollapsed && (
-              <span className="font-extrabold text-base tracking-tight text-slate-900 truncate">
-                Audio Transcriber <span className="text-purple-600 font-black">AI</span>
-              </span>
-            )}
+
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              className="hidden lg:flex w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 items-center justify-center text-zinc-400 hover:text-white transition"
+            >
+              {isCollapsed ? (
+                <PanelLeft className="w-3.5 h-3.5" />
+              ) : (
+                <PanelLeftClose className="w-3.5 h-3.5" />
+              )}
+            </button>
           </div>
 
-          <button
-            type="button"
-            onClick={onToggleCollapse}
-            aria-label="Toggle Sidebar"
-            className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-          >
-            {isCollapsed ? <PanelLeft className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
-          </button>
-        </div>
-
-        {/* Scrollable Navigation Body */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1 custom-scrollbar">
-          {/* Main Direct Tools */}
-          <SidebarNavButton
-            icon={<FileAudio className="w-4 h-4" />}
-            label="Audio Transcriber"
-            isActive={activeTool === 'transcriber'}
-            isCollapsed={isCollapsed}
-            onClick={() => handleItemClick('transcriber')}
-          />
-
-          <SidebarNavButton
-            icon={<Youtube className="w-4 h-4 text-red-500" />}
-            label="YouTube to MP3 Converter"
-            isActive={activeTool === 'youtube-to-mp3'}
-            isCollapsed={isCollapsed}
-            onClick={() => handleItemClick('youtube-to-mp3')}
-          />
-
-          <SidebarNavButton
-            icon={<Radio className="w-4 h-4 text-purple-500" />}
-            label="Free AI Podcast Generator"
-            isActive={activeTool === 'podcast-generator'}
-            isCollapsed={isCollapsed}
-            onClick={() => handleItemClick('podcast-generator')}
-          />
-
-          <SidebarNavButton
-            icon={<Languages className="w-4 h-4 text-blue-500" />}
-            label="Free AI Audio Translator"
-            isActive={activeTool === 'audio-translator'}
-            isCollapsed={isCollapsed}
-            onClick={() => handleItemClick('audio-translator')}
-          />
-
-          <SidebarNavButton
-            icon={<Disc className="w-4 h-4 text-emerald-500" />}
-            label="Recorder & Transcriber"
-            isActive={activeTool === 'recorder-transcriber'}
-            isCollapsed={isCollapsed}
-            onClick={() => handleItemClick('recorder-transcriber')}
-          />
-
-          {/* Collapsible Section: AI Section (QuillBot AI Tools Matching Screenshot) */}
-          <div className="pt-2">
+          {/* 1. AI SECTION CATEGORY ACCORDION */}
+          <div>
             {!isCollapsed ? (
+              <div className="flex items-center gap-1 mb-1">
+                <button
+                  type="button"
+                  onClick={() => handleCategoryClick('ai-section')}
+                  className={`flex-1 flex items-center justify-between px-3 py-2 rounded-2xl border transition-all text-left ${
+                    activeCategory === 'ai-section' && activeTool === null
+                      ? 'bg-emerald-500 text-zinc-950 border-emerald-400 font-bold shadow-md'
+                      : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300 hover:bg-emerald-500/15'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                    <span className="text-[11px] font-bold tracking-wider uppercase">
+                      AI SECTION
+                    </span>
+                  </div>
+                  <span
+                    className={`px-2 py-0.5 text-[10px] font-extrabold rounded-full ${
+                      activeCategory === 'ai-section' && activeTool === null
+                        ? 'bg-zinc-950 text-white'
+                        : 'bg-emerald-500 text-zinc-950'
+                    }`}
+                  >
+                    8 TOOLS
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsAiSectionOpen(!isAiSectionOpen)}
+                  aria-label="Toggle AI Section list"
+                  className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition"
+                >
+                  {isAiSectionOpen ? (
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  ) : (
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              </div>
+            ) : (
               <button
                 type="button"
-                onClick={() => setIsAiSectionOpen(!isAiSectionOpen)}
-                className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-slate-900 rounded-lg bg-emerald-50/70 hover:bg-emerald-100/60 border border-emerald-200/80 transition-colors"
+                onClick={() => handleCategoryClick('ai-section')}
+                title="AI Section (8 Tools)"
+                className="w-full py-2.5 flex justify-center text-emerald-400 hover:bg-white/5 rounded-xl mb-1"
               >
-                <span className="flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="text-emerald-950 font-extrabold">AI Section</span>
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-600 text-white leading-none">
-                    8 Tools
-                  </span>
-                  {isAiSectionOpen ? (
-                    <ChevronUp className="w-3.5 h-3.5 text-emerald-700" />
-                  ) : (
-                    <ChevronDown className="w-3.5 h-3.5 text-emerald-700" />
-                  )}
-                </div>
+                <Sparkles className="w-4 h-4" />
               </button>
-            ) : (
-              <div className="w-full h-px bg-slate-200 my-2" />
             )}
 
             {(isAiSectionOpen || isCollapsed) && (
-              <div className="mt-1 space-y-0.5">
-                <SidebarNavButton
-                  icon={<MessageSquare className="w-4 h-4 text-blue-500" />}
+              <nav aria-label="AI Suite Tools" className="space-y-0.5">
+                <SidebarToolPill
+                  icon={<MessageSquare className="w-3.5 h-3.5 text-blue-400" />}
                   label="AI Chat"
-                  isActive={activeTool === 'ai-chat'}
+                  isActive={activeCategory === 'ai-section' && activeTool === 'ai-chat'}
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('ai-chat')}
+                  onClick={() => handleToolClick('ai-chat', 'ai-section')}
                 />
-                <SidebarNavButton
-                  icon={<RefreshCw className="w-4 h-4 text-emerald-600" />}
+                <SidebarToolPill
+                  icon={<RefreshCw className="w-3.5 h-3.5 text-emerald-400" />}
                   label="Paraphrasing tool"
-                  isActive={activeTool === 'paraphrasing-tool'}
+                  isActive={
+                    activeCategory === 'ai-section' && activeTool === 'paraphrasing-tool'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('paraphrasing-tool')}
+                  onClick={() => handleToolClick('paraphrasing-tool', 'ai-section')}
                 />
-                <SidebarNavButton
-                  icon={<CheckCheck className="w-4 h-4 text-rose-500" />}
+                <SidebarToolPill
+                  icon={<CheckCheck className="w-3.5 h-3.5 text-rose-400" />}
                   label="Grammar Checker"
-                  isActive={activeTool === 'grammar-checker'}
+                  isActive={
+                    activeCategory === 'ai-section' && activeTool === 'grammar-checker'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('grammar-checker')}
+                  onClick={() => handleToolClick('grammar-checker', 'ai-section')}
                 />
-                <SidebarNavButton
-                  icon={<ImageIcon className="w-4 h-4 text-amber-500" />}
+                <SidebarToolPill
+                  icon={<ImageIcon className="w-3.5 h-3.5 text-amber-400" />}
                   label="AI Image Generator"
-                  isActive={activeTool === 'ai-image-generator'}
+                  isActive={
+                    activeCategory === 'ai-section' && activeTool === 'ai-image-generator'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('ai-image-generator')}
+                  onClick={() => handleToolClick('ai-image-generator', 'ai-section')}
                 />
-                <SidebarNavButton
-                  icon={<AlignLeft className="w-4 h-4 text-purple-500" />}
+                <SidebarToolPill
+                  icon={<AlignLeft className="w-3.5 h-3.5 text-purple-400" />}
                   label="Summarizer"
-                  isActive={activeTool === 'summarizer'}
+                  isActive={activeCategory === 'ai-section' && activeTool === 'summarizer'}
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('summarizer')}
+                  onClick={() => handleToolClick('summarizer', 'ai-section')}
                 />
-                <SidebarNavButton
-                  icon={<UserCheck className="w-4 h-4 text-teal-600" />}
+                <SidebarToolPill
+                  icon={<UserCheck className="w-3.5 h-3.5 text-teal-400" />}
                   label="AI Humanizer"
-                  isActive={activeTool === 'ai-humanizer'}
+                  isActive={activeCategory === 'ai-section' && activeTool === 'ai-humanizer'}
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('ai-humanizer')}
+                  onClick={() => handleToolClick('ai-humanizer', 'ai-section')}
                 />
-                <SidebarNavButton
-                  icon={<Languages className="w-4 h-4 text-slate-600" />}
+                <SidebarToolPill
+                  icon={<Languages className="w-3.5 h-3.5 text-zinc-300" />}
                   label="Translator"
-                  isActive={activeTool === 'translator'}
+                  isActive={activeCategory === 'ai-section' && activeTool === 'translator'}
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('translator')}
+                  onClick={() => handleToolClick('translator', 'ai-section')}
                 />
-                <SidebarNavButton
-                  icon={<FileSearch className="w-4 h-4 text-orange-500" />}
+                <SidebarToolPill
+                  icon={<FileSearch className="w-3.5 h-3.5 text-orange-400" />}
                   label="Plagiarism Checker"
-                  isActive={activeTool === 'plagiarism-checker'}
+                  isActive={
+                    activeCategory === 'ai-section' && activeTool === 'plagiarism-checker'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('plagiarism-checker')}
+                  onClick={() => handleToolClick('plagiarism-checker', 'ai-section')}
                 />
-              </div>
+              </nav>
             )}
           </div>
 
-          {/* Collapsible Section: Audio Tools */}
-          <div className="pt-2">
+          {/* 2. AUDIO TOOLS CATEGORY ACCORDION */}
+          <div>
             {!isCollapsed ? (
+              <div className="flex items-center gap-1 mb-1">
+                <button
+                  type="button"
+                  onClick={() => handleCategoryClick('audio-tools')}
+                  className={`flex-1 flex items-center justify-between px-3 py-2 rounded-2xl border transition-all text-left ${
+                    activeCategory === 'audio-tools' && activeTool === null
+                      ? 'bg-blue-500 text-white border-blue-400 font-bold shadow-md'
+                      : 'bg-blue-500/10 border-blue-500/20 text-blue-300 hover:bg-blue-500/15'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <FileAudio className="w-3.5 h-3.5 shrink-0" />
+                    <span className="text-[11px] font-bold tracking-wider uppercase">
+                      AUDIO TOOLS
+                    </span>
+                  </div>
+                  <span
+                    className={`px-2 py-0.5 text-[10px] font-extrabold rounded-full ${
+                      activeCategory === 'audio-tools' && activeTool === null
+                        ? 'bg-zinc-950 text-white'
+                        : 'bg-blue-500 text-zinc-950'
+                    }`}
+                  >
+                    9 TOOLS
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsAudioToolsOpen(!isAudioToolsOpen)}
+                  aria-label="Toggle Audio Tools list"
+                  className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition"
+                >
+                  {isAudioToolsOpen ? (
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  ) : (
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              </div>
+            ) : (
               <button
                 type="button"
-                onClick={() => setIsAudioToolsOpen(!isAudioToolsOpen)}
-                className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-50 transition-colors"
+                onClick={() => handleCategoryClick('audio-tools')}
+                title="Audio Tools (9 Tools)"
+                className="w-full py-2.5 flex justify-center text-blue-400 hover:bg-white/5 rounded-xl mb-1"
               >
-                <span className="flex items-center gap-2">
-                  <Sliders className="w-3.5 h-3.5" />
-                  <span>Audio Tools</span>
-                </span>
-                {isAudioToolsOpen ? (
-                  <ChevronUp className="w-3.5 h-3.5" />
-                ) : (
-                  <ChevronDown className="w-3.5 h-3.5" />
-                )}
+                <FileAudio className="w-4 h-4" />
               </button>
-            ) : (
-              <div className="w-full h-px bg-slate-200 my-2" />
             )}
 
             {(isAudioToolsOpen || isCollapsed) && (
-              <div className="mt-1 space-y-0.5">
-                <SidebarNavButton
-                  icon={<Music2 className="w-4 h-4 text-slate-600" />}
-                  label="TikTok to MP3 Converter"
-                  isActive={activeTool === 'tiktok-to-mp3'}
+              <nav aria-label="Audio Tools Navigation" className="space-y-0.5">
+                <SidebarToolPill
+                  icon={<FileAudio className="w-3.5 h-3.5 text-zinc-300" />}
+                  label="Audio Transcriber"
+                  isActive={activeCategory === 'audio-tools' && activeTool === 'transcriber'}
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('tiktok-to-mp3')}
+                  onClick={() => handleToolClick('transcriber', 'audio-tools')}
                 />
-                <SidebarNavButton
-                  icon={<Film className="w-4 h-4 text-slate-600" />}
-                  label="Video to MP3 Converter"
-                  isActive={activeTool === 'video-to-mp3'}
+                <SidebarToolPill
+                  icon={<Youtube className="w-3.5 h-3.5 text-rose-400" />}
+                  label="YouTube to MP3 Converter"
+                  isActive={
+                    activeCategory === 'audio-tools' && activeTool === 'youtube-to-mp3'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('video-to-mp3')}
+                  onClick={() => handleToolClick('youtube-to-mp3', 'audio-tools')}
                 />
-                <SidebarNavButton
-                  icon={<FileVideo className="w-4 h-4 text-slate-600" />}
+                <SidebarToolPill
+                  icon={<Radio className="w-3.5 h-3.5 text-violet-400" />}
+                  label="Free AI Podcast Generator"
+                  isActive={
+                    activeCategory === 'audio-tools' && activeTool === 'podcast-generator'
+                  }
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleToolClick('podcast-generator', 'audio-tools')}
+                />
+                <SidebarToolPill
+                  icon={<Languages className="w-3.5 h-3.5 text-teal-400" />}
+                  label="Free AI Audio Translator"
+                  isActive={
+                    activeCategory === 'audio-tools' && activeTool === 'audio-translator'
+                  }
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleToolClick('audio-translator', 'audio-tools')}
+                />
+                <SidebarToolPill
+                  icon={<Disc className="w-3.5 h-3.5 text-emerald-400" />}
+                  label="Recorder & Transcriber"
+                  isActive={
+                    activeCategory === 'audio-tools' &&
+                    activeTool === 'recorder-transcriber'
+                  }
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleToolClick('recorder-transcriber', 'audio-tools')}
+                />
+                <SidebarToolPill
+                  icon={<Music2 className="w-3.5 h-3.5 text-amber-400" />}
+                  label="TikTok to MP3"
+                  isActive={
+                    activeCategory === 'audio-tools' && activeTool === 'tiktok-to-mp3'
+                  }
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleToolClick('tiktok-to-mp3', 'audio-tools')}
+                />
+                <SidebarToolPill
+                  icon={<FileVideo className="w-3.5 h-3.5 text-orange-400" />}
                   label="MP4 to MP3 Converter"
-                  isActive={activeTool === 'mp4-to-mp3'}
+                  isActive={
+                    activeCategory === 'audio-tools' && activeTool === 'mp4-to-mp3'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('mp4-to-mp3')}
+                  onClick={() => handleToolClick('mp4-to-mp3', 'audio-tools')}
                 />
-                <SidebarNavButton
-                  icon={<Youtube className="w-4 h-4 text-slate-600" />}
+                <SidebarToolPill
+                  icon={<Youtube className="w-3.5 h-3.5 text-blue-400" />}
                   label="YouTube to WAV Converter"
-                  isActive={activeTool === 'youtube-to-wav'}
+                  isActive={
+                    activeCategory === 'audio-tools' && activeTool === 'youtube-to-wav'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('youtube-to-wav')}
+                  onClick={() => handleToolClick('youtube-to-wav', 'audio-tools')}
                 />
-                <SidebarNavButton
-                  icon={<Scissors className="w-4 h-4 text-slate-600" />}
+                <SidebarToolPill
+                  icon={<Scissors className="w-3.5 h-3.5 text-emerald-400" />}
                   label="Extract Audio from Video"
-                  isActive={activeTool === 'extract-audio'}
+                  isActive={
+                    activeCategory === 'audio-tools' && activeTool === 'extract-audio'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('extract-audio')}
+                  onClick={() => handleToolClick('extract-audio', 'audio-tools')}
                 />
-                <SidebarNavButton
-                  icon={<Languages className="w-4 h-4 text-slate-600" />}
-                  label="English to Tamil Translator"
-                  isActive={activeTool === 'english-to-tamil'}
-                  isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('english-to-tamil')}
-                />
-                <SidebarNavButton
-                  icon={<Volume2 className="w-4 h-4 text-slate-600" />}
-                  label="Voice to Text Converter"
-                  isActive={activeTool === 'voice-to-text'}
-                  isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('voice-to-text')}
-                />
-                <SidebarNavButton
-                  icon={<Mic className="w-4 h-4 text-slate-600" />}
-                  label="Speech Transcriber"
-                  isActive={activeTool === 'speech-transcriber'}
-                  isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('speech-transcriber')}
-                />
-              </div>
+              </nav>
             )}
           </div>
 
-          {/* Collapsible Section: AI Voice Matching User Screenshot */}
-          <div className="pt-2">
+          {/* 3. AI VOICE STUDIO CATEGORY ACCORDION */}
+          <div>
             {!isCollapsed ? (
-              <button
-                type="button"
-                onClick={() => setIsAiVoiceOpen(!isAiVoiceOpen)}
-                className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-50 transition-colors"
-              >
-                <span className="flex items-center gap-2">
-                  <Volume2 className="w-3.5 h-3.5 text-purple-600" />
-                  <span>AI Voice Studio</span>
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-purple-600 text-white leading-none">
-                    36+ Voices
+              <div className="flex items-center gap-1 mb-1">
+                <button
+                  type="button"
+                  onClick={() => handleCategoryClick('ai-voice')}
+                  className={`flex-1 flex items-center justify-between px-3 py-2 rounded-2xl border transition-all text-left ${
+                    activeCategory === 'ai-voice' && activeTool === null
+                      ? 'bg-purple-600 text-white border-purple-400 font-bold shadow-md'
+                      : 'bg-purple-500/10 border-purple-500/20 text-purple-300 hover:bg-purple-500/15'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="w-3.5 h-3.5 shrink-0" />
+                    <span className="text-[11px] font-bold tracking-wider uppercase">
+                      AI VOICE STUDIO
+                    </span>
+                  </div>
+                  <span
+                    className={`px-2 py-0.5 text-[10px] font-extrabold rounded-full ${
+                      activeCategory === 'ai-voice' && activeTool === null
+                        ? 'bg-zinc-950 text-white'
+                        : 'bg-purple-500 text-white'
+                    }`}
+                  >
+                    36+ VOICES
                   </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsAiVoiceOpen(!isAiVoiceOpen)}
+                  aria-label="Toggle AI Voice list"
+                  className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition"
+                >
                   {isAiVoiceOpen ? (
                     <ChevronUp className="w-3.5 h-3.5" />
                   ) : (
                     <ChevronDown className="w-3.5 h-3.5" />
                   )}
-                </div>
-              </button>
+                </button>
+              </div>
             ) : (
-              <div className="w-full h-px bg-slate-200 my-2" />
+              <button
+                type="button"
+                onClick={() => handleCategoryClick('ai-voice')}
+                title="AI Voice Studio (36+ Voices)"
+                className="w-full py-2.5 flex justify-center text-purple-400 hover:bg-white/5 rounded-xl mb-1"
+              >
+                <Volume2 className="w-4 h-4" />
+              </button>
             )}
 
             {(isAiVoiceOpen || isCollapsed) && (
-              <div className="mt-1 space-y-0.5">
-                <SidebarNavButton
-                  icon={<Sparkles className="w-4 h-4 text-purple-600" />}
+              <nav aria-label="AI Voice Tools" className="space-y-0.5">
+                <SidebarToolPill
+                  icon={<Sparkles className="w-3.5 h-3.5 text-purple-400" />}
                   label="AI Voice Generator"
-                  isActive={activeTool === 'ai-voice-generator'}
+                  isActive={
+                    activeCategory === 'ai-voice' && activeTool === 'ai-voice-generator'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('ai-voice-generator')}
+                  onClick={() => handleToolClick('ai-voice-generator', 'ai-voice')}
                 />
-                <SidebarNavButton
-                  icon={<Mic className="w-4 h-4 text-indigo-500" />}
+                <SidebarToolPill
+                  icon={<Mic className="w-3.5 h-3.5 text-indigo-400" />}
                   label="AI Voice Clone"
-                  isActive={activeTool === 'ai-voice-clone'}
+                  isActive={
+                    activeCategory === 'ai-voice' && activeTool === 'ai-voice-clone'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('ai-voice-clone')}
+                  onClick={() => handleToolClick('ai-voice-clone', 'ai-voice')}
                 />
-                <SidebarNavButton
-                  icon={<Volume2 className="w-4 h-4 text-amber-500" />}
+                <SidebarToolPill
+                  icon={<Volume2 className="w-3.5 h-3.5 text-amber-400" />}
                   label="Volume Booster"
-                  isActive={activeTool === 'volume-booster'}
+                  isActive={
+                    activeCategory === 'ai-voice' && activeTool === 'volume-booster'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('volume-booster')}
+                  onClick={() => handleToolClick('volume-booster', 'ai-voice')}
                 />
-                <SidebarNavButton
-                  icon={<Sparkles className="w-4 h-4 text-emerald-500" />}
+                <SidebarToolPill
+                  icon={<Sparkles className="w-3.5 h-3.5 text-emerald-400" />}
                   label="AI Voice Cleaner"
-                  isActive={activeTool === 'ai-voice-cleaner'}
+                  isActive={
+                    activeCategory === 'ai-voice' && activeTool === 'ai-voice-cleaner'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('ai-voice-cleaner')}
+                  onClick={() => handleToolClick('ai-voice-cleaner', 'ai-voice')}
                 />
-                <SidebarNavButton
-                  icon={<Disc className="w-4 h-4 text-rose-500" />}
+                <SidebarToolPill
+                  icon={<Disc className="w-3.5 h-3.5 text-rose-400" />}
                   label="AI Vocal Remover"
-                  isActive={activeTool === 'ai-vocal-remover'}
+                  isActive={
+                    activeCategory === 'ai-voice' && activeTool === 'ai-vocal-remover'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('ai-vocal-remover')}
+                  onClick={() => handleToolClick('ai-vocal-remover', 'ai-voice')}
                 />
-                <SidebarNavButton
-                  icon={<Wand2 className="w-4 h-4 text-cyan-500" />}
+                <SidebarToolPill
+                  icon={<Wand2 className="w-3.5 h-3.5 text-cyan-400" />}
                   label="AI Voice Changer"
-                  isActive={activeTool === 'ai-voice-changer'}
+                  isActive={
+                    activeCategory === 'ai-voice' && activeTool === 'ai-voice-changer'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('ai-voice-changer')}
+                  onClick={() => handleToolClick('ai-voice-changer', 'ai-voice')}
                 />
-                <SidebarNavButton
-                  icon={<Radio className="w-4 h-4 text-blue-500" />}
+                <SidebarToolPill
+                  icon={<Radio className="w-3.5 h-3.5 text-blue-400" />}
                   label="Background Noise Remover"
-                  isActive={activeTool === 'background-noise-remover'}
+                  isActive={
+                    activeCategory === 'ai-voice' &&
+                    activeTool === 'background-noise-remover'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('background-noise-remover')}
+                  onClick={() => handleToolClick('background-noise-remover', 'ai-voice')}
                 />
-                <SidebarNavButton
-                  icon={<Music2 className="w-4 h-4 text-violet-500" />}
+                <SidebarToolPill
+                  icon={<Music2 className="w-3.5 h-3.5 text-orange-400" />}
                   label="Background Music Remover"
-                  isActive={activeTool === 'background-music-remover'}
+                  isActive={
+                    activeCategory === 'ai-voice' &&
+                    activeTool === 'background-music-remover'
+                  }
                   isCollapsed={isCollapsed}
-                  onClick={() => handleItemClick('background-music-remover')}
+                  onClick={() => handleToolClick('background-music-remover', 'ai-voice')}
                 />
-              </div>
+              </nav>
             )}
-          </div>
-
-          {/* Original Video Downloader Link */}
-          <div className="pt-3">
-            <SidebarNavButton
-              icon={<DownloadCloud className="w-4 h-4 text-purple-600" />}
-              label="Playzy Video Downloader"
-              isActive={activeTool === 'video-downloader'}
-              isCollapsed={isCollapsed}
-              onClick={() => handleItemClick('video-downloader')}
-              badge="Full Suite"
-            />
           </div>
         </div>
 
-        {/* Sidebar Footer */}
-        <div className="p-3 border-t border-slate-100 space-y-2 flex-shrink-0 bg-slate-50/50">
-          <SidebarNavButton
-            icon={<FolderOpen className="w-4 h-4 text-amber-500" />}
-            label="Workspace"
-            isActive={activeTool === 'workspace'}
-            isCollapsed={isCollapsed}
-            onClick={() => handleItemClick('workspace')}
-          />
+        {/* Sidebar Bottom Controls: Downloader, Workspace & 100% Free Pill */}
+        <div className="pt-3 border-t border-white/10 space-y-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => handleCategoryClick('video-downloader')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-2xl text-[13px] font-semibold transition group ${
+              activeCategory === 'video-downloader'
+                ? 'bg-white text-zinc-950 shadow-md'
+                : 'text-zinc-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <DownloadCloud
+                className={`w-4 h-4 ${
+                  activeCategory === 'video-downloader'
+                    ? 'text-purple-600'
+                    : 'text-purple-400'
+                }`}
+              />
+              {!isCollapsed && <span>Playzy Downloader</span>}
+            </div>
+            {!isCollapsed && (
+              <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
+                4K HD
+              </span>
+            )}
+          </button>
 
+          <button
+            type="button"
+            onClick={() => handleCategoryClick('workspace')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-2xl text-[13px] font-semibold transition group ${
+              activeCategory === 'workspace'
+                ? 'bg-white text-zinc-950 shadow-md'
+                : 'text-zinc-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <FolderOpen
+                className={`w-4 h-4 ${
+                  activeCategory === 'workspace' ? 'text-amber-600' : 'text-amber-400'
+                }`}
+              />
+              {!isCollapsed && <span>Workspace</span>}
+            </div>
+            {!isCollapsed && (
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-white/10 text-zinc-300">
+                Ready
+              </span>
+            )}
+          </button>
+
+          {/* 100% Free Pill */}
           {!isCollapsed ? (
-            <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-purple-50 border border-purple-200/60">
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-purple-600 flex-shrink-0" />
-                <div className="text-[11px] leading-tight">
-                  <p className="font-bold text-purple-900">100% Free</p>
-                  <p className="text-purple-700">No login required</p>
+                <div className="w-6 h-6 rounded-full bg-violet-500/20 border border-violet-400/30 flex items-center justify-center text-violet-300">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <div className="text-[12px] font-bold text-white leading-tight">
+                    100% Free
+                  </div>
+                  <div className="text-[10.5px] text-zinc-400">No login required</div>
                 </div>
               </div>
-              <Globe className="w-4 h-4 text-purple-500" />
+              <Globe className="w-3.5 h-3.5 text-zinc-400" />
             </div>
           ) : (
-            <div className="flex justify-center py-2 text-purple-600" title="100% Free • No Login Required">
-              <CheckCircle2 className="w-5 h-5" />
+            <div
+              className="flex justify-center py-1 text-emerald-400"
+              title="100% Free • No Login Required"
+            >
+              <CheckCircle2 className="w-4 h-4" />
             </div>
           )}
         </div>
@@ -488,43 +644,40 @@ export function AppSidebar({
   );
 }
 
-interface SidebarNavButtonProps {
+interface SidebarToolPillProps {
   icon: React.ReactNode;
   label: string;
   isActive: boolean;
   isCollapsed: boolean;
   onClick: () => void;
-  badge?: string;
 }
 
-function SidebarNavButton({
+function SidebarToolPill({
   icon,
   label,
   isActive,
   isCollapsed,
   onClick,
-  badge,
-}: SidebarNavButtonProps) {
+}: SidebarToolPillProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       title={isCollapsed ? label : undefined}
-      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${
+      className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-2xl text-[13px] transition group ${
         isActive
-          ? 'bg-purple-100/80 text-purple-900 font-semibold shadow-xs'
-          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
+          ? 'bg-white text-zinc-950 font-semibold shadow-md'
+          : 'font-medium text-zinc-400 hover:text-white hover:bg-white/5'
       }`}
     >
-      <div className="flex-shrink-0 flex items-center justify-center">{icon}</div>
-      {!isCollapsed && (
-        <span className="truncate flex-1 text-left">{label}</span>
-      )}
-      {!isCollapsed && badge && (
-        <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-md bg-purple-200/80 text-purple-800">
-          {badge}
-        </span>
-      )}
+      <span
+        className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${
+          isActive ? 'bg-zinc-100 text-zinc-950' : 'bg-zinc-800/60'
+        }`}
+      >
+        {icon}
+      </span>
+      {!isCollapsed && <span className="truncate text-left">{label}</span>}
     </button>
   );
 }

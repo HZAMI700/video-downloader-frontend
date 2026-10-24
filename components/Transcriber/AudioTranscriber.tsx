@@ -24,6 +24,7 @@ import {
   Zap,
   Mic,
   Music,
+  ChevronLeft,
 } from 'lucide-react';
 import {
   uploadAndTranscribeFile,
@@ -37,6 +38,7 @@ import { LiveAudioRecorder } from './LiveAudioRecorder';
 
 interface AudioTranscriberProps {
   toolId?: ToolId;
+  onBackToCategory?: () => void;
 }
 
 const LANGUAGES = [
@@ -63,7 +65,10 @@ function formatTime(seconds: number): string {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
-export function AudioTranscriber({ toolId = 'transcriber' }: AudioTranscriberProps) {
+export function AudioTranscriber({
+  toolId = 'transcriber',
+  onBackToCategory,
+}: AudioTranscriberProps) {
   const [activeMediaTab, setActiveMediaTab] = useState<'audio' | 'record'>(
     toolId === 'recorder-transcriber' ? 'record' : 'audio'
   );
@@ -341,7 +346,25 @@ export function AudioTranscriber({ toolId = 'transcriber' }: AudioTranscriberPro
   const wordCount = job?.text ? job.text.trim().split(/\s+/).filter(Boolean).length : 0;
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
+    <div className="w-full max-w-4xl mx-auto space-y-6 animate-apple-in">
+      {/* Top Apple Navigation Bar */}
+      {onBackToCategory && (
+        <div className="flex items-center gap-2 pb-1 border-b border-zinc-200/70">
+          <button
+            type="button"
+            onClick={onBackToCategory}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-bold text-zinc-700 transition active:scale-95 shadow-2xs"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+            <span>Back to Audio Tools</span>
+          </button>
+          <span className="text-zinc-300">/</span>
+          <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+            {meta.title}
+          </span>
+        </div>
+      )}
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}

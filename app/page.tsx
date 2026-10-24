@@ -1,11 +1,22 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, Sparkles, DownloadCloud, FileAudio } from 'lucide-react';
+import {
+  Menu,
+  Sparkles,
+  DownloadCloud,
+  FileAudio,
+  Search,
+  ChevronRight,
+  ChevronLeft,
+  X,
+  ExternalLink,
+} from 'lucide-react';
 import { AppSidebar, ToolId } from '../components/AppSidebar';
+import { CategoryId, CATEGORIES, getCategoryById, getCategoryForTool, getToolById } from '../lib/categories';
+import { CategoryOverview } from '../components/Category/CategoryOverview';
 import { AudioTranscriber } from '../components/Transcriber/AudioTranscriber';
 import { PodcastGenerator } from '../components/Transcriber/PodcastGenerator';
-import { TextToSpeechTool } from '../components/Transcriber/TextToSpeechTool';
 import { WorkspaceHistory } from '../components/Transcriber/WorkspaceHistory';
 import { MediaToMp3Converter } from '../components/Tools/MediaToMp3Converter';
 import { AudioTranslator } from '../components/Tools/AudioTranslator';
@@ -31,12 +42,14 @@ import {
 import { CapabilitiesResponse, MediaMetadata, DownloadJob } from '../lib/types';
 
 export default function Home() {
-  // Sidebar state
-  const [activeTool, setActiveTool] = useState<ToolId>('transcriber');
+  // Category & Tool Navigation State
+  const [activeCategory, setActiveCategory] = useState<CategoryId>('ai-section');
+  const [activeTool, setActiveTool] = useState<ToolId | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  // Existing Video Downloader state
+  // Video Downloader state
   const [capabilities, setCapabilities] = useState<CapabilitiesResponse | null>(null);
   const [loadingCapabilities, setLoadingCapabilities] = useState<boolean>(true);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
@@ -159,176 +172,313 @@ export default function Home() {
     setAnalyzeError(null);
   };
 
+  // Switch category and reset active tool so user sees category overview
+  const handleSelectCategory = (categoryId: CategoryId) => {
+    setActiveCategory(categoryId);
+    setActiveTool(null);
+    setSearchQuery('');
+  };
+
+  // Switch to a specific tool and ensure its category is active
+  const handleSelectTool = (toolId: ToolId) => {
+    const cat = getCategoryForTool(toolId);
+    if (cat) {
+      setActiveCategory(cat.id);
+    } else if (toolId === 'video-downloader') {
+      setActiveCategory('video-downloader');
+    } else if (toolId === 'workspace') {
+      setActiveCategory('workspace');
+    }
+    setActiveTool(toolId);
+  };
+
+  const currentCategoryDef = getCategoryById(activeCategory) || CATEGORIES[0];
+  const currentToolDef = activeTool ? getToolById(activeTool) : undefined;
+
   return (
-    <div className="min-h-screen bg-[#fbfbfe] text-slate-900 flex flex-col lg:flex-row font-sans">
-      {/* Target Platform Left Sidebar */}
-      <AppSidebar
-        activeTool={activeTool}
-        onSelectTool={setActiveTool}
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        isMobileOpen={isMobileSidebarOpen}
-        onCloseMobile={() => setIsMobileSidebarOpen(false)}
-      />
+    <div className="min-h-screen p-2 sm:p-4 lg:p-6 flex items-center justify-center font-sans">
+      {/* Outer Apple macOS Window Frame */}
+      <div
+        id="appShell"
+        className="apple-shell w-full max-w-[1540px] min-h-[900px] bg-[#14151a] rounded-[34px] p-2.5 sm:p-3.5 flex flex-col lg:flex-row gap-3 transition-colors duration-300 shadow-2xl relative"
+      >
+        {/* Left Dark Apple Sidebar */}
+        <AppSidebar
+          activeCategory={activeCategory}
+          activeTool={activeTool}
+          onSelectCategory={handleSelectCategory}
+          onSelectTool={handleSelectTool}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          isMobileOpen={isMobileSidebarOpen}
+          onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
-        {/* Top Navbar Header */}
-        <header className="h-16 border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setIsMobileSidebarOpen(true)}
-              aria-label="Open Navigation Menu"
-              className="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
+        {/* Main Inner Apple Canvas (White rounded sheet inside dark shell) */}
+        <main className="flex-1 bg-[#F9FAFC] rounded-[26px] p-4 sm:p-6 lg:p-8 flex flex-col justify-between overflow-x-hidden min-h-[860px] relative">
+          <div>
+            {/* Top Navigation & Breadcrumb Header */}
+            <header className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-zinc-200/70">
+              <div className="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setIsMobileSidebarOpen(true)}
+                  aria-label="Open Mobile Menu"
+                  className="lg:hidden p-2 rounded-xl text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
 
-            <span className="text-sm font-bold text-slate-700 hidden sm:inline-block">
-              {activeTool === 'video-downloader'
-                ? 'Playzy Video Downloader'
-                : activeTool === 'podcast-generator'
-                ? 'AI Podcast Generator'
-                : activeTool === 'youtube-to-mp3'
-                ? 'YouTube to MP3 Converter'
-                : activeTool === 'tiktok-to-mp3'
-                ? 'TikTok to MP3 Converter'
-                : activeTool === 'audio-translator' || activeTool === 'english-to-tamil'
-                ? 'Free AI Audio Translator'
-                : activeTool === 'ai-voice-generator' || activeTool === 'ai-voice-clone'
-                ? 'AI Voice Studio'
-                : activeTool === 'volume-booster' || activeTool === 'ai-vocal-remover' || activeTool === 'ai-voice-cleaner' || activeTool === 'ai-voice-changer' || activeTool === 'background-noise-remover' || activeTool === 'background-music-remover'
-                ? 'Audio DSP Studio'
-                : activeTool === 'ai-chat'
-                ? 'QuillBot AI Chat'
-                : activeTool === 'paraphrasing-tool'
-                ? 'QuillBot Paraphrasing Tool'
-                : activeTool === 'grammar-checker'
-                ? 'QuillBot Grammar Checker'
-                : activeTool === 'ai-image-generator'
-                ? 'QuillBot AI Image Generator'
-                : activeTool === 'summarizer'
-                ? 'QuillBot Summarizer'
-                : activeTool === 'ai-humanizer'
-                ? 'QuillBot AI Humanizer'
-                : activeTool === 'translator'
-                ? 'QuillBot Translator'
-                : activeTool === 'plagiarism-checker'
-                ? 'QuillBot Plagiarism Checker'
-                : activeTool === 'ai-section'
-                ? 'QuillBot AI Writing Suite'
-                : activeTool === 'workspace'
-                ? 'Local Workspace'
-                : 'Audio Transcriber AI'}
-            </span>
-          </div>
+                {/* Dynamic Breadcrumbs */}
+                <div className="flex items-center gap-2 text-[14px]">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveTool(null);
+                      setSearchQuery('');
+                    }}
+                    className={`font-bold transition hover:text-zinc-950 ${
+                      activeTool === null
+                        ? 'text-zinc-900 text-[16px]'
+                        : 'text-zinc-500 hover:underline'
+                    }`}
+                  >
+                    {activeCategory === 'video-downloader'
+                      ? 'Playzy Video Downloader'
+                      : activeCategory === 'workspace'
+                      ? 'Saved Workspace'
+                      : currentCategoryDef.name}
+                  </button>
 
-          {/* Quick switcher to/from Video Downloader */}
-          <div className="flex items-center gap-2">
-            {activeTool === 'video-downloader' ? (
-              <button
-                type="button"
-                onClick={() => setActiveTool('transcriber')}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-800 text-xs font-bold transition-all"
-              >
-                <FileAudio className="w-4 h-4" />
-                <span>Switch to AI Transcriber</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setActiveTool('video-downloader')}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all"
-              >
-                <DownloadCloud className="w-4 h-4 text-purple-600" />
-                <span className="hidden sm:inline">Playzy Video Downloader</span>
-                <span className="sm:hidden">Downloader</span>
-              </button>
-            )}
+                  {activeTool !== null && currentToolDef && (
+                    <>
+                      <span className="text-zinc-300 font-normal">/</span>
+                      <span className="font-bold text-zinc-900 text-[15.5px] truncate max-w-[200px] sm:max-w-none">
+                        {currentToolDef.name}
+                      </span>
+                    </>
+                  )}
 
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>No Login Required</span>
-            </span>
-          </div>
-        </header>
-
-        {/* Dynamic Main Body Content */}
-        <main className="flex-1 p-4 sm:p-6 md:p-10 max-w-6xl mx-auto w-full space-y-8">
-          {activeTool === 'video-downloader' ? (
-            /* Full Existing Video Downloader Experience (Preserved completely) */
-            <div className="space-y-10 md:space-y-12">
-              <HeroInput
-                onAnalyze={handleAnalyze}
-                isLoading={isAnalyzing}
-                error={analyzeError}
-                onFileDrop={(file) => {
-                  setActiveTool('mp4-to-mp3');
-                }}
-              />
-
-              <ReadyContainer
-                metadata={metadata}
-                activeJob={activeJob}
-                isStartingJob={isStartingJob}
-                onDownloadFormat={handleDownloadFormat}
-                onReset={handleReset}
-              />
-
-              <HowItWorks />
-              <PlatformShowcase />
-              <FeatureCards />
-              <div className="pt-6">
-                <FaqSection />
+                  <span className="hidden md:inline-flex items-center gap-1 ml-2 px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-zinc-200/70 text-zinc-600">
+                    macOS Design Edition
+                  </span>
+                </div>
               </div>
-            </div>
-          ) : activeTool === 'youtube-to-mp3' ||
-            activeTool === 'tiktok-to-mp3' ||
-            activeTool === 'video-to-mp3' ||
-            activeTool === 'mp4-to-mp3' ||
-            activeTool === 'youtube-to-wav' ||
-            activeTool === 'extract-audio' ? (
-            /* Dedicated Media to MP3 & Audio Extractors */
-            <MediaToMp3Converter toolId={activeTool} />
-          ) : activeTool === 'audio-translator' || activeTool === 'english-to-tamil' ? (
-            /* Dedicated AI Audio Translator */
-            <AudioTranslator toolId={activeTool} />
-          ) : activeTool === 'ai-voice-generator' || activeTool === 'ai-voice-clone' || activeTool === 'text-to-speech' ? (
-            /* Dedicated AI Voice Studio */
-            <AiVoiceStudio toolId={activeTool} />
-          ) : activeTool === 'volume-booster' ||
-            activeTool === 'ai-vocal-remover' ||
-            activeTool === 'ai-voice-cleaner' ||
-            activeTool === 'ai-voice-changer' ||
-            activeTool === 'background-noise-remover' ||
-            activeTool === 'background-music-remover' ? (
-            /* Dedicated Audio DSP Studio */
-            <AudioDspStudio toolId={activeTool} />
-          ) : activeTool === 'ai-section' ||
-            activeTool === 'ai-chat' ||
-            activeTool === 'paraphrasing-tool' ||
-            activeTool === 'grammar-checker' ||
-            activeTool === 'ai-image-generator' ||
-            activeTool === 'summarizer' ||
-            activeTool === 'ai-humanizer' ||
-            activeTool === 'translator' ||
-            activeTool === 'plagiarism-checker' ? (
-            /* Dedicated QuillBot AI Tools Suite Matching User Screenshot */
-            <QuillBotAiStudio toolId={activeTool} onSelectTool={(t) => setActiveTool(t)} />
-          ) : activeTool === 'podcast-generator' ? (
-            /* AI Podcast Studio */
-            <PodcastGenerator />
-          ) : activeTool === 'workspace' ? (
-            /* Local Workspace History */
-            <WorkspaceHistory />
-          ) : (
-            /* Audio & Video Transcriber + Tools Matching Screenshot */
-            <AudioTranscriber toolId={activeTool} />
-          )}
-        </main>
 
-        <Footer />
+              {/* Right Action Pills & Search Bar */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                {/* Search Bar */}
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search 25+ AI tools..."
+                    className="pl-9 pr-8 py-1.5 rounded-full bg-white border border-zinc-200/90 text-[12.5px] text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 w-44 sm:w-56 shadow-2xs transition"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Playzy Quick Switcher Button */}
+                {activeCategory !== 'video-downloader' ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveCategory('video-downloader');
+                      setActiveTool('video-downloader');
+                    }}
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white hover:bg-zinc-50 border border-zinc-200/90 shadow-2xs text-[12px] font-semibold text-zinc-800 transition active:scale-95"
+                  >
+                    <DownloadCloud className="w-3.5 h-3.5 text-purple-600" />
+                    <span className="hidden sm:inline">Playzy Video Downloader</span>
+                    <span className="sm:hidden">Downloader</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveCategory('ai-section');
+                      setActiveTool(null);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-[12px] font-bold transition active:scale-95"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Back to AI Suite</span>
+                  </button>
+                )}
+
+                {/* No Login Required Pill */}
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-[11.5px] font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="hidden sm:inline">No Login Required</span>
+                  <span className="sm:hidden">100% Free</span>
+                </div>
+              </div>
+            </header>
+
+            {/* Dynamic Body Content */}
+            <div className="pt-4">
+              {/* 1. PLAYZY VIDEO DOWNLOADER FULL SUITE */}
+              {activeCategory === 'video-downloader' ? (
+                <div className="space-y-10 md:space-y-12 animate-apple-in max-w-5xl mx-auto pt-2">
+                  <div className="text-center max-w-2xl mx-auto space-y-2">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200">
+                      <DownloadCloud className="w-4 h-4 text-purple-600" />
+                      <span>Playzy Downloader • 4K Video & 320kbps MP3</span>
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                      Free Video &amp; Audio Downloader
+                    </h1>
+                    <p className="text-xs sm:text-sm text-slate-500">
+                      Download videos and audio from YouTube, TikTok, Vimeo, and 1000+ sites with zero registration.
+                    </p>
+                  </div>
+
+                  <HeroInput
+                    onAnalyze={handleAnalyze}
+                    isLoading={isAnalyzing}
+                    error={analyzeError}
+                    onFileDrop={() => {
+                      handleSelectTool('mp4-to-mp3');
+                    }}
+                  />
+
+                  <ReadyContainer
+                    metadata={metadata}
+                    activeJob={activeJob}
+                    isStartingJob={isStartingJob}
+                    onDownloadFormat={handleDownloadFormat}
+                    onReset={handleReset}
+                  />
+
+                  <HowItWorks />
+                  <PlatformShowcase />
+                  <FeatureCards />
+                  <div className="pt-4">
+                    <FaqSection />
+                  </div>
+                </div>
+              ) : activeCategory === 'workspace' ? (
+                /* 2. LOCAL WORKSPACE HISTORY */
+                <div className="animate-apple-in max-w-5xl mx-auto pt-2">
+                  <WorkspaceHistory />
+                </div>
+              ) : activeTool === null ? (
+                /* 3. CATEGORY OVERVIEW BENTO GRID (When category is selected) */
+                <CategoryOverview
+                  category={currentCategoryDef}
+                  onSelectTool={handleSelectTool}
+                  searchFilter={searchQuery}
+                />
+              ) : (
+                /* 4. DEDICATED TOOL WORKSPACE (When a specific tool is open) */
+                <div className="animate-apple-in pt-1">
+                  {/* AI SECTION TOOLS */}
+                  {activeCategory === 'ai-section' ||
+                  activeTool === 'ai-chat' ||
+                  activeTool === 'paraphrasing-tool' ||
+                  activeTool === 'grammar-checker' ||
+                  activeTool === 'ai-image-generator' ||
+                  activeTool === 'summarizer' ||
+                  activeTool === 'ai-humanizer' ||
+                  activeTool === 'translator' ||
+                  activeTool === 'plagiarism-checker' ? (
+                    <QuillBotAiStudio
+                      toolId={activeTool}
+                      onSelectTool={handleSelectTool}
+                      onBackToCategory={() => setActiveTool(null)}
+                    />
+                  ) : activeTool === 'transcriber' ||
+                    activeTool === 'recorder-transcriber' ||
+                    activeTool === 'voice-to-text' ||
+                    activeTool === 'speech-transcriber' ? (
+                    /* AUDIO TRANSCRIBER & LIVE RECORDER */
+                    <AudioTranscriber
+                      toolId={activeTool}
+                      onBackToCategory={() => setActiveTool(null)}
+                    />
+                  ) : activeTool === 'audio-translator' || activeTool === 'english-to-tamil' ? (
+                    /* DEDICATED AI AUDIO TRANSLATOR */
+                    <AudioTranslator
+                      toolId={activeTool}
+                      onBackToCategory={() => setActiveTool(null)}
+                    />
+                  ) : activeTool === 'podcast-generator' ? (
+                    /* DEDICATED AI PODCAST STUDIO */
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 pb-1 border-b border-zinc-200/70">
+                        <button
+                          type="button"
+                          onClick={() => setActiveTool(null)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-bold text-zinc-700 transition active:scale-95 shadow-2xs"
+                        >
+                          <ChevronLeft className="w-3.5 h-3.5" />
+                          <span>Back to Audio Tools</span>
+                        </button>
+                        <span className="text-zinc-300">/</span>
+                        <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+                          Free AI Podcast Generator
+                        </span>
+                      </div>
+                      <PodcastGenerator />
+                    </div>
+                  ) : activeTool === 'youtube-to-mp3' ||
+                    activeTool === 'tiktok-to-mp3' ||
+                    activeTool === 'video-to-mp3' ||
+                    activeTool === 'mp4-to-mp3' ||
+                    activeTool === 'youtube-to-wav' ||
+                    activeTool === 'extract-audio' ? (
+                    /* DEDICATED MEDIA TO MP3 / WAV EXTRACTORS */
+                    <MediaToMp3Converter
+                      toolId={activeTool}
+                      onBackToCategory={() => setActiveTool(null)}
+                    />
+                  ) : activeTool === 'ai-voice-generator' ||
+                    activeTool === 'ai-voice-clone' ||
+                    activeTool === 'text-to-speech' ? (
+                    /* DEDICATED ELEVENLABS AI VOICE STUDIO */
+                    <AiVoiceStudio
+                      toolId={activeTool}
+                      onBackToCategory={() => setActiveTool(null)}
+                    />
+                  ) : activeTool === 'volume-booster' ||
+                    activeTool === 'ai-vocal-remover' ||
+                    activeTool === 'ai-voice-cleaner' ||
+                    activeTool === 'ai-voice-changer' ||
+                    activeTool === 'background-noise-remover' ||
+                    activeTool === 'background-music-remover' ? (
+                    /* DEDICATED AUDIO DSP STUDIO */
+                    <AudioDspStudio
+                      toolId={activeTool}
+                      onBackToCategory={() => setActiveTool(null)}
+                    />
+                  ) : (
+                    /* FALLBACK TO TRANSCRIBER */
+                    <AudioTranscriber
+                      toolId="transcriber"
+                      onBackToCategory={() => setActiveTool(null)}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Canvas Footer */}
+          <div className="pt-8 mt-8 border-t border-zinc-200/60">
+            <Footer />
+          </div>
+        </main>
       </div>
     </div>
   );

@@ -31,11 +31,13 @@ import {
   Music,
   Share2,
   Check,
+  ChevronLeft,
 } from 'lucide-react';
 import { ToolId } from '../AppSidebar';
 
 interface AiVoiceStudioProps {
   toolId: ToolId;
+  onBackToCategory?: () => void;
 }
 
 export interface VoiceProfile {
@@ -552,7 +554,7 @@ const SAMPLE_SCRIPTS = [
   },
 ];
 
-export function AiVoiceStudio({ toolId }: AiVoiceStudioProps) {
+export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) {
   const isCloneInitial = toolId === 'ai-voice-clone';
 
   const [activeTab, setActiveTab] = useState<'generate' | 'clone'>(
@@ -845,7 +847,27 @@ export function AiVoiceStudio({ toolId }: AiVoiceStudioProps) {
   });
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 animate-fadeIn pb-12">
+    <div className="w-full max-w-5xl mx-auto space-y-6 animate-apple-in pb-12">
+      {/* Top Apple Navigation Bar */}
+      {onBackToCategory && (
+        <div className="flex items-center gap-2 pb-1 border-b border-zinc-200/70">
+          <button
+            type="button"
+            onClick={onBackToCategory}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-bold text-zinc-700 transition active:scale-95 shadow-2xs"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+            <span>Back to AI Voice Studio</span>
+          </button>
+          <span className="text-zinc-300">/</span>
+          <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+            {toolId === 'ai-voice-clone'
+              ? 'AI Voice Clone'
+              : 'AI Voice Generator (ElevenLabs 36+ Voices)'}
+          </span>
+        </div>
+      )}
       {/* Hidden File Inputs */}
       <input
         ref={fileInputRef}

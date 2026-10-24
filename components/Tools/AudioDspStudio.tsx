@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   Sliders,
   RefreshCw,
+  ChevronLeft,
 } from 'lucide-react';
 import { ToolId } from '../AppSidebar';
 import {
@@ -28,9 +29,10 @@ import {
 
 interface AudioDspStudioProps {
   toolId: ToolId;
+  onBackToCategory?: () => void;
 }
 
-export function AudioDspStudio({ toolId }: AudioDspStudioProps) {
+export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [boostPercent, setBoostPercent] = useState<number>(200); // 100 to 500%
   const [vocalMode, setVocalMode] = useState<'instrumental' | 'vocals'>('instrumental');
@@ -145,7 +147,25 @@ export function AudioDspStudio({ toolId }: AudioDspStudioProps) {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-8 animate-fadeIn">
+    <div className="w-full max-w-4xl mx-auto space-y-6 animate-apple-in">
+      {/* Top Apple Navigation Bar */}
+      {onBackToCategory && (
+        <div className="flex items-center gap-2 pb-1 border-b border-zinc-200/70">
+          <button
+            type="button"
+            onClick={onBackToCategory}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-bold text-zinc-700 transition active:scale-95 shadow-2xs"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+            <span>Back to AI Voice Studio</span>
+          </button>
+          <span className="text-zinc-300">/</span>
+          <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+            {meta.title}
+          </span>
+        </div>
+      )}
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}

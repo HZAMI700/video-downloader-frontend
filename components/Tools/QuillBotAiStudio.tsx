@@ -21,6 +21,7 @@ import {
   ArrowRight,
   ShieldCheck,
   ChevronRight,
+  ChevronLeft,
   Zap,
   Volume2,
   Sliders,
@@ -43,6 +44,7 @@ import {
 interface QuillBotAiStudioProps {
   toolId: ToolId;
   onSelectTool?: (toolId: ToolId) => void;
+  onBackToCategory?: () => void;
 }
 
 interface AiToolCardConfig {
@@ -136,7 +138,11 @@ const LANGUAGES = [
   { code: 'ta', label: 'Tamil' },
 ];
 
-export function QuillBotAiStudio({ toolId, onSelectTool }: QuillBotAiStudioProps) {
+export function QuillBotAiStudio({
+  toolId,
+  onSelectTool,
+  onBackToCategory,
+}: QuillBotAiStudioProps) {
   const [currentTool, setCurrentTool] = useState<ToolId>(
     toolId === 'ai-section' ? 'paraphrasing-tool' : toolId
   );
@@ -454,63 +460,42 @@ export function QuillBotAiStudio({ toolId, onSelectTool }: QuillBotAiStudioProps
         onChange={handleFileInputChange}
       />
 
-      {/* Header matching QuillBot style */}
-      <div className="text-center space-y-3 pt-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
-          <Sparkles className="w-4 h-4 text-emerald-600" />
-          <span>QuillBot AI Suite • 100% Free & No Sign-up</span>
+      {/* Top Apple Navigation Bar for Dedicated Tool */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-2 pt-1 border-b border-zinc-200/70">
+        <div className="flex items-center gap-2">
+          {onBackToCategory && (
+            <button
+              type="button"
+              onClick={onBackToCategory}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-bold text-zinc-700 transition active:scale-95 shadow-2xs"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+              <span>Back to AI Section</span>
+            </button>
+          )}
+          <span className="text-zinc-300">/</span>
+          <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            QuillBot {QUILLBOT_TOOLS.find((t) => t.id === currentTool)?.title}
+          </span>
         </div>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-          AI Writing & Creative Suite
-        </h1>
-        <p className="text-sm sm:text-base text-slate-500 max-w-2xl mx-auto leading-relaxed">
-          Rewrite, edit, humanize, translate, scan, and generate with high-performance AI tools.
-        </p>
-      </div>
 
-      {/* 8-Card Grid Matching the User's Screenshot Exactly */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {QUILLBOT_TOOLS.map((t) => {
-          const isActive = currentTool === t.id;
-          return (
-            <div
+        {/* Quick Sibling Tool Switcher */}
+        <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-1 custom-scrollbar">
+          {QUILLBOT_TOOLS.map((t) => (
+            <button
               key={t.id}
               onClick={() => handleToolChange(t.id)}
-              className={`p-6 rounded-3xl border bg-white cursor-pointer transition-all duration-200 flex flex-col justify-between gap-4 group ${
-                isActive
-                  ? 'border-emerald-500 ring-2 ring-emerald-100 shadow-lg shadow-emerald-500/10'
-                  : 'border-slate-200/90 hover:border-emerald-300 hover:shadow-md'
+              className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                currentTool === t.id
+                  ? 'bg-zinc-950 text-white shadow-sm'
+                  : 'bg-white hover:bg-zinc-100 text-zinc-600 border border-zinc-200/80'
               }`}
             >
-              <div className="space-y-3">
-                <div
-                  className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-transform group-hover:scale-105 ${t.iconBg}`}
-                >
-                  {t.icon}
-                </div>
-                <div>
-                  <h3 className="text-base font-extrabold text-slate-900 group-hover:text-emerald-700 transition-colors">
-                    {t.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-                    {t.description}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs font-bold">
-                <span className={isActive ? 'text-emerald-600' : 'text-slate-400 group-hover:text-slate-700'}>
-                  {isActive ? 'Active Workspace' : 'Open Tool'}
-                </span>
-                <ChevronRight
-                  className={`w-4 h-4 transition-transform ${
-                    isActive ? 'text-emerald-600 translate-x-1' : 'text-slate-400 group-hover:translate-x-1'
-                  }`}
-                />
-              </div>
-            </div>
-          );
-        })}
+              {t.title}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Universal Drop Indicator Pill */}

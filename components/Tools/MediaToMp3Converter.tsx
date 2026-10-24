@@ -23,6 +23,7 @@ import {
   FileAudio,
   X,
   Link2,
+  ChevronLeft,
 } from 'lucide-react';
 import { ToolId } from '../AppSidebar';
 import {
@@ -36,9 +37,10 @@ import { MediaMetadata, DownloadJob, FormatOption } from '../../lib/types';
 
 interface MediaToMp3Props {
   toolId: ToolId;
+  onBackToCategory?: () => void;
 }
 
-export function MediaToMp3Converter({ toolId }: MediaToMp3Props) {
+export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Props) {
   const [inputMode, setInputMode] = useState<'url' | 'file'>(
     toolId === 'video-to-mp3' || toolId === 'mp4-to-mp3' || toolId === 'extract-audio' ? 'file' : 'url'
   );
@@ -284,7 +286,25 @@ export function MediaToMp3Converter({ toolId }: MediaToMp3Props) {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-8 animate-fadeIn">
+    <div className="w-full max-w-4xl mx-auto space-y-6 animate-apple-in">
+      {/* Top Apple Navigation Bar */}
+      {onBackToCategory && (
+        <div className="flex items-center gap-2 pb-1 border-b border-zinc-200/70">
+          <button
+            type="button"
+            onClick={onBackToCategory}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-bold text-zinc-700 transition active:scale-95 shadow-2xs"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+            <span>Back to Audio Tools</span>
+          </button>
+          <span className="text-zinc-300">/</span>
+          <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+            {config.title}
+          </span>
+        </div>
+      )}
       {/* Tool Header */}
       <div className="text-center space-y-3 pt-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border shadow-xs transition-colors">
