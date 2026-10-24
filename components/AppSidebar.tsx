@@ -364,13 +364,18 @@ export function AppSidebar({
               >
                 <span className="flex items-center gap-2">
                   <Volume2 className="w-3.5 h-3.5 text-purple-600" />
-                  <span>AI Voice</span>
+                  <span>AI Voice Studio</span>
                 </span>
-                {isAiVoiceOpen ? (
-                  <ChevronUp className="w-3.5 h-3.5" />
-                ) : (
-                  <ChevronDown className="w-3.5 h-3.5" />
-                )}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-purple-600 text-white leading-none">
+                    36+ Voices
+                  </span>
+                  {isAiVoiceOpen ? (
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  ) : (
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  )}
+                </div>
               </button>
             ) : (
               <div className="w-full h-px bg-slate-200 my-2" />

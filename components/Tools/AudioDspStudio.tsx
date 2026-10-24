@@ -374,19 +374,32 @@ export function AudioDspStudio({ toolId }: AudioDspStudioProps) {
           </div>
         )}
 
-        {/* Completed Output Card */}
+        {/* Completed Output Card with ElevenLabs Pro Audio Visualizer */}
         {resultAudioUrl && (
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white space-y-4 animate-fadeIn">
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white space-y-4 animate-fadeIn shadow-2xl border border-slate-800">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
-                  Success
+                  Processing Complete
                 </span>
-                <h4 className="text-base font-extrabold">Audio Processing Complete!</h4>
+                <h4 className="text-base font-extrabold">{meta.title} — Audio Ready</h4>
               </div>
               <div className="w-9 h-9 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
+            </div>
+
+            {/* Visual Waveform Simulation */}
+            <div className="flex items-center justify-between gap-1 h-10 py-2 px-3 rounded-xl bg-slate-900/90 border border-slate-800">
+              {Array.from({ length: 42 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-1 rounded-full bg-gradient-to-t from-purple-500 to-cyan-400"
+                  style={{
+                    height: `${20 + Math.sin(i * 0.45) * 35 + ((i % 5) * 8)}%`,
+                  }}
+                />
+              ))}
             </div>
 
             {/* Audio Preview Player */}
