@@ -56,6 +56,7 @@ export default function Home() {
   // Category & Tool Navigation State
   const [activeCategory, setActiveCategory] = useState<CategoryId>('ai-section');
   const [activeTool, setActiveTool] = useState<ToolId | null>(null);
+  const [toolInitialText, setToolInitialText] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -191,7 +192,7 @@ export default function Home() {
   };
 
   // Switch to a specific tool and ensure its category is active
-  const handleSelectTool = (toolId: ToolId) => {
+  const handleSelectTool = (toolId: ToolId, initialText?: string) => {
     const cat = getCategoryForTool(toolId);
     if (cat) {
       setActiveCategory(cat.id);
@@ -200,6 +201,7 @@ export default function Home() {
     } else if (toolId === 'workspace') {
       setActiveCategory('workspace');
     }
+    setToolInitialText(initialText || '');
     setActiveTool(toolId);
   };
 
@@ -437,8 +439,8 @@ export default function Home() {
                 />
               ) : (
                 <PlayzyHomeScreen
-                  onSelectTool={(toolId) => {
-                    handleSelectTool(toolId);
+                  onSelectTool={(toolId, initialText) => {
+                    handleSelectTool(toolId, initialText);
                   }}
                 />
               )
@@ -457,6 +459,7 @@ export default function Home() {
                 activeTool === 'plagiarism-checker' ? (
                   <QuillBotAiStudio
                     toolId={activeTool}
+                    initialText={toolInitialText}
                     onSelectTool={handleSelectTool}
                     onBackToCategory={() => setActiveTool(null)}
                   />
