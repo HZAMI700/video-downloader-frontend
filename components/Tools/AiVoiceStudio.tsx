@@ -619,7 +619,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
     };
   }, [generatedAudioUrl]);
 
-  // Audio player time listener
+  // Audio player event listeners (permanently attached to audioPlayerRef)
   useEffect(() => {
     const audio = audioPlayerRef.current;
     if (!audio) return;
@@ -627,17 +627,23 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
     const handleTimeUpdate = () => setPlaybackTime(audio.currentTime);
     const handleLoadedMetadata = () => setAudioDuration(audio.duration || 0);
     const handleEnded = () => setIsPlaying(false);
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
 
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
 
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
     };
-  }, [generatedAudioUrl]);
+  }, []);
 
   // Audition voice preview with native speech
   const handleAuditionVoice = (voice: VoiceProfile, e?: React.MouseEvent) => {
@@ -692,11 +698,16 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
       if (generatedAudioUrl) URL.revokeObjectURL(generatedAudioUrl);
       const url = URL.createObjectURL(blob);
       setGeneratedAudioUrl(url);
-      setIsPlaying(true);
 
       if (audioPlayerRef.current) {
         audioPlayerRef.current.src = url;
-        audioPlayerRef.current.play().catch(() => {});
+        audioPlayerRef.current.currentTime = 0;
+        audioPlayerRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch((playErr) => {
+          console.warn('Playback notice:', playErr);
+          setIsPlaying(false);
+        });
       }
       setIsGenerating(false);
       return;
@@ -797,14 +808,22 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
   // Toggle Play / Pause on synthesized audio
   const togglePlayAudio = () => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-
     if (isPlaying) {
-      window.speechSynthesis.cancel();
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
       if (audioPlayerRef.current) audioPlayerRef.current.pause();
       setIsPlaying(false);
     } else {
-      handleGenerateSpeech();
+      if (audioPlayerRef.current && generatedAudioUrl) {
+        audioPlayerRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(() => {
+          handleGenerateSpeech();
+        });
+      } else {
+        handleGenerateSpeech();
+      }
     }
   };
 
@@ -928,8 +947,8 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
         }}
       />
 
-      {/* Hidden Audio Element */}
-      {generatedAudioUrl && <audio ref={audioPlayerRef} src={generatedAudioUrl} className="hidden" />}
+      {/* Permanent Audio Element for Immediate, Seamless Playback */}
+      <audio ref={audioPlayerRef} preload="auto" className="hidden" />
 
       {/* ElevenLabs Studio Header Banner */}
       <div className="relative rounded-2xl sm:rounded-[22px] p-6 sm:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white shadow-xl border border-slate-800 overflow-hidden">

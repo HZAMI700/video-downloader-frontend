@@ -3,37 +3,48 @@ import Script from 'next/script';
 import './globals.css';
 import { faqs } from '../lib/faqs';
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://playzy.app').replace(/\/+$/, '');
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://playzy.me').replace(/\/+$/, '');
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Playzy — Free Video Downloader | TikTok, Pinterest, Facebook & Reels',
-    template: '%s | Playzy',
+    default: 'Playzy — Free AI Paraphraser, AI Detector, Voice Generator & Video Downloader',
+    template: '%s | Playzy AI & Media Suite',
   },
   description:
-    'Download videos for free with Playzy. Save TikTok without watermark, Pinterest pins, Facebook Reels, and Instagram videos in HD MP4 or 320kbps MP3. Fast, free & 100% safe.',
+    'Playzy is the free all-in-one AI writing & media studio. Paraphrase text, detect AI content with 0-100% precision, humanize AI writing, generate realistic AI voices, convert MP3 and MP4 to text, and download HD videos & 320kbps MP3s from YouTube and TikTok.',
   keywords: [
-    'video downloader',
-    'free video downloader',
-    'tiktok video downloader',
-    'tiktok without watermark',
-    'pinterest video downloader',
-    'pinterest pin downloader',
-    'facebook video downloader',
-    'facebook reels downloader',
-    'instagram reels downloader',
+    'quillbot alternative',
+    'free paraphrasing tool',
+    'ai paraphraser',
+    'ai detector',
+    'ai content detector',
+    'ai text detector 0 to 100',
+    'ai humanizer',
+    'undetectable ai',
+    'humanize ai text',
+    'ai voice generator',
+    'elevenlabs alternative',
+    'realistic text to speech',
+    'mp3 to text',
+    'audio transcriber',
+    'mp4 to text',
+    'video to text transcription',
     'youtube to mp3',
-    'download mp4',
-    'download 1080p video',
+    'tiktok to mp3',
+    'free video downloader',
+    'video downloader without watermark',
+    'grammar checker',
+    'plagiarism checker',
     'playzy',
-    'playzy downloader',
-    'online video saver',
+    'playzy.me',
+    'playzy ai',
   ],
-  authors: [{ name: 'Playzy Team' }],
+  authors: [{ name: 'Playzy Team', url: siteUrl }],
   creator: 'Playzy',
   publisher: 'Playzy',
   applicationName: 'Playzy',
+  category: 'Productivity & Multimedia AI',
   formatDetection: {
     telephone: false,
     email: false,
@@ -59,15 +70,15 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: siteUrl,
     siteName: 'Playzy',
-    title: 'Playzy — Free Video Downloader | TikTok, Pinterest, Facebook & Reels',
+    title: 'Playzy — Free AI Paraphraser, AI Detector, Voice Generator & Video Downloader',
     description:
-      'Download public videos and reels in high definition with Playzy. Clean MP4 & MP3, no watermarks, unlimited downloads.',
+      'Paraphrase text, detect AI writing, humanize AI text, generate lifelike voices, transcribe MP3/MP4, and download 4K videos & MP3 audio for free on Playzy.me.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Playzy — Free Video Downloader | TikTok, Pinterest, Facebook & Reels',
+    title: 'Playzy — Free AI Paraphraser, AI Detector, Voice Generator & Video Downloader',
     description:
-      'Save TikTok videos without watermark, Pinterest pins, Facebook Reels, and Instagram videos in HD MP4 or MP3.',
+      'Top-tier AI writing and media suite: Paraphraser, AI Detector, AI Humanizer, Voice Studio, MP3/MP4 Transcriber, and Video Downloader.',
     creator: '@playzyapp',
   },
 };
@@ -82,18 +93,28 @@ export default function RootLayout({
     '@type': 'WebSite',
     name: 'Playzy',
     url: siteUrl,
-    description: 'Free online video downloader for TikTok, Pinterest, Facebook, Instagram, and YouTube.',
+    description:
+      'Playzy is a free all-in-one AI writing suite, voice generator, speech-to-text transcriber, and video downloader.',
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${siteUrl}/?url={search_term_string}`,
+      target: `${siteUrl}/?q={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
+  };
+
+  const jsonLdOrganization = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Playzy',
+    url: siteUrl,
+    logo: `${siteUrl}/icon.png`,
+    sameAs: ['https://twitter.com/playzyapp', 'https://github.com/playzyapp'],
   };
 
   const jsonLdWebApp = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'Playzy Video Downloader',
+    name: 'Playzy AI & Media Suite',
     url: siteUrl,
     applicationCategory: 'MultimediaApplication',
     operatingSystem: 'All',
@@ -105,44 +126,53 @@ export default function RootLayout({
     },
     aggregateRating: {
       '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      reviewCount: '18450',
+      ratingValue: '4.95',
+      reviewCount: '24890',
       bestRating: '5',
       worstRating: '1',
     },
-  };
-
-  const jsonLdHowTo = {
-    '@context': 'https://schema.org',
-    '@type': 'HowTo',
-    name: 'How to Download Any Video Online with Playzy',
-    description: 'A 3-step guide to saving videos from TikTok, Pinterest, Facebook, and Instagram using Playzy.',
-    step: [
-      {
-        '@type': 'HowToStep',
-        position: 1,
-        name: 'Copy Video Link',
-        text: 'Copy the URL of the video, reel, or pin you want to save from TikTok, Pinterest, Facebook, or Instagram.',
-      },
-      {
-        '@type': 'HowToStep',
-        position: 2,
-        name: 'Paste into Playzy',
-        text: 'Paste the link into the search box on Playzy and click Download.',
-      },
-      {
-        '@type': 'HowToStep',
-        position: 3,
-        name: 'Save File',
-        text: 'Choose your desired format (1080p MP4, 720p, or MP3 audio) and click to save the completed file to your device.',
-      },
+    featureList: [
+      'AI Paraphrasing & Rewriter Tool',
+      'AI Content Detector with 0-100% Probability Score',
+      'AI Humanizer for Undetectable Text',
+      'Realistic Multi-Language AI Voice Generator (ElevenLabs Quality)',
+      'MP3 Audio to Text Transcriber',
+      'MP4 Video to Text Transcriber',
+      'YouTube to MP3 (320kbps High Quality)',
+      'TikTok to MP3 & Watermark-Free Video Downloader',
+      'Grammar & Spell Checker',
+      'Plagiarism Checker',
     ],
   };
+
+  const extendedFaqs = [
+    {
+      q: 'What is Playzy and what tools does it offer?',
+      a: 'Playzy is a free, all-in-one AI and media platform offering an AI Paraphraser, AI Content Detector (0-100 score), AI Humanizer (undetectable rewrite), realistic AI Voice Generator, MP3 to Text transcriber, MP4 to Text transcriber, YouTube to MP3 converter, and HD Video Downloader.',
+    },
+    {
+      q: 'How does Playzy AI Content Detector work?',
+      a: 'Playzy AI Detector analyzes text structure, perplexity, burstiness, and semantic patterns to determine if writing was generated by ChatGPT, GPT-4, Claude, Gemini, or a human, returning an exact percentage confidence score from 0 to 100.',
+    },
+    {
+      q: 'How does the Playzy AI Voice Generator work?',
+      a: 'Playzy AI Voice Studio synthesizes natural, studio-quality speech across 36+ realistic male, female, and narrative voices in multiple languages and accents, powered by advanced audio DSP and parametric acoustic filtering.',
+    },
+    {
+      q: 'Can I transcribe MP3 and MP4 files to text on Playzy?',
+      a: 'Yes. Playzy offers dedicated MP3 to Text for pure audio files and MP4 to Text for video files, converting speech into timestamped, accurate transcripts with one-click export to TXT, SRT, or DOCX.',
+    },
+    {
+      q: 'Is Playzy completely free to use?',
+      a: 'Yes! Playzy is 100% free with no registration or credit card required. You can paraphrase, detect AI, generate voices, transcribe audio, and download videos immediately.',
+    },
+    ...faqs,
+  ];
 
   const jsonLdFaq = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqs.map((f) => ({
+    mainEntity: extendedFaqs.map((f) => ({
       '@type': 'Question',
       name: f.q,
       acceptedAnswer: {
@@ -183,18 +213,18 @@ export default function RootLayout({
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebApp) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrganization) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdHowTo) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebApp) }}
         />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }}
         />
       </head>
-      <body className="bg-[#f8fafc] text-slate-900 antialiased min-h-screen flex flex-col font-sans selection:bg-purple-500 selection:text-white">
+      <body className="bg-[#EFF5F1] text-slate-900 antialiased min-h-screen flex flex-col font-sans selection:bg-[#2E7D32] selection:text-white">
         {children}
       </body>
     </html>

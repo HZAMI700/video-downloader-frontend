@@ -7,32 +7,27 @@ import {
   UserCheck,
   ShieldAlert,
   Plus,
+  ArrowRight,
   ArrowUp,
   FileText,
   FileCheck2,
   Share2,
-  Upload,
-  Crown,
-  ChevronRight,
-  Compass,
-  Grid,
+  Paperclip,
   Check,
-  MessageSquare,
+  Copy,
+  RotateCcw,
+  ThumbsUp,
+  ThumbsDown,
+  Loader2,
+  X,
   FileAudio,
   FileVideo,
   Youtube,
   Music2,
   Volume2,
   Languages,
-  Layers,
-  Search,
-  ExternalLink,
-  Mic,
-  Copy,
-  RotateCcw,
-  Loader2,
-  CornerDownLeft,
-  X,
+  ChevronDown,
+  FolderPlus,
 } from 'lucide-react';
 import { ToolId } from '../AppSidebar';
 import { runAiChat } from '../../lib/api';
@@ -57,12 +52,18 @@ export function PlayzyHomeScreen({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [showToolsDrawer, setShowToolsDrawer] = useState(false);
-  const [isListening, setIsListening] = useState(false);
+  const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
+  const [dislikedMap, setDislikedMap] = useState<Record<string, boolean>>({});
+  const [showToolsDropdown, setShowToolsDropdown] = useState(false);
+  const [showNoticeBanner, setShowNoticeBanner] = useState(true);
+  const [attachedFileName, setAttachedFileName] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const pristineFileInputRef = useRef<HTMLInputElement | null>(null);
+  const pristineTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const activeChatTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   // Auto scroll to bottom when messages update
   useEffect(() => {
@@ -71,29 +72,24 @@ export function PlayzyHomeScreen({
     }
   }, [messages, isGenerating]);
 
-  // Adjust textarea height dynamically like ChatGPT
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPromptText(e.target.value);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 220)}px`;
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowToolsDropdown(false);
+      }
     }
-  };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
-  const handleActionClick = (toolId: ToolId) => {
-    onSelectTool(toolId, promptText);
-  };
-
-  const handleCardClick = (presetText: string) => {
-    setPromptText(presetText);
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  };
-
+  // Handle file uploads (txt, md, doc, docx)
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      setAttachedFileName(file.name);
       const reader = new FileReader();
       reader.onload = (event) => {
         const text = event.target?.result as string;
@@ -105,10 +101,10 @@ export function PlayzyHomeScreen({
     }
   };
 
-  // Direct ChatGPT-style chat submission
-  const handleSendMessage = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const clean = promptText.trim();
+  // Chat message submission
+  const handleSendMessage = async (textToSend?: string) => {
+    const raw = typeof textToSend === 'string' ? textToSend : promptText;
+    const clean = raw.trim();
     if (!clean || isGenerating) return;
 
     const userMsg: ChatMessage = {
@@ -120,9 +116,7 @@ export function PlayzyHomeScreen({
 
     setMessages((prev) => [...prev, userMsg]);
     setPromptText('');
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-    }
+    setAttachedFileName(null);
     setIsGenerating(true);
 
     try {
@@ -133,7 +127,7 @@ export function PlayzyHomeScreen({
 
       const response = await runAiChat(
         chatHistory,
-        "You are Playzy AI — an intelligent, friendly, ultra-capable writing and coding assistant. Answer clearly, format with markdown, lists, and code blocks."
+        'You are Playzy AI — an intelligent, friendly, ultra-capable writing and reasoning assistant. Provide direct, beautifully structured, and high-quality responses.'
       );
 
       const aiMsg: ChatMessage = {
@@ -143,14 +137,46 @@ export function PlayzyHomeScreen({
         createdAt: Date.now(),
       };
       setMessages((prev) => [...prev, aiMsg]);
-    } catch (err: any) {
+    } catch {
       const fallbackMsg: ChatMessage = {
         id: `ai_${Date.now()}`,
         role: 'assistant',
-        content: "I've processed your prompt. You can also send this text directly into our specialized tools (Paraphraser, AI Humanizer, AI Detector, or Transcriber) using the buttons below.",
+        content:
+          "I've processed your request. You can also send this text directly into Playzy's specialized tools (Paraphraser, AI Humanizer, AI Detector, or Voice Studio) using the Tools menu below.",
         createdAt: Date.now(),
       };
       setMessages((prev) => [...prev, fallbackMsg]);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // Regenerate last response
+  const handleRegenerate = async () => {
+    if (isGenerating || messages.length === 0) return;
+    const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
+    if (!lastUserMsg) return;
+
+    setIsGenerating(true);
+    try {
+      const chatHistory = messages
+        .filter((_, idx) => idx < messages.length - 1)
+        .map((m) => ({ role: m.role, content: m.content }));
+
+      const response = await runAiChat(
+        chatHistory,
+        'You are Playzy AI — provide an alternative high-quality response.'
+      );
+
+      const aiMsg: ChatMessage = {
+        id: `ai_${Date.now()}`,
+        role: 'assistant',
+        content: response.reply,
+        createdAt: Date.now(),
+      };
+      setMessages((prev) => [...prev.slice(0, -1), aiMsg]);
+    } catch {
+      // Keep previous
     } finally {
       setIsGenerating(false);
     }
@@ -162,270 +188,323 @@ export function PlayzyHomeScreen({
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleSpeechToggle = () => {
-    if (typeof window === 'undefined') return;
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert('Speech recognition is not supported on your browser.');
-      return;
+  const handleThumbsUp = (id: string) => {
+    setLikedMap((prev) => ({ ...prev, [id]: !prev[id] }));
+    if (dislikedMap[id]) {
+      setDislikedMap((prev) => ({ ...prev, [id]: false }));
     }
+  };
 
-    if (isListening) {
-      setIsListening(false);
-      return;
-    }
-
-    try {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = 'en-US';
-
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
-      recognition.onerror = () => setIsListening(false);
-
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setPromptText((prev) => (prev ? `${prev} ${transcript}` : transcript));
-      };
-
-      recognition.start();
-    } catch {
-      setIsListening(false);
+  const handleThumbsDown = (id: string) => {
+    setDislikedMap((prev) => ({ ...prev, [id]: !prev[id] }));
+    if (likedMap[id]) {
+      setLikedMap((prev) => ({ ...prev, [id]: false }));
     }
   };
 
   const handleResetChat = () => {
     setMessages([]);
     setPromptText('');
+    setAttachedFileName(null);
     setIsGenerating(false);
   };
 
-  return (
-    <div className="w-full max-w-4xl mx-auto px-2 sm:px-4 py-4 sm:py-6 space-y-6 animate-apple-in font-sans">
-      {/* Hidden Doc/Text File Input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".txt,.md,.doc,.docx"
-        className="hidden"
-        onChange={handleFileUpload}
-      />
+  // ----------------------------------------------------------------------------------
+  // VIEW 1: ACTIVE CHAT VIEW (Matching Screenshot 2 - media_1792939430993_c880f2fd.png)
+  // ----------------------------------------------------------------------------------
+  if (messages.length > 0) {
+    return (
+      <div className="w-full h-full flex flex-col justify-between min-h-[calc(100vh-6rem)] animate-apple-in select-text">
+        {/* Hidden File Input for chat */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".txt,.md,.doc,.docx,.pdf"
+          className="hidden"
+          onChange={handleFileUpload}
+        />
 
-      {/* 1. ACTIVE CHAT THREAD VIEW (When messages exist, ChatGPT view) */}
-      {messages.length > 0 ? (
-        <div className="space-y-6">
-          {/* Conversation Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#499557] text-white flex items-center justify-center shadow-xs">
-                <Sparkles className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-sm font-extrabold text-slate-900 tracking-tight">Playzy AI Conversation</h3>
-                <p className="text-[11px] text-slate-500 font-medium">Instant AI reasoning &amp; writing assistant</p>
-              </div>
-            </div>
+        {/* Top Header Row in Chat: [+ New Chat] */}
+        <div className="flex items-center justify-between pb-3 shrink-0">
+          <button
+            type="button"
+            onClick={handleResetChat}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-semibold text-xs transition active:scale-95 shadow-2xs cursor-pointer"
+          >
+            <FolderPlus className="w-4 h-4 text-slate-600" />
+            <span>New Chat</span>
+          </button>
+        </div>
 
-            <button
-              type="button"
-              onClick={handleResetChat}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200/80 text-xs font-bold text-slate-700 transition active:scale-95 shadow-2xs"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-              <span>New Chat</span>
-            </button>
-          </div>
-
-          {/* Messages Stream */}
-          <div className="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar p-1">
-            {messages.map((m) => (
+        {/* Messages Stream */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-2 sm:px-6 py-4 space-y-6">
+          {messages.map((m) => {
+            const isUser = m.role === 'user';
+            return (
               <div
                 key={m.id}
-                className={`flex gap-3 ${
-                  m.role === 'user' ? 'justify-end' : 'justify-start'
-                }`}
+                className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'}`}
               >
-                {m.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-xl bg-[#499557] text-white flex items-center justify-center shrink-0 shadow-2xs">
-                    <Sparkles className="w-4 h-4" />
+                {isUser ? (
+                  /* User Bubble (matching screenshot 2: light mint, right aligned) */
+                  <div className="bg-[#EFF5F1] text-slate-800 px-4 py-2.5 rounded-[18px] max-w-[80%] text-sm leading-relaxed border border-[#DCE5DF]">
+                    <p className="whitespace-pre-wrap select-text">{m.content}</p>
                   </div>
-                )}
+                ) : (
+                  /* Assistant Bubble (matching screenshot 2: clean text on white + 4 action icons) */
+                  <div className="max-w-[85%] space-y-2">
+                    <div className="text-slate-800 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap select-text font-normal">
+                      {m.content}
+                    </div>
 
-                <div
-                  className={`max-w-[85%] rounded-2xl p-4 text-xs sm:text-sm leading-relaxed transition-all ${
-                    m.role === 'user'
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-white border border-slate-200/90 text-slate-800 shadow-2xs space-y-3'
-                  }`}
-                >
-                  <p className="whitespace-pre-wrap">{m.content}</p>
-
-                  {m.role === 'assistant' && (
-                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                    {/* 4 Action Icons underneath text: Copy, Regenerate, Thumbs Up, Thumbs Down */}
+                    <div className="flex items-center gap-2 pt-1 text-slate-500">
                       <button
                         type="button"
                         onClick={() => handleCopyMessage(m.id, m.content)}
-                        className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-slate-800 transition"
+                        title="Copy message"
+                        className="p-1.5 rounded-md hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
                       >
                         {copiedId === m.id ? (
-                          <>
-                            <Check className="w-3.5 h-3.5 text-emerald-600" />
-                            <span className="text-emerald-600">Copied</span>
-                          </>
+                          <Check className="w-4 h-4 text-emerald-600" />
                         ) : (
-                          <>
-                            <Copy className="w-3.5 h-3.5" />
-                            <span>Copy</span>
-                          </>
+                          <Copy className="w-4 h-4" />
                         )}
                       </button>
 
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => onSelectTool('paraphrasing-tool', m.content)}
-                          className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-[10.5px] font-semibold text-slate-600 transition"
-                        >
-                          Paraphrase
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onSelectTool('ai-humanizer', m.content)}
-                          className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-[10.5px] font-semibold text-slate-600 transition"
-                        >
-                          Humanize
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onSelectTool('ai-detector', m.content)}
-                          className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-amber-50 hover:text-amber-700 text-[10.5px] font-semibold text-slate-600 transition"
-                        >
-                          Check AI
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
+                      <button
+                        type="button"
+                        onClick={handleRegenerate}
+                        disabled={isGenerating}
+                        title="Regenerate response"
+                        className="p-1.5 rounded-md hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer disabled:opacity-40"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </button>
 
-            {isGenerating && (
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#499557] text-white flex items-center justify-center shrink-0">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-                <div className="bg-white border border-slate-200/90 rounded-2xl px-4 py-3 shadow-2xs flex items-center gap-2 text-xs text-slate-500">
-                  <Loader2 className="w-4 h-4 text-[#499557] animate-spin" />
-                  <span>Playzy AI is writing...</span>
-                </div>
+                      <button
+                        type="button"
+                        onClick={() => handleThumbsUp(m.id)}
+                        title="Good response"
+                        className={`p-1.5 rounded-md hover:bg-slate-100 transition cursor-pointer ${
+                          likedMap[m.id] ? 'text-emerald-600' : 'hover:text-slate-800'
+                        }`}
+                      >
+                        <ThumbsUp
+                          className={`w-4 h-4 ${
+                            likedMap[m.id] ? 'fill-emerald-600 text-emerald-600' : ''
+                          }`}
+                        />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleThumbsDown(m.id)}
+                        title="Bad response"
+                        className={`p-1.5 rounded-md hover:bg-slate-100 transition cursor-pointer ${
+                          dislikedMap[m.id] ? 'text-rose-600' : 'hover:text-slate-800'
+                        }`}
+                      >
+                        <ThumbsDown
+                          className={`w-4 h-4 ${
+                            dislikedMap[m.id] ? 'fill-rose-600 text-rose-600' : ''
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {isGenerating && (
+            <div className="flex items-center gap-2 text-xs text-slate-400 italic">
+              <Loader2 className="w-3.5 h-3.5 text-[#2E7D32] animate-spin" />
+              <span>Playzy AI is writing...</span>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Bottom Pinned Area (Matching Screenshot 2) */}
+        <div className="w-full max-w-[720px] mx-auto pt-3 pb-2 px-3 space-y-2 shrink-0">
+          {/* Notification Banner */}
+          {showNoticeBanner && (
+            <div className="w-full bg-[#EFF5F1] border border-[#D5E3DA] rounded-xl px-4 py-2 flex items-center justify-between text-[12px] text-slate-600 shadow-2xs">
+              <p className="truncate mr-2">
+                Chats are processed by Playzy and its service providers.{' '}
+                <a href="#terms" className="underline hover:text-slate-900">
+                  Terms of Service
+                </a>{' '}
+                and{' '}
+                <a href="#privacy" className="underline hover:text-slate-900">
+                  Privacy Policy
+                </a>{' '}
+                apply.
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowNoticeBanner(false)}
+                className="text-slate-400 hover:text-slate-700 transition cursor-pointer"
+                title="Dismiss notice"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
+          {/* Floating Chat Input Box */}
+          <div className="relative bg-white rounded-[22px] border border-[#CBDCD0] shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:border-[#B8CEC0] focus-within:border-[#2E7D32]/40 transition-all p-3 sm:p-4">
+            {attachedFileName && (
+              <div className="mb-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EFF5F1] text-[11px] text-[#2E7D32] font-semibold">
+                <Paperclip className="w-3 h-3" />
+                <span>{attachedFileName}</span>
+                <button
+                  type="button"
+                  onClick={() => setAttachedFileName(null)}
+                  className="hover:text-rose-600 ml-1"
+                >
+                  <X className="w-3 h-3" />
+                </button>
               </div>
             )}
-            <div ref={messagesEndRef} />
-          </div>
-        </div>
-      ) : (
-        /* 2. PRISTINE HERO SECTION (When no messages yet) */
-        <div className="space-y-6 pt-2">
-          {/* Top Laurel Banner Matching Screenshot */}
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-xs font-semibold shadow-2xs">
-              <span className="text-emerald-600 text-sm">🌿</span>
-              <span>Perfect your writing everywhere</span>
-              <span className="text-emerald-600 text-sm">🌿</span>
-            </div>
 
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold shadow-2xs transition cursor-pointer">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-              <span>Add to Browser. It&apos;s Free</span>
-            </div>
-          </div>
+            <textarea
+              ref={activeChatTextareaRef}
+              rows={2}
+              value={promptText}
+              onChange={(e) => setPromptText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
+                }
+              }}
+              placeholder="Type your message ..."
+              className="w-full resize-none outline-none border-none text-slate-800 placeholder-[#9CA3AF] text-sm sm:text-base leading-relaxed bg-transparent focus:ring-0 select-text min-h-[44px] max-h-[160px]"
+            />
 
-          {/* Hero Headline & Subtitle Matching Screenshot */}
-          <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-              Create something great today
-            </h1>
-            <p className="text-xs sm:text-sm md:text-base text-slate-500 font-medium">
-              Write, design, build, and so much more with AI tools for every task.
-            </p>
-          </div>
-        </div>
-      )}
+            {/* Bottom Toolbar inside Chat Box */}
+            <div className="flex items-center justify-between pt-1 mt-1 border-t border-slate-100">
+              {/* Left Controls: Paperclip + [+ Tools ▾] */}
+              <div className="relative flex items-center gap-2" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  title="Attach file"
+                  className="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-600 flex items-center justify-center transition cursor-pointer"
+                >
+                  <Paperclip className="w-4 h-4" />
+                </button>
 
-      {/* 3. CHATGPT-STYLE PROMPT FIELD (Clean, Elevated, Floating Box) */}
-      <div className="w-full max-w-3xl mx-auto space-y-3">
-        <form
-          onSubmit={handleSendMessage}
-          className="bg-white rounded-[26px] sm:rounded-[28px] border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 focus-within:border-slate-400 focus-within:shadow-[0_8px_30px_rgba(0,0,0,0.09)] transition-all p-3 sm:p-4 relative"
-        >
-          {/* Auto-growing Textarea */}
-          <textarea
-            ref={textareaRef}
-            rows={2}
-            value={promptText}
-            onChange={handleTextChange}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendMessage();
-              }
-            }}
-            placeholder="Message Playzy AI or paste text to summarize, paraphrase, detect..."
-            className="w-full bg-transparent resize-none border-none text-slate-800 text-sm sm:text-base placeholder:text-slate-400 focus:outline-none focus:ring-0 leading-relaxed font-normal min-h-[50px] max-h-[220px]"
-          />
+                <button
+                  type="button"
+                  onClick={() => setShowToolsDropdown(!showToolsDropdown)}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 transition cursor-pointer shadow-2xs"
+                >
+                  <Plus className="w-3.5 h-3.5 text-slate-600" />
+                  <span>Tools</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                </button>
 
-          {/* Bottom Toolbar inside the ChatGPT Box */}
-          <div className="flex items-center justify-between pt-2 mt-1 border-t border-slate-100">
-            {/* Left Tools / Attachments */}
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                title="Attach Document (.txt, .md, .doc)"
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition active:scale-95 shadow-2xs"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100/80 border border-slate-200 text-[11px] font-semibold text-slate-600">
-                <Sparkles className="w-3 h-3 text-[#499557]" />
-                <span>Playzy 4.0</span>
+                {/* Tools Dropdown Menu */}
+                {showToolsDropdown && (
+                  <div className="absolute bottom-11 left-0 w-60 bg-white rounded-2xl border border-slate-200 shadow-xl p-2 z-50 space-y-1 animate-apple-in">
+                    <p className="text-[10px] uppercase font-bold text-slate-400 px-2 py-1">
+                      Route Prompt to Tool
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowToolsDropdown(false);
+                        onSelectTool('paraphrasing-tool', promptText);
+                      }}
+                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Paraphraser</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowToolsDropdown(false);
+                        onSelectTool('ai-humanizer', promptText);
+                      }}
+                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                    >
+                      <UserCheck className="w-3.5 h-3.5 text-teal-600" />
+                      <span>AI Humanizer</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowToolsDropdown(false);
+                        onSelectTool('ai-detector', promptText);
+                      }}
+                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                    >
+                      <ShieldAlert className="w-3.5 h-3.5 text-orange-600" />
+                      <span>AI Detector</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowToolsDropdown(false);
+                        onSelectTool('ai-voice-generator', promptText);
+                      }}
+                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                    >
+                      <Volume2 className="w-3.5 h-3.5 text-purple-600" />
+                      <span>AI Voice Studio</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowToolsDropdown(false);
+                        onSelectTool('mp3-to-text');
+                      }}
+                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                    >
+                      <FileAudio className="w-3.5 h-3.5 text-blue-600" />
+                      <span>MP3 to Text</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowToolsDropdown(false);
+                        onSelectTool('mp4-to-text');
+                      }}
+                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                    >
+                      <FileVideo className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>MP4 to Text</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowToolsDropdown(false);
+                        onSelectTool('video-downloader');
+                      }}
+                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                    >
+                      <Share2 className="w-3.5 h-3.5 text-sky-600" />
+                      <span>Video Downloader</span>
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
 
-            {/* Right: Word count + Mic + Send Arrow */}
-            <div className="flex items-center gap-2">
-              {promptText && (
-                <span className="text-[11px] text-slate-400 font-medium mr-1 hidden sm:inline">
-                  {promptText.trim().split(/\s+/).filter(Boolean).length} words
-                </span>
-              )}
-
-              {/* Voice Microphone Input */}
+              {/* Right: Circular Send Button with Up Arrow */}
               <button
                 type="button"
-                onClick={handleSpeechToggle}
-                title={isListening ? 'Listening...' : 'Voice Input'}
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                  isListening
-                    ? 'bg-rose-500 text-white animate-pulse'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
-                }`}
-              >
-                <Mic className="w-4 h-4" />
-              </button>
-
-              {/* Circular Send Button (Up Arrow like ChatGPT) */}
-              <button
-                type="submit"
+                onClick={() => handleSendMessage()}
                 disabled={!promptText.trim() || isGenerating}
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
                   promptText.trim() && !isGenerating
-                    ? 'bg-slate-900 hover:bg-black text-white shadow-md active:scale-95 cursor-pointer'
-                    : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                    ? 'bg-[#2E7D32] text-white hover:bg-[#256628] shadow-xs active:scale-95 cursor-pointer'
+                    : 'bg-[#E3EBE6] text-[#9CA3AF] cursor-not-allowed'
                 }`}
                 title="Send message"
               >
@@ -433,259 +512,325 @@ export function PlayzyHomeScreen({
               </button>
             </div>
           </div>
-        </form>
 
-        {/* Action Pills Row Attached Underneath Prompt Box */}
-        <div className="flex flex-wrap items-center justify-start gap-2 px-1">
-          <button
-            type="button"
-            onClick={() => handleActionClick('ai-chat')}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-[13px] font-bold shadow-2xs transition active:scale-95"
-          >
-            <span>📝</span>
-            <span>Create</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleActionClick('paraphrasing-tool')}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-[13px] font-bold shadow-2xs transition active:scale-95"
-          >
-            <RefreshCw className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Paraphraser</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleActionClick('ai-humanizer')}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-[13px] font-bold shadow-2xs transition active:scale-95"
-          >
-            <UserCheck className="w-3.5 h-3.5 text-teal-600" />
-            <span>AI Humanizer</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleActionClick('ai-detector')}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-[13px] font-bold shadow-2xs transition active:scale-95"
-          >
-            <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
-            <span>AI Detector</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowToolsDrawer(!showToolsDrawer)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-700 text-xs sm:text-[13px] font-bold shadow-2xs transition active:scale-95"
-          >
-            <Plus className="w-3.5 h-3.5 text-slate-500" />
-            <span>More</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Expanded Tools Drawer (When clicking "+ More") */}
-      {showToolsDrawer && (
-        <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-lg space-y-4 animate-apple-in">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
-              <Grid className="w-4 h-4 text-[#499557]" />
-              <span>All Playzy AI &amp; Media Tools</span>
-            </h4>
-            <button
-              type="button"
-              onClick={() => setShowToolsDrawer(false)}
-              className="text-xs font-bold text-slate-400 hover:text-slate-700"
-            >
-              Close ✕
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            <button
-              type="button"
-              onClick={() => onSelectTool('mp3-to-text')}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 text-left transition"
-            >
-              <FileAudio className="w-4 h-4 text-blue-600 shrink-0" />
-              <div className="truncate">
-                <p className="text-xs font-bold text-slate-800 truncate">MP3 to Text</p>
-                <p className="text-[10px] text-slate-400">Strictly .mp3</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onSelectTool('mp4-to-text')}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 hover:bg-indigo-50 border border-slate-200/80 text-left transition"
-            >
-              <FileVideo className="w-4 h-4 text-indigo-600 shrink-0" />
-              <div className="truncate">
-                <p className="text-xs font-bold text-slate-800 truncate">MP4 to Text</p>
-                <p className="text-[10px] text-slate-400">Strictly .mp4</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onSelectTool('youtube-to-mp3')}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 hover:bg-rose-50 border border-slate-200/80 text-left transition"
-            >
-              <Youtube className="w-4 h-4 text-rose-600 shrink-0" />
-              <div className="truncate">
-                <p className="text-xs font-bold text-slate-800 truncate">YouTube MP3</p>
-                <p className="text-[10px] text-slate-400">Link Only</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onSelectTool('tiktok-to-mp3')}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 hover:bg-amber-50 border border-slate-200/80 text-left transition"
-            >
-              <Music2 className="w-4 h-4 text-amber-600 shrink-0" />
-              <div className="truncate">
-                <p className="text-xs font-bold text-slate-800 truncate">TikTok MP3</p>
-                <p className="text-[10px] text-slate-400">Link Only</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onSelectTool('ai-voice-generator')}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 hover:bg-purple-50 border border-slate-200/80 text-left transition"
-            >
-              <Volume2 className="w-4 h-4 text-purple-600 shrink-0" />
-              <div className="truncate">
-                <p className="text-xs font-bold text-slate-800 truncate">AI Voice Studio</p>
-                <p className="text-[10px] text-slate-400">36+ Voices</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onSelectTool('translator')}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200/80 text-left transition"
-            >
-              <Languages className="w-4 h-4 text-emerald-600 shrink-0" />
-              <div className="truncate">
-                <p className="text-xs font-bold text-slate-800 truncate">Translator</p>
-                <p className="text-[10px] text-slate-400">40+ Langs</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onSelectTool('grammar-checker')}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 hover:bg-rose-50 border border-slate-200/80 text-left transition"
-            >
-              <FileCheck2 className="w-4 h-4 text-rose-600 shrink-0" />
-              <div className="truncate">
-                <p className="text-xs font-bold text-slate-800 truncate">Grammar</p>
-                <p className="text-[10px] text-slate-400">0 Errors</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onSelectTool('video-downloader')}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 text-left transition"
-            >
-              <Share2 className="w-4 h-4 text-blue-600 shrink-0" />
-              <div className="truncate">
-                <p className="text-xs font-bold text-slate-800 truncate">Playzy Video</p>
-                <p className="text-[10px] text-slate-400">Downloader</p>
-              </div>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 4. PROMPT SUGGESTION CARDS (Visible when not actively chatting) */}
-      {messages.length === 0 && (
-        <div className="max-w-3xl mx-auto space-y-3 pt-2">
-          <p className="text-xs font-semibold text-slate-400 text-center">
-            Need an Idea? Try one of these...
+          {/* Under-prompt Disclaimer */}
+          <p className="text-[11.5px] text-[#9CA3AF] text-center font-normal">
+            AI responses may be inaccurate. Don&apos;t enter sensitive info.
           </p>
+        </div>
+      </div>
+    );
+  }
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {/* Card 1: Create presentations */}
-            <div
-              onClick={() =>
-                handleCardClick(
-                  'Create a comprehensive pitch deck outline for an AI SaaS platform including problem, solution, market size, and pricing model.'
-                )
-              }
-              className="p-3.5 sm:p-4 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs cursor-pointer transition-all transform hover:-translate-y-0.5"
-            >
-              <div className="flex items-start gap-2.5">
-                <span className="text-lg">📑</span>
-                <div className="space-y-1">
-                  <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-tight">
-                    Create presentations
-                  </h4>
-                  <p className="text-[11px] text-slate-500 line-clamp-1">
-                    Create a pitch deck for a SaaS marketin...
-                  </p>
-                </div>
-              </div>
-            </div>
+  // ----------------------------------------------------------------------------------
+  // VIEW 2: PRISTINE HOME SCREEN (Matching Screenshot 1 & quillbot_dashboard_replica.html)
+  // ----------------------------------------------------------------------------------
+  return (
+    <div className="w-full flex-1 flex flex-col justify-between items-center py-2 select-none animate-apple-in">
+      {/* Hidden File Input for pristine prompt box */}
+      <input
+        ref={pristineFileInputRef}
+        type="file"
+        accept=".txt,.md,.doc,.docx,.pdf"
+        className="hidden"
+        onChange={handleFileUpload}
+      />
 
-            {/* Card 2: Create resumes */}
-            <div
-              onClick={() =>
-                handleCardClick(
-                  'Draft a high-impact resume summary highlighting 5+ years of software engineering, full-stack React, FastAPI, and machine learning.'
-                )
-              }
-              className="p-3.5 sm:p-4 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs cursor-pointer transition-all transform hover:-translate-y-0.5"
+      {/* TOP PROMO BANNER (Laurel Wreath + Add to Edge) */}
+      <div className="w-full flex items-center justify-center pt-0.5">
+        <div className="inline-flex items-center flex-wrap justify-center gap-3 text-sm">
+          {/* Left Laurel Wreath + Text */}
+          <div className="flex items-center gap-1.5">
+            <svg
+              className="w-5 h-7 text-[#2E7D32]"
+              viewBox="0 0 24 32"
+              fill="currentColor"
             >
-              <div className="flex items-start gap-2.5">
-                <span className="text-lg">📄</span>
-                <div className="space-y-1">
-                  <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-tight">
-                    Create resumes
-                  </h4>
-                  <p className="text-[11px] text-slate-500 line-clamp-1">
-                    Create a resume for a business internsh...
-                  </p>
-                </div>
-              </div>
-            </div>
+              <path
+                d="M18 28c-5-2-9-7-10-13 2 0 4 1 5 3-1-3-1-6 1-9 1 2 2 4 2 6 0-3 2-6 5-8-1 3 0 5 1 7 1-2 3-4 5-5-2 3-2 6-1 8-2 0-4 2-5 4 2 1 3 3 3 5-3-1-5 0-6 2z"
+                opacity="0.85"
+              />
+            </svg>
+            <span className="text-[13.5px] font-semibold text-[#1F2937] tracking-tight">
+              Perfect your writing everywhere
+            </span>
+            <svg
+              className="w-5 h-7 text-[#2E7D32] scale-x-[-1]"
+              viewBox="0 0 24 32"
+              fill="currentColor"
+            >
+              <path
+                d="M18 28c-5-2-9-7-10-13 2 0 4 1 5 3-1-3-1-6 1-9 1 2 2 4 2 6 0-3 2-6 5-8-1 3 0 5 1 7 1-2 3-4 5-5-2 3-2 6-1 8-2 0-4 2-5 4 2 1 3 3 3 5-3-1-5 0-6 2z"
+                opacity="0.85"
+              />
+            </svg>
+          </div>
 
-            {/* Card 3: Create social media posts */}
-            <div
-              onClick={() =>
-                handleCardClick(
-                  'Write an engaging viral Instagram and LinkedIn post announcing a new product launch with high-converting hooks and hashtags.'
-                )
-              }
-              className="p-3.5 sm:p-4 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs cursor-pointer transition-all transform hover:-translate-y-0.5"
-            >
-              <div className="flex items-start gap-2.5">
-                <span className="text-lg">💬</span>
-                <div className="space-y-1">
-                  <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-tight">
-                    Create social media posts
-                  </h4>
-                  <p className="text-[11px] text-slate-500 line-clamp-1">
-                    Create an Instagram post announcing a...
-                  </p>
-                </div>
+          {/* Vertical Divider */}
+          <div className="h-6 w-px bg-gray-300 hidden sm:block" />
+
+          {/* Add to Edge Button */}
+          <a
+            href="https://microsoftedge.microsoft.com/addons"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold text-[#1F2937] flex items-center gap-2 transition-all cursor-pointer shadow-2xs"
+          >
+            <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" fill="url(#edgeGradHome)" />
+              <path
+                d="M7.5 14.5C7.5 10.5 11 8 15 8C17.5 8 19.5 9.5 19.5 12C19.5 14 18 15.5 15.5 15.5H11C11 17 12.8 18 15 18C16.8 18 18 17.3 18.8 16.5"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <defs>
+                <linearGradient
+                  id="edgeGradHome"
+                  x1="2"
+                  y1="2"
+                  x2="22"
+                  y2="22"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#0078D4" />
+                  <stop offset="0.5" stopColor="#00B294" />
+                  <stop offset="1" stopColor="#4CAF50" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <span>Add to Edge. It&apos;s Free</span>
+          </a>
+        </div>
+      </div>
+
+      {/* CENTER HERO & PROMPT SECTION */}
+      <div className="w-full max-w-[770px] flex flex-col items-center my-auto pt-6 pb-4">
+        {/* Hero Heading */}
+        <h1 className="text-3xl sm:text-[42px] font-extrabold text-[#111827] text-center leading-tight tracking-tight">
+          Create something great today
+        </h1>
+        <p className="text-base sm:text-[18.5px] text-[#6B7280] text-center mt-2.5 font-normal">
+          Write, design, build, and so much more with AI tools for every task.
+        </p>
+
+        {/* CENTRAL PROMPT BOX (Matching quillbot_dashboard_replica.html) */}
+        <div className="w-full mt-8 bg-[#E9F1EC] p-[7px] rounded-[22px] border border-[#D5E3DA] prompt-outer-shadow transition-all">
+          {/* Inner White Card */}
+          <div className="bg-white rounded-[16px] px-5 pt-4 pb-3.5 flex flex-col justify-between min-h-[152px] border border-white focus-within:border-[#2E7D32]/30 transition-all">
+            <textarea
+              ref={pristineTextareaRef}
+              rows={3}
+              value={promptText}
+              onChange={(e) => setPromptText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
+                }
+              }}
+              placeholder="Write, paste, upload, or start with an action below"
+              className="w-full resize-none outline-none text-[#1F2937] placeholder-[#6B7280] text-[15.5px] leading-relaxed bg-transparent select-text"
+            />
+
+            {/* Bottom Controls inside White Box */}
+            <div className="flex items-center justify-between pt-2">
+              {/* Plus / Upload Trigger */}
+              <div className="relative flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => pristineFileInputRef.current?.click()}
+                  title="Upload document or image"
+                  className="w-8 h-8 rounded-full text-gray-700 hover:bg-gray-100 flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <Plus className="w-5 h-5 stroke-[2]" />
+                </button>
+
+                {attachedFileName && (
+                  <span className="text-xs bg-[#EFF5F1] text-[#2E7D32] font-medium px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                    <Paperclip className="w-3 h-3" />
+                    <span className="truncate max-w-[120px]">{attachedFileName}</span>
+                  </span>
+                )}
               </div>
+
+              {/* Submit Arrow Button (Arrow Right or Arrow Up) */}
+              <button
+                type="button"
+                onClick={() => handleSendMessage()}
+                disabled={!promptText.trim() && !attachedFileName}
+                title="Run prompt"
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                  promptText.trim() || attachedFileName
+                    ? 'bg-[#2E7D32] text-white shadow-xs hover:bg-[#256628] active:scale-95'
+                    : 'bg-[#E3EBE6] text-[#6B7280] hover:bg-[#2E7D32] hover:text-white'
+                }`}
+              >
+                <ArrowRight className="w-[18px] h-[18px] stroke-[2.2]" />
+              </button>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Disclaimer Matching Screenshot */}
-      <div className="text-center pt-2">
-        <p className="text-[11px] text-slate-400">
-          Ensure you have the rights to images or files you upload. Comply with our{' '}
-          <span className="underline hover:text-slate-600 cursor-pointer">Copyright Policy</span> and{' '}
-          <span className="underline hover:text-slate-600 cursor-pointer">Community Guidelines</span>.
+          {/* Action Pills Row (Inside Mint Container) */}
+          <div className="flex items-center justify-center gap-2.5 py-2.5 px-2 flex-wrap">
+            {/* Pill 1: Create */}
+            <button
+              type="button"
+              onClick={() => {
+                if (promptText.trim()) {
+                  handleSendMessage();
+                } else {
+                  setPromptText('Create an engaging article outline about ');
+                  pristineTextareaRef.current?.focus();
+                }
+              }}
+              className="bg-white hover:bg-gray-50 active:scale-[0.98] text-[#1F2937] text-[13.5px] font-semibold px-4 py-1.5 rounded-full pill-shadow border border-gray-200/70 flex items-center gap-2 cursor-pointer transition-all"
+            >
+              <span className="w-5 h-5 rounded-md bg-pink-50 flex items-center justify-center text-[#E11D48]">
+                <FileText className="w-3.5 h-3.5 stroke-[2.3]" />
+              </span>
+              <span>Create</span>
+            </button>
+
+            {/* Pill 2: Paraphraser */}
+            <button
+              type="button"
+              onClick={() => onSelectTool('paraphrasing-tool', promptText)}
+              className="bg-white hover:bg-gray-50 active:scale-[0.98] text-[#1F2937] text-[13.5px] font-semibold px-4 py-1.5 rounded-full pill-shadow border border-gray-200/70 flex items-center gap-2 cursor-pointer transition-all"
+            >
+              <span className="w-5 h-5 rounded-full bg-green-50 flex items-center justify-center text-[#16A34A]">
+                <RefreshCw className="w-3.5 h-3.5 stroke-[2.3]" />
+              </span>
+              <span>Paraphraser</span>
+            </button>
+
+            {/* Pill 3: AI Humanizer */}
+            <button
+              type="button"
+              onClick={() => onSelectTool('ai-humanizer', promptText)}
+              className="bg-white hover:bg-gray-50 active:scale-[0.98] text-[#1F2937] text-[13.5px] font-semibold px-4 py-1.5 rounded-full pill-shadow border border-gray-200/70 flex items-center gap-2 cursor-pointer transition-all"
+            >
+              <span className="w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center text-[#10B981]">
+                <Sparkles className="w-3.5 h-3.5 stroke-[2.3]" />
+              </span>
+              <span>AI Humanizer</span>
+            </button>
+
+            {/* Pill 4: AI Detector */}
+            <button
+              type="button"
+              onClick={() => onSelectTool('ai-detector', promptText)}
+              className="bg-white hover:bg-gray-50 active:scale-[0.98] text-[#1F2937] text-[13.5px] font-semibold px-4 py-1.5 rounded-full pill-shadow border border-gray-200/70 flex items-center gap-2 cursor-pointer transition-all"
+            >
+              <span className="w-5 h-5 rounded-md bg-orange-50 flex items-center justify-center text-[#F97316]">
+                <ShieldAlert className="w-3.5 h-3.5 stroke-[2.3]" />
+              </span>
+              <span>AI Detector</span>
+            </button>
+
+            {/* Pill 5: + More */}
+            <button
+              type="button"
+              onClick={() => onOpenAllToolsModal?.()}
+              className="bg-white hover:bg-gray-50 active:scale-[0.98] text-[#1F2937] text-[13.5px] font-semibold px-4 py-1.5 rounded-full pill-shadow border border-gray-200/70 flex items-center gap-1.5 cursor-pointer transition-all"
+            >
+              <Plus className="w-4 h-4 text-gray-700 stroke-[2.3]" />
+              <span>More</span>
+            </button>
+          </div>
+        </div>
+
+        {/* SUGGESTIONS SECTION ("Need an idea? Try one of these...") */}
+        <p className="text-[12px] text-[#6B7280] mt-6 mb-3 font-medium">
+          Need an idea? Try one of these...
         </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 w-full">
+          {/* Suggestion Card 1 */}
+          <button
+            type="button"
+            onClick={() =>
+              handleSendMessage(
+                'Create a pitch deck for a SaaS marketing platform launching in Q3 with slide-by-slide talking points.'
+              )
+            }
+            className="text-left bg-white hover:bg-[#F9FBFA] border border-gray-200/90 hover:border-[#B8CEC0] rounded-2xl p-3.5 flex items-start gap-3 transition-all cursor-pointer shadow-2xs group"
+          >
+            <div className="w-7 h-7 rounded-lg bg-pink-50 border border-pink-100 flex items-center justify-center text-[#DB2777] shrink-0 mt-0.5">
+              <FileText className="w-4 h-4 stroke-[2]" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[13.5px] font-semibold text-[#111827] group-hover:text-[#2E7D32] transition-colors">
+                Create presentations
+              </div>
+              <div className="text-[12px] text-[#6B7280] truncate mt-0.5">
+                Create a pitch deck for a SaaS marketin...
+              </div>
+            </div>
+          </button>
+
+          {/* Suggestion Card 2 */}
+          <button
+            type="button"
+            onClick={() =>
+              handleSendMessage(
+                'Create a resume for a business internship highlighting analytical coursework, leadership, and project management.'
+              )
+            }
+            className="text-left bg-white hover:bg-[#F9FBFA] border border-gray-200/90 hover:border-[#B8CEC0] rounded-2xl p-3.5 flex items-start gap-3 transition-all cursor-pointer shadow-2xs group"
+          >
+            <div className="w-7 h-7 rounded-lg bg-sky-50 border border-sky-100 flex items-center justify-center text-[#0284C7] shrink-0 mt-0.5">
+              <FileCheck2 className="w-4 h-4 stroke-[2]" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[13.5px] font-semibold text-[#111827] group-hover:text-[#2E7D32] transition-colors">
+                Create resumes
+              </div>
+              <div className="text-[12px] text-[#6B7280] truncate mt-0.5">
+                Create a resume for a business internsh...
+              </div>
+            </div>
+          </button>
+
+          {/* Suggestion Card 3 */}
+          <button
+            type="button"
+            onClick={() =>
+              handleSendMessage(
+                'Create an Instagram post announcing a new eco-friendly product line with engaging hooks and relevant hashtags.'
+              )
+            }
+            className="text-left bg-white hover:bg-[#F9FBFA] border border-gray-200/90 hover:border-[#B8CEC0] rounded-2xl p-3.5 flex items-start gap-3 transition-all cursor-pointer shadow-2xs group"
+          >
+            <div className="w-7 h-7 rounded-lg bg-purple-50 border border-purple-100 flex items-center justify-center text-[#9333EA] shrink-0 mt-0.5">
+              <Share2 className="w-4 h-4 stroke-[2]" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[13.5px] font-semibold text-[#111827] group-hover:text-[#2E7D32] transition-colors">
+                Create social media posts
+              </div>
+              <div className="text-[12px] text-[#6B7280] truncate mt-0.5">
+                Create an Instagram post announcing a...
+              </div>
+            </div>
+          </button>
+        </div>
       </div>
+
+      {/* FOOTER DISCLAIMER */}
+      <footer className="w-full text-center pb-1 pt-4">
+        <p className="text-[12px] text-[#6B7280]">
+          Ensure you have the rights to images or files you upload. Comply with our{' '}
+          <a href="#copyright" className="underline hover:text-gray-800">
+            Copyright Policy
+          </a>{' '}
+          and{' '}
+          <a href="#guidelines" className="underline hover:text-gray-800">
+            Community Guidelines
+          </a>
+          .
+        </p>
+      </footer>
     </div>
   );
 }

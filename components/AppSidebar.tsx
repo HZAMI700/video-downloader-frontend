@@ -72,6 +72,8 @@ interface AppSidebarProps {
   onToggleCollapse: () => void;
   isMobileOpen: boolean;
   onCloseMobile: () => void;
+  isMoreModalOpen?: boolean;
+  setIsMoreModalOpen?: (open: boolean) => void;
 }
 
 export function AppSidebar({
@@ -83,8 +85,12 @@ export function AppSidebar({
   onToggleCollapse,
   isMobileOpen,
   onCloseMobile,
+  isMoreModalOpen: controlledIsMoreOpen,
+  setIsMoreModalOpen: controlledSetIsMoreOpen,
 }: AppSidebarProps) {
-  const [isMoreModalOpen, setIsMoreModalOpen] = useState(false);
+  const [internalIsMoreModalOpen, setInternalIsMoreModalOpen] = useState(false);
+  const isMoreModalOpen = controlledIsMoreOpen !== undefined ? controlledIsMoreOpen : internalIsMoreModalOpen;
+  const setIsMoreModalOpen = controlledSetIsMoreOpen || setInternalIsMoreModalOpen;
 
   // Exact vertical rail tools matching screenshot
   const PRIMARY_TOOLS: {
@@ -160,36 +166,16 @@ export function AppSidebar({
         />
       )}
 
-      {/* Slim Light Sidebar Rail Matching Screenshot */}
+      {/* Slim Light Sidebar Rail Matching Screenshot & Replica */}
       <aside
-        className={`bg-white border-r border-slate-200/80 w-[78px] sm:w-[84px] shrink-0 py-3 flex flex-col justify-between items-center select-none z-50 transition-all ${
+        className={`bg-[#EFF5F1] w-[78px] shrink-0 py-2.5 flex flex-col items-center gap-1.5 text-[11px] text-[#374151] font-medium select-none z-30 transition-all ${
           isMobileOpen
-            ? 'fixed inset-y-0 left-0 z-50 shadow-2xl flex'
+            ? 'fixed inset-y-0 left-0 z-50 shadow-2xl flex bg-[#EFF5F1]'
             : 'hidden lg:flex'
         }`}
       >
-        {/* Top Logo / Brand mark */}
-        <div className="flex flex-col items-center gap-1 pb-3 mb-1 border-b border-slate-100 w-full px-2">
-          <button
-            type="button"
-            onClick={() => {
-              onSelectTool(null as any);
-              onCloseMobile();
-            }}
-            title="Playzy Home"
-            className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#499557] to-emerald-400 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 hover:scale-105 transition-transform"
-          >
-            {/* Playzy Brand Icon */}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-              <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
-              <line x1="16" y1="8" x2="2" y2="22" />
-            </svg>
-          </button>
-          <span className="text-[11px] font-black tracking-tight text-slate-800">playzy</span>
-        </div>
-
         {/* Vertical Tool Navigation List Matching Screenshot */}
-        <div className="w-full flex-1 overflow-y-auto custom-scrollbar flex flex-col items-center gap-1.5 px-1.5">
+        <div className="w-full flex-1 overflow-y-auto custom-scrollbar flex flex-col items-center gap-1 px-1">
           {PRIMARY_TOOLS.map((tool) => {
             const isActive = activeTool === tool.id;
             return (
@@ -198,16 +184,16 @@ export function AppSidebar({
                 type="button"
                 onClick={() => handleToolClick(tool.id, tool.category)}
                 title={tool.name}
-                className={`w-full py-2.5 px-1 rounded-2xl flex flex-col items-center justify-center gap-1 text-center transition-all ${
+                className={`w-16 py-2 rounded-xl flex flex-col items-center gap-1 transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#edf7ee] text-[#499557] font-bold shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 font-medium'
+                    ? 'bg-white text-[#2E7D32] shadow-2xs font-bold'
+                    : 'text-[#374151] hover:bg-white/70 hover:text-[#2E7D32]'
                 }`}
               >
-                <div className={isActive ? 'text-[#499557]' : 'text-slate-500'}>
+                <div className={isActive ? 'text-[#2E7D32]' : 'text-gray-700'}>
                   {tool.icon}
                 </div>
-                <span className="text-[10px] leading-tight line-clamp-2 max-w-[68px]">
+                <span className="text-[10px] leading-tight text-center line-clamp-2 max-w-[62px]">
                   {tool.name}
                 </span>
               </button>
@@ -219,22 +205,10 @@ export function AppSidebar({
             type="button"
             onClick={() => setIsMoreModalOpen(true)}
             title="More Tools"
-            className="w-full py-2.5 px-1 rounded-2xl flex flex-col items-center justify-center gap-1 text-center text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 transition-all font-medium mt-1"
+            className="w-16 py-2 rounded-xl flex flex-col items-center gap-1 transition-all cursor-pointer text-[#374151] hover:bg-white/70 hover:text-[#2E7D32] mt-0.5"
           >
-            <MoreHorizontal className="w-5 h-5 text-slate-500" />
+            <MoreHorizontal className="w-5 h-5 text-gray-700" />
             <span className="text-[10px] leading-tight">More</span>
-          </button>
-        </div>
-
-        {/* Bottom User / Premium Indicator */}
-        <div className="pt-2 border-t border-slate-100 w-full px-2 flex flex-col items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setIsMoreModalOpen(true)}
-            title="Open all tools"
-            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition"
-          >
-            <Sliders className="w-4 h-4" />
           </button>
         </div>
       </aside>
