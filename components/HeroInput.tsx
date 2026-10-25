@@ -45,7 +45,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-900 leading-tight">
           Download{' '}
           <ShinyText text="Any Video" speed={3.5} />{' '}
-          with <span className="bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] bg-clip-text text-transparent">Playzy</span>
+          with <span className="text-[#499557]">Playzy</span>
         </h1>
 
         <p className="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
@@ -89,12 +89,12 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
           }}
           className="relative"
         >
-          {/* Glowing gradient background border with animated breathing glow */}
+          {/* Clean refined outline matching Playzy studio tokens */}
           <div
-            className={`rounded-2xl sm:rounded-3xl p-[2.5px] transition-all duration-300 ${
+            className={`rounded-2xl sm:rounded-3xl p-[1.5px] transition-all duration-300 ${
               isDragOver
-                ? 'bg-gradient-to-r from-purple-600 via-pink-500 to-amber-400 shadow-2xl scale-[1.01]'
-                : 'bg-gradient-to-r from-pink-400/80 via-purple-500/80 to-cyan-400/80 shadow-2xl shadow-indigo-500/20 hover:shadow-indigo-500/30'
+                ? 'bg-[#499557] ring-4 ring-emerald-100 shadow-xl scale-[1.01]'
+                : 'bg-slate-200 hover:bg-slate-300 shadow-xl shadow-slate-200/50'
             }`}
           >
             <div className="flex items-center bg-white rounded-[14px] sm:rounded-[22px] p-2 sm:p-2.5">
@@ -134,7 +134,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
                 disabled={!url.trim() || isLoading}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="shrink-0 flex items-center justify-center gap-1.5 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base text-white bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] hover:opacity-95 shadow-md shadow-purple-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="shrink-0 flex items-center justify-center gap-1.5 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base text-white bg-[#499557] hover:bg-[#3d7d49] shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <>

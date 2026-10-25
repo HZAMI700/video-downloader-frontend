@@ -23,16 +23,16 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand Logo: Playzy */}
         <div className="flex items-center gap-2">
           <a href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#9333EA] via-[#6366F1] to-[#06B6D4] flex items-center justify-center text-white shadow-md shadow-purple-500/25 group-hover:scale-105 transition-transform duration-200">
+            <div className="w-10 h-10 rounded-2xl bg-[#499557] flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-200">
               <Play className="w-5 h-5 fill-current ml-0.5" />
             </div>
-            <span className="text-2xl sm:text-3xl font-black tracking-tight bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] bg-clip-text text-transparent">
+            <span className="text-2xl sm:text-3xl font-black tracking-tight text-[#499557]">
               Playzy
             </span>
           </a>
           {capabilities && (
-            <span className="ml-2 hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200/80 shadow-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="ml-2 hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#edf7ee] text-[#499557] border border-[#499557]/30 shadow-2xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#499557] animate-pulse" />
               API Ready
             </span>
           )}
@@ -92,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onTabChange(activeTab === 'downloader' ? 'transcriber' : 'downloader');
               }
             }}
-            className="px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] hover:opacity-95 shadow-md shadow-purple-500/20 transition-all transform active:scale-95 flex items-center gap-1.5"
+            className="px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-[#499557] hover:bg-[#3d7d49] shadow-md transition-all transform active:scale-95 flex items-center gap-1.5"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>{activeTab === 'downloader' ? 'Transcribe AI' : 'Download Video'}</span>

@@ -150,18 +150,18 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
     <div className="w-full max-w-4xl mx-auto space-y-6 animate-apple-in">
       {/* Top Apple Navigation Bar */}
       {onBackToCategory && (
-        <div className="flex items-center gap-2 pb-1 border-b border-zinc-200/70">
+        <div className="flex items-center gap-2 pb-1 border-b border-slate-200/70">
           <button
             type="button"
             onClick={onBackToCategory}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-bold text-zinc-700 transition active:scale-95 shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 transition active:scale-95 shadow-2xs"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
-            <span>Back to AI Voice Studio</span>
+            <span>Back to Audio Tools</span>
           </button>
-          <span className="text-zinc-300">/</span>
-          <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+          <span className="text-slate-300">/</span>
+          <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#499557] animate-pulse" />
             {meta.title}
           </span>
         </div>
@@ -183,9 +183,9 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
 
       {/* Header */}
       <div className="text-center space-y-3 pt-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border shadow-xs bg-slate-50 border-slate-200">
-          <span className={`w-2 h-2 rounded-full bg-current ${meta.accent} animate-pulse`} />
-          <span className={meta.accent}>{meta.badge}</span>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border shadow-xs bg-[#edf7ee] border-[#499557]/30 text-[#499557]">
+          <span className="w-2 h-2 rounded-full bg-[#499557] animate-pulse" />
+          <span>{meta.badge}</span>
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
@@ -197,7 +197,7 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
       </div>
 
       {/* Main Workspace Card */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/40 p-6 sm:p-10 space-y-8">
+      <div className="bg-white rounded-2xl sm:rounded-[22px] border border-slate-200/80 shadow-2xs p-6 sm:p-10 space-y-8">
         {/* File Ingest Drop Zone with Drag and Drop */}
         <div
           onClick={() => fileInputRef.current?.click()}
@@ -217,24 +217,24 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
           }}
           className={`flex flex-col items-center justify-center text-center p-8 rounded-2xl border-2 border-dashed cursor-pointer transition-all ${
             isDragOver
-              ? 'border-purple-500 bg-purple-50/70 scale-[1.01] shadow-lg shadow-purple-500/10'
+              ? 'border-[#499557] bg-[#edf7ee]/60 scale-[1.01]'
               : selectedFile
-              ? 'border-purple-500 bg-purple-50/30'
-              : 'border-slate-300 hover:border-purple-400 bg-slate-50/50'
+              ? 'border-[#499557] bg-[#edf7ee]/30'
+              : 'border-slate-300 hover:border-slate-400 bg-slate-50/50'
           }`}
         >
           <div
-            className={`w-14 h-14 rounded-2xl bg-gradient-to-tr ${meta.theme} text-white flex items-center justify-center shadow-lg shadow-purple-500/20 mb-3`}
+            className="w-14 h-14 rounded-2xl bg-[#edf7ee] text-[#499557] flex items-center justify-center shadow-2xs mb-3 border border-[#499557]/20"
           >
             {meta.icon}
           </div>
 
           {isDragOver ? (
             <div className="space-y-1">
-              <p className="text-sm font-extrabold text-purple-700">
+              <p className="text-sm font-extrabold text-[#499557]">
                 Release file to drop into {meta.badge}!
               </p>
-              <p className="text-xs text-purple-500">Supports all standard audio & video formats</p>
+              <p className="text-xs text-slate-500">Supports all standard audio & video formats</p>
             </div>
           ) : selectedFile ? (
             <div className="space-y-1">
@@ -371,7 +371,7 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
           type="button"
           onClick={handleProcess}
           disabled={isProcessing || !selectedFile}
-          className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r ${meta.theme} text-white font-extrabold text-sm shadow-lg shadow-purple-500/20 hover:opacity-95 transition-all transform active:scale-[0.99] disabled:opacity-50`}
+          className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-extrabold text-sm shadow-md transition-all transform active:scale-[0.99] disabled:opacity-50"
         >
           {isProcessing ? (
             <>

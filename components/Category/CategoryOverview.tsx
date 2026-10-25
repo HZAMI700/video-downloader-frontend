@@ -127,38 +127,38 @@ export function CategoryOverview({
               <article
                 key={tool.id}
                 onClick={() => onSelectTool(tool.id)}
-                className={`apple-card ${tool.pastelBg} hover:bg-white rounded-[26px] p-6 border border-white/80 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all`}
+                className={`bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-[#499557]/40 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center justify-between mb-4">
                     <div
-                      className={`w-12 h-12 squircle ${tool.iconBg} flex items-center justify-center transition-transform group-hover:scale-105`}
+                      className={`w-11 h-11 rounded-xl ${tool.iconBg} flex items-center justify-center transition-transform group-hover:scale-105 shadow-2xs`}
                     >
                       {renderIcon(tool.iconName, 'w-5 h-5')}
                     </div>
                     <span
-                      className={`text-[11px] font-semibold ${tool.badgeColor} bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-full shadow-2xs border border-zinc-100`}
+                      className={`text-[11px] font-bold ${tool.badgeColor} px-2.5 py-0.5 rounded-full shadow-2xs border border-slate-200/80`}
                     >
                       {tool.pillTag}
                     </span>
                   </div>
 
-                  <h3 className="text-[17px] font-bold tracking-tight text-zinc-900 mb-1.5 group-hover:text-zinc-950 transition-colors">
+                  <h3 className="text-base font-extrabold tracking-tight text-slate-900 mb-1 group-hover:text-[#499557] transition-colors">
                     {tool.name}
                   </h3>
-                  <p className="text-[13px] text-zinc-500 leading-relaxed min-h-[40px]">
+                  <p className="text-xs text-slate-500 leading-relaxed min-h-[36px]">
                     {tool.shortDesc}
                   </p>
                 </div>
 
-                <div className="pt-4 mt-5 border-t border-zinc-900/5 flex items-center justify-between text-[13px] font-semibold text-zinc-600 group-hover:text-zinc-950 transition">
+                <div className="pt-3.5 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-600 group-hover:text-[#499557] transition">
                   <span className="flex items-center gap-1.5">
                     <span>Open Tool</span>
-                    <span className="text-[11px] font-medium text-zinc-400">
-                      • Zero login
+                    <span className="text-[10px] font-medium text-slate-400">
+                      • 100% Free
                     </span>
                   </span>
-                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-zinc-400 group-hover:text-zinc-900" />
+                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-slate-400 group-hover:text-[#499557]" />
                 </div>
               </article>
             ))}

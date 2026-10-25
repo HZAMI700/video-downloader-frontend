@@ -878,18 +878,18 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
     <div className="w-full max-w-5xl mx-auto space-y-6 animate-apple-in pb-12">
       {/* Top Apple Navigation Bar */}
       {onBackToCategory && (
-        <div className="flex items-center gap-2 pb-1 border-b border-zinc-200/70">
+        <div className="flex items-center gap-2 pb-1 border-b border-slate-200/70">
           <button
             type="button"
             onClick={onBackToCategory}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-bold text-zinc-700 transition active:scale-95 shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 transition active:scale-95 shadow-2xs"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             <span>Back to AI Voice Studio</span>
           </button>
-          <span className="text-zinc-300">/</span>
-          <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+          <span className="text-slate-300">/</span>
+          <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#499557] animate-pulse" />
             {toolId === 'ai-voice-clone'
               ? 'AI Voice Clone'
               : 'AI Voice Generator (ElevenLabs 36+ Voices)'}
@@ -932,18 +932,18 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
       {generatedAudioUrl && <audio ref={audioPlayerRef} src={generatedAudioUrl} className="hidden" />}
 
       {/* ElevenLabs Studio Header Banner */}
-      <div className="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white shadow-2xl border border-slate-800 overflow-hidden">
-        <div className="absolute -right-16 -top-16 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative rounded-2xl sm:rounded-[22px] p-6 sm:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white shadow-xl border border-slate-800 overflow-hidden">
+        <div className="absolute -right-16 -top-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-purple-300 border border-purple-500/30 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-emerald-300 border border-emerald-500/30 backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
               <span>ElevenLabs Pro Voice Studio • 36+ Voices • 16 Languages</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
-              AI Voice Generator & Voice Lab
+              AI Voice Generator &amp; Voice Lab
             </h1>
             <p className="text-sm text-slate-400 max-w-xl leading-relaxed">
               Generate lifelike human speech across dozens of languages, accents, and emotions with
@@ -958,7 +958,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
               onClick={() => setActiveTab('generate')}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
                 activeTab === 'generate'
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/25'
+                  ? 'bg-[#499557] text-white shadow-md'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -970,7 +970,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
               onClick={() => setActiveTab('clone')}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
                 activeTab === 'clone'
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/25'
+                  ? 'bg-[#499557] text-white shadow-md'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -982,7 +982,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
       </div>
 
       {/* Main Studio Card */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/40 p-6 sm:p-8 space-y-6">
+      <div className="bg-white rounded-2xl sm:rounded-[22px] border border-slate-200/80 shadow-2xs p-6 sm:p-8 space-y-6">
         {/* TAB 1: TEXT TO SPEECH (VOICE GENERATOR) */}
         {activeTab === 'generate' && (
           <div className="space-y-6">
@@ -1219,7 +1219,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                 type="button"
                 onClick={handleGenerateSpeech}
                 disabled={isGenerating || !scriptText.trim()}
-                className="flex-1 flex items-center justify-center gap-2 py-4 px-8 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:opacity-95 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-purple-500/25 transition-all active:scale-[0.99] disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-2 py-4 px-8 rounded-2xl bg-[#499557] hover:bg-[#3d7d49] text-white font-extrabold text-sm sm:text-base shadow-md transition-all active:scale-[0.99] disabled:opacity-50"
               >
                 {isGenerating ? (
                   <>
@@ -1238,7 +1238,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                 type="button"
                 onClick={togglePlayAudio}
                 className={`p-4 rounded-2xl border text-slate-700 hover:bg-slate-50 transition-all ${
-                  isPlaying ? 'bg-purple-100 border-purple-300 text-purple-700' : 'border-slate-200'
+                  isPlaying ? 'bg-[#edf7ee] border-[#499557] text-[#499557]' : 'border-slate-200'
                 }`}
                 title={isPlaying ? 'Pause' : 'Play / Replay'}
               >

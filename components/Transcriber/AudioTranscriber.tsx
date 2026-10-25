@@ -387,20 +387,20 @@ export function AudioTranscriber({
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6 animate-apple-in">
-      {/* Top Apple Navigation Bar */}
+      {/* Top Navigation Bar */}
       {onBackToCategory && (
-        <div className="flex items-center gap-2 pb-1 border-b border-zinc-200/70">
+        <div className="flex items-center gap-2 pb-1 border-b border-slate-200/70">
           <button
             type="button"
             onClick={onBackToCategory}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-bold text-zinc-700 transition active:scale-95 shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 transition active:scale-95 shadow-2xs"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             <span>Back to Audio Tools</span>
           </button>
-          <span className="text-zinc-300">/</span>
-          <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+          <span className="text-slate-300">/</span>
+          <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#499557] animate-pulse" />
             {meta.title}
           </span>
         </div>
@@ -418,7 +418,7 @@ export function AudioTranscriber({
         }}
       />
 
-      {/* Main Header Matching Screenshot */}
+      {/* Main Header */}
       <div className="text-center space-y-3 pt-2">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           {meta.title}
@@ -427,22 +427,22 @@ export function AudioTranscriber({
           {meta.subtitle}
         </p>
 
-        {/* Feature Highlights Row Matching Screenshot */}
+        {/* Feature Highlights Row */}
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2 text-xs font-semibold text-slate-600">
           <span className="inline-flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-purple-600" />
+            <ShieldCheck className="w-4 h-4 text-[#499557]" />
             <span>100% Privacy & Security</span>
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <Infinity className="w-4 h-4 text-purple-600" />
+            <Infinity className="w-4 h-4 text-[#499557]" />
             <span>Unlimited Audio Time</span>
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <Tag className="w-4 h-4 text-purple-600" />
+            <Tag className="w-4 h-4 text-[#499557]" />
             <span>100% Free to Use</span>
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <Zap className="w-4 h-4 text-purple-600" />
+            <Zap className="w-4 h-4 text-[#499557]" />
             <span>Instantly Get Results</span>
           </span>
         </div>
@@ -459,7 +459,7 @@ export function AudioTranscriber({
             }}
             className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-all ${
               activeMediaTab === 'audio'
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/25'
+                ? 'bg-[#499557] text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -475,7 +475,7 @@ export function AudioTranscriber({
             }}
             className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-all ${
               activeMediaTab === 'record'
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/25'
+                ? 'bg-[#499557] text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -485,8 +485,8 @@ export function AudioTranscriber({
         </div>
       </div>
 
-      {/* Main Container Card Matching Screenshot */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl shadow-purple-500/5 p-6 sm:p-10 relative overflow-hidden transition-all">
+      {/* Main Container Card */}
+      <div className="bg-white rounded-2xl sm:rounded-[22px] border border-slate-200/80 shadow-2xs p-6 sm:p-10 relative overflow-hidden transition-all">
         {activeMediaTab === 'record' ? (
           /* Live Microphone Recording View */
           <LiveAudioRecorder
@@ -508,14 +508,14 @@ export function AudioTranscriber({
               onDrop={handleDrop}
               className={`flex flex-col items-center justify-center text-center space-y-4 py-8 px-4 rounded-2xl border-2 border-dashed transition-all ${
                 isDragOver
-                  ? 'border-purple-500 bg-purple-50/60 scale-[1.01]'
-                  : 'border-transparent hover:border-purple-200 hover:bg-slate-50/50'
+                  ? 'border-[#499557] bg-[#edf7ee]/50 scale-[1.01]'
+                  : 'border-transparent hover:border-slate-300 hover:bg-slate-50/50'
               }`}
             >
-              {/* Floating Purple Circle with Cloud Icon matching screenshot */}
+              {/* Floating Emerald Circle with Cloud Icon */}
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="w-16 h-16 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-purple-500/30 cursor-pointer transform hover:scale-105 transition-transform"
+                className="w-16 h-16 rounded-full bg-[#499557] hover:bg-[#3d7d49] text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 cursor-pointer transform hover:scale-105 transition-all"
               >
                 <UploadCloud className="w-8 h-8" />
               </div>
@@ -537,13 +537,13 @@ export function AudioTranscriber({
                 </p>
               </div>
 
-              {/* Action Buttons: [ Upload Audio ] & [ Link ˅ ] matching screenshot */}
+              {/* Action Buttons: [ Upload Audio ] & [ Link ˅ ] */}
               <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isSubmitting}
-                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-purple-500/25 transition-all transform active:scale-95 disabled:opacity-50"
+                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#499557] hover:bg-[#3d7d49] text-white font-bold text-sm shadow-md transition-all transform active:scale-95 disabled:opacity-50"
                 >
                   <UploadCloud className="w-4 h-4" />
                   <span>
@@ -554,7 +554,7 @@ export function AudioTranscriber({
                 <button
                   type="button"
                   onClick={() => setShowLinkInput(!showLinkInput)}
-                  className="flex items-center gap-2 px-7 py-3.5 rounded-full border border-purple-300 text-purple-700 hover:bg-purple-50 font-bold text-sm transition-all"
+                  className="flex items-center gap-2 px-7 py-3.5 rounded-full border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-sm transition-all"
                 >
                   <span>Link</span>
                   <ChevronDown className={`w-4 h-4 transition-transform ${showLinkInput ? 'rotate-180' : ''}`} />
@@ -564,7 +564,7 @@ export function AudioTranscriber({
               {/* Link Input Bar (when [Link ˅] is active) */}
               {showLinkInput && (
                 <div className="w-full max-w-xl mt-4 pt-2 space-y-2 animate-fadeIn">
-                  <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-1.5 focus-within:border-purple-600 focus-within:ring-2 focus-within:ring-purple-100 transition-all">
+                  <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-1.5 focus-within:border-[#499557] focus-within:ring-2 focus-within:ring-emerald-100 transition-all">
                     <div className="pl-3 text-slate-400">
                       <Link2 className="w-4 h-4" />
                     </div>
@@ -585,7 +585,7 @@ export function AudioTranscriber({
                       type="button"
                       onClick={submitUrl}
                       disabled={isSubmitting || !mediaUrl.trim()}
-                      className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md disabled:opacity-50 transition-colors"
+                      className="px-5 py-2.5 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-bold text-xs shadow-md disabled:opacity-50 transition-colors"
                     >
                       {isSubmitting ? 'Loading...' : 'Transcribe'}
                     </button>
@@ -594,17 +594,17 @@ export function AudioTranscriber({
               )}
             </div>
 
-            {/* Bottom Settings Bar matching screenshot */}
+            {/* Bottom Settings Bar */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-100 text-xs text-slate-600">
               {/* Output Language */}
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-slate-500">Output Language:</span>
                 <div className="relative inline-flex items-center">
-                  <Globe2 className="w-3.5 h-3.5 text-purple-600 absolute left-2.5 pointer-events-none" />
+                  <Globe2 className="w-3.5 h-3.5 text-[#499557] absolute left-2.5 pointer-events-none" />
                   <select
                     value={selectedLanguage}
                     onChange={(e) => setSelectedLanguage(e.target.value)}
-                    className="pl-8 pr-6 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-800 bg-white hover:border-purple-300 focus:outline-none focus:border-purple-600 transition-colors appearance-none cursor-pointer"
+                    className="pl-8 pr-6 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-800 bg-white hover:border-[#499557]/50 focus:outline-none focus:border-[#499557] transition-colors appearance-none cursor-pointer"
                   >
                     {LANGUAGES.map((lang) => (
                       <option key={lang.code} value={lang.code}>
@@ -625,7 +625,7 @@ export function AudioTranscriber({
                   aria-checked={speakerDiarization}
                   onClick={() => setSpeakerDiarization(!speakerDiarization)}
                   className={`relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    speakerDiarization ? 'bg-purple-600' : 'bg-slate-300'
+                    speakerDiarization ? 'bg-[#499557]' : 'bg-slate-300'
                   }`}
                 >
                   <span
@@ -653,8 +653,8 @@ export function AudioTranscriber({
           /* Processing State */
           <div className="py-16 flex flex-col items-center justify-center text-center space-y-6">
             <div className="relative">
-              <div className="w-20 h-20 rounded-full border-4 border-purple-200 border-t-purple-600 animate-spin flex items-center justify-center" />
-              <FileAudio className="w-8 h-8 text-purple-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              <div className="w-20 h-20 rounded-full border-4 border-slate-200 border-t-[#499557] animate-spin flex items-center justify-center" />
+              <FileAudio className="w-8 h-8 text-[#499557] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
             </div>
 
             <div className="space-y-2 max-w-md">
@@ -676,7 +676,7 @@ export function AudioTranscriber({
             <div className="w-full max-w-md space-y-2">
               <div className="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
                 <div
-                  className="h-full bg-gradient-to-r from-purple-600 to-indigo-600 transition-all duration-500 rounded-full"
+                  className="h-full bg-[#499557] transition-all duration-500 rounded-full"
                   style={{ width: `${Math.max(15, job.progress)}%` }}
                 />
               </div>
@@ -707,16 +707,16 @@ export function AudioTranscriber({
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 {job.duration > 0 && (
                   <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 text-slate-700 font-semibold">
-                    <Clock className="w-3.5 h-3.5 text-purple-600" />
+                    <Clock className="w-3.5 h-3.5 text-[#499557]" />
                     <span>{formatTime(job.duration)}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-purple-50 text-purple-700 font-semibold uppercase">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#edf7ee] text-[#499557] font-semibold uppercase">
                   <Globe2 className="w-3.5 h-3.5" />
                   <span>{job.language || 'auto'}</span>
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 text-slate-700 font-semibold">
-                  <FileText className="w-3.5 h-3.5 text-indigo-600" />
+                  <FileText className="w-3.5 h-3.5 text-slate-600" />
                   <span>{wordCount} words</span>
                 </div>
               </div>
@@ -730,7 +730,7 @@ export function AudioTranscriber({
                   onClick={() => setActiveViewTab('segments')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     activeViewTab === 'segments'
-                      ? 'bg-white text-purple-700 shadow-xs'
+                      ? 'bg-white text-[#499557] shadow-xs'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -742,7 +742,7 @@ export function AudioTranscriber({
                   onClick={() => setActiveViewTab('text')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     activeViewTab === 'text'
-                      ? 'bg-white text-purple-700 shadow-xs'
+                      ? 'bg-white text-[#499557] shadow-xs'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >

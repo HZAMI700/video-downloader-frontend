@@ -66,7 +66,7 @@ export function WorkspaceHistory({ onSelectTranscript }: WorkspaceHistoryProps) 
     <div className="w-full max-w-4xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#edf7ee] border border-[#499557]/30 text-[#499557] text-xs font-semibold shadow-2xs">
             <FolderOpen className="w-3.5 h-3.5" />
             <span>Local Browser Workspace</span>
           </div>
@@ -91,8 +91,8 @@ export function WorkspaceHistory({ onSelectTranscript }: WorkspaceHistoryProps) 
       </div>
 
       {items.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center space-y-4 shadow-sm">
-          <div className="w-16 h-16 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mx-auto">
+        <div className="bg-white rounded-2xl sm:rounded-[22px] border border-slate-200/80 p-12 text-center space-y-4 shadow-2xs">
+          <div className="w-16 h-16 rounded-full bg-[#edf7ee] text-[#499557] flex items-center justify-center mx-auto shadow-2xs">
             <FileAudio className="w-8 h-8" />
           </div>
           <div className="space-y-1">

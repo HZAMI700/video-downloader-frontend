@@ -157,7 +157,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
       </div>
 
       {/* Main Container Card */}
-      <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-7 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col md:flex-row items-center gap-6 md:gap-8 transition-all duration-300">
+      <div className="bg-white rounded-2xl sm:rounded-[22px] p-5 sm:p-6 md:p-7 shadow-2xs border border-slate-200/80 flex flex-col md:flex-row items-center gap-6 md:gap-8 transition-all duration-300">
         
         {/* Left Column: Video Thumbnail Preview or Embedded Stream Player */}
         <div className={`shrink-0 ${isVertical ? 'w-full sm:w-auto flex justify-center' : 'w-full md:w-[45%]'}`}>
@@ -253,7 +253,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
                       download
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
-                      className="px-5 sm:px-6 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-95 shadow-md shadow-emerald-500/20 flex items-center gap-1.5 transition-all"
+                      className="px-5 sm:px-6 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-[#499557] hover:bg-[#3d7d49] shadow-md flex items-center gap-1.5 transition-all"
                     >
                       <CheckCircle className="w-4 h-4" />
                       <span>Save File</span>
@@ -261,7 +261,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
                   ) : isProcessing ? (
                     <button
                       disabled
-                      className="px-5 sm:px-6 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#9333EA] to-[#06B6D4] opacity-90 flex items-center gap-2 cursor-wait"
+                      className="px-5 sm:px-6 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-[#499557] opacity-90 flex items-center gap-2 cursor-wait"
                     >
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
                       <span>{activeJob.progress_percent > 0 ? `${activeJob.progress_percent.toFixed(0)}%` : 'Queued...'}</span>
@@ -282,7 +282,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
                       disabled={isStartingJob}
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
-                      className="px-6 sm:px-7 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] hover:opacity-95 shadow-md shadow-purple-500/25 transition-all disabled:opacity-50"
+                      className="px-6 sm:px-7 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-[#499557] hover:bg-[#3d7d49] shadow-md transition-all disabled:opacity-50"
                     >
                       Download
                     </motion.button>
@@ -297,7 +297,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
             <div className="pt-2">
               <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden p-0.5">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] rounded-full"
+                  className="h-full bg-[#499557] rounded-full"
                   initial={{ width: '5%' }}
                   animate={{ width: `${Math.max(5, activeJob.progress_percent)}%` }}
                   transition={{ duration: 0.3 }}
@@ -305,7 +305,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
               </div>
               <p className="text-[11px] text-slate-500 mt-1.5 flex justify-between">
                 <span>Processing and preparing your download...</span>
-                <span className="font-semibold text-purple-600">{activeJob.progress_percent.toFixed(0)}%</span>
+                <span className="font-semibold text-[#499557]">{activeJob.progress_percent.toFixed(0)}%</span>
               </p>
             </div>
           )}
