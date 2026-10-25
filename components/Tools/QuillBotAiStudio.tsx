@@ -122,7 +122,7 @@ export const QUILLBOT_TOOLS: AiToolCardConfig[] = [
   {
     id: 'ai-chat',
     title: 'AI Chat',
-    description: "Unlock your writing potential with QuillBot's free AI chat",
+    description: "Unlock your writing potential with Playzy's free AI chat",
     icon: <MessageSquare className="w-4 h-4 text-blue-600" />,
     iconBg: 'bg-blue-50 border-blue-200/80',
     badgeColor: 'text-blue-700 bg-blue-50 border-blue-200',
@@ -158,7 +158,7 @@ const SAMPLE_TEXTS: Record<string, string> = {
   'summarizer':
     'Machine learning is a branch of artificial intelligence and computer science which focuses on the use of data and algorithms to imitate the way that humans learn, gradually improving its accuracy. In the last couple of decades, technological advances in storage and processing power have enabled some innovative products based on machine learning, such as Netflix’s recommendation engine and self-driving cars.',
   'translator':
-    'Welcome to QuillBot! Our intelligent writing platform empowers millions of students and professionals to write with clarity and confidence.',
+    'Welcome to Playzy! Our intelligent writing platform empowers millions of students and professionals to write with clarity and confidence.',
   'plagiarism-checker':
     'To be or not to be, that is the question: whether tis nobler in the mind to suffer the slings and arrows of outrageous fortune, or to take arms against a sea of troubles.',
 };
@@ -220,7 +220,7 @@ export function QuillBotAiStudio({
     {
       role: 'assistant',
       content:
-        "Hello! I'm QuillBot AI Assistant. How can I help you write, brainstorm, edit, or research today?",
+        "Hello! I'm Playzy AI Assistant. How can I help you write, brainstorm, edit, or research today?",
     },
   ]);
   const [chatInput, setChatInput] = useState('');
@@ -542,7 +542,7 @@ export function QuillBotAiStudio({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-base font-extrabold tracking-tight text-slate-900">QuillBot</span>
+              <span className="text-base font-extrabold tracking-tight text-slate-900">Playzy</span>
               <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#edf7ee] text-[#499557] border border-[#499557]/20">
                 100% Free Suite
               </span>
@@ -832,7 +832,7 @@ export function QuillBotAiStudio({
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleDownload(outputText, `quillbot_paraphrased_${Date.now()}.txt`)}
+                      onClick={() => handleDownload(outputText, `playzy_paraphrased_${Date.now()}.txt`)}
                       disabled={!outputText}
                       className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold disabled:opacity-40"
                     >
@@ -1590,7 +1590,7 @@ export function QuillBotAiStudio({
               {isLoading && (
                 <div className="flex items-center gap-2 text-xs text-slate-400">
                   <Loader2 className="w-4 h-4 animate-spin text-[#499557]" />
-                  <span>QuillBot AI is thinking...</span>
+                  <span>Playzy AI is thinking...</span>
                 </div>
               )}
             </div>
@@ -1601,7 +1601,7 @@ export function QuillBotAiStudio({
                   type="text"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  placeholder="Ask QuillBot AI anything, or drop a document above to analyze..."
+                  placeholder="Ask Playzy AI anything, or drop a document above to analyze..."
                   className="flex-1 bg-transparent px-3 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none"
                 />
                 <button

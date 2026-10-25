@@ -63,10 +63,10 @@ export const CATEGORIES: CategoryDefinition[] = [
     id: 'ai-section',
     name: 'AI Section',
     badge: '8 TOOLS',
-    heroBadge: 'QuillBot AI Suite • 100% Free & No Sign-up',
+    heroBadge: 'Playzy AI Suite • 100% Free & No Sign-up',
     heroTitle: 'AI Writing & Creative Suite',
     heroDescription:
-      'Rewrite, edit, humanize, translate, scan, and detect with high-performance QuillBot AI tools.',
+      'Rewrite, edit, humanize, translate, scan, and detect with high-performance Playzy AI tools.',
     themeColor: 'emerald',
     tools: [
       {
@@ -74,7 +74,7 @@ export const CATEGORIES: CategoryDefinition[] = [
         name: 'AI Chat',
         category: 'ai-section',
         categoryName: 'AI Section',
-        shortDesc: "Unlock your potential with QuillBot's free AI chat!",
+        shortDesc: "Unlock your potential with Playzy's free AI chat!",
         fullDesc:
           'Ask questions, brainstorm ideas, draft emails, and solve complex problems with low latency LLMs.',
         iconName: 'MessageSquare',
@@ -191,8 +191,8 @@ export const CATEGORIES: CategoryDefinition[] = [
   {
     id: 'audio-tools',
     name: 'Audio Tools',
-    badge: '9 TOOLS',
-    heroBadge: 'CoreAudio AI Suite • Real-time Transcription & DSP',
+    badge: '10 TOOLS',
+    heroBadge: 'Playzy Audio Suite • Real-time Transcription & DSP',
     heroTitle: 'Audio Transcription & Audio Processing Suite',
     heroDescription:
       'Transcribe, extract, convert, record, and translate audio files with high-precision Whisper models.',
@@ -200,17 +200,32 @@ export const CATEGORIES: CategoryDefinition[] = [
     tools: [
       {
         id: 'transcriber',
-        name: 'Audio Transcriber',
+        name: 'MP3 to Text',
         category: 'audio-tools',
         categoryName: 'Audio Tools',
-        shortDesc: 'Convert speech, podcasts, and video meetings to text',
+        shortDesc: 'Convert MP3 speech, podcasts, and recordings to text (MP3 only)',
         fullDesc:
-          'Whisper Large-v3 automated speech recognition with speaker diarization and accurate timestamps.',
+          'Whisper Large-v3 automated speech recognition with speaker diarization and accurate timestamps. Strictly accepts .mp3 audio files.',
         iconName: 'FileAudio',
         pastelBg: 'bg-[#EEF4FF]',
         iconBg: 'bg-white text-blue-600 shadow-sm',
         badgeColor: 'text-blue-600',
-        pillTag: 'Whisper Large-v3',
+        pillTag: 'MP3 Only',
+        popular: true,
+      },
+      {
+        id: 'mp4-to-text',
+        name: 'MP4 to Text',
+        category: 'audio-tools',
+        categoryName: 'Audio Tools',
+        shortDesc: 'Extract and transcribe speech from MP4 video files (MP4 only)',
+        fullDesc:
+          'Whisper Large-v3 video speech recognition with automatic audio extraction and timestamps. Strictly accepts .mp4 video files.',
+        iconName: 'FileVideo',
+        pastelBg: 'bg-[#EEF4FF]',
+        iconBg: 'bg-white text-indigo-600 shadow-sm',
+        badgeColor: 'text-indigo-600',
+        pillTag: 'MP4 Only',
         popular: true,
       },
       {
@@ -218,14 +233,14 @@ export const CATEGORIES: CategoryDefinition[] = [
         name: 'YouTube to MP3 Converter',
         category: 'audio-tools',
         categoryName: 'Audio Tools',
-        shortDesc: 'Extract high-bitrate MP3 audio from any YouTube video',
+        shortDesc: 'Extract 320kbps MP3 audio from any YouTube link (Link only)',
         fullDesc:
-          'High-speed cloud extraction up to 320 kbps with metadata tagging and zero quality loss.',
+          'High-speed cloud extraction up to 320 kbps with metadata tagging and zero quality loss. Link input only.',
         iconName: 'Youtube',
         pastelBg: 'bg-[#FFF1F3]',
         iconBg: 'bg-white text-rose-600 shadow-sm',
         badgeColor: 'text-rose-600',
-        pillTag: '320 kbps HD',
+        pillTag: 'Link Only',
         popular: true,
       },
       {
@@ -276,14 +291,14 @@ export const CATEGORIES: CategoryDefinition[] = [
         name: 'TikTok to MP3 Converter',
         category: 'audio-tools',
         categoryName: 'Audio Tools',
-        shortDesc: 'Extract audio & viral sounds from TikTok videos',
+        shortDesc: 'Extract audio & viral sounds from TikTok link (Link only)',
         fullDesc:
-          'Save background music, voices, and audio clips from TikTok with high fidelity and zero watermark.',
+          'Save background music, voices, and audio clips from TikTok links with high fidelity and zero watermark. Link input only.',
         iconName: 'Music2',
         pastelBg: 'bg-[#FFF8EB]',
         iconBg: 'bg-white text-amber-600 shadow-sm',
         badgeColor: 'text-amber-600',
-        pillTag: 'Lossless MP3',
+        pillTag: 'Link Only',
       },
       {
         id: 'mp4-to-mp3',
@@ -304,14 +319,14 @@ export const CATEGORIES: CategoryDefinition[] = [
         name: 'YouTube to WAV Converter',
         category: 'audio-tools',
         categoryName: 'Audio Tools',
-        shortDesc: 'Extract uncompressed studio-grade WAV audio',
+        shortDesc: 'Extract uncompressed WAV audio from YouTube link (Link only)',
         fullDesc:
-          'Studio quality 24-bit 48kHz uncompressed WAV audio for sound designers and music producers.',
+          'Studio quality 24-bit 48kHz uncompressed WAV audio extracted directly from YouTube video links. Link input only.',
         iconName: 'Youtube',
         pastelBg: 'bg-[#EEF4FF]',
         iconBg: 'bg-white text-blue-600 shadow-sm',
         badgeColor: 'text-blue-600',
-        pillTag: '24-bit PCM WAV',
+        pillTag: 'Link Only',
       },
       {
         id: 'extract-audio',

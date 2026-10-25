@@ -169,8 +169,24 @@ export function AudioTranscriber({
     }, 1500);
   };
 
+  const isMp3Tool = toolId === 'transcriber' || toolId === 'mp3-to-text';
+  const isMp4Tool = toolId === 'mp4-to-text';
+  const acceptFormat = isMp3Tool ? '.mp3,audio/mpeg' : isMp4Tool ? '.mp4,video/mp4' : 'audio/*,video/*,.mp3,.wav,.mp4';
+
   const handleFileSelect = (file: File) => {
     setErrorMessage(null);
+    const fileName = file.name.toLowerCase();
+
+    if (isMp3Tool && !fileName.endsWith('.mp3')) {
+      setErrorMessage("Only .mp3 files are supported in MP3 to Text. To transcribe video files, please switch to 'MP4 to Text'.");
+      return;
+    }
+
+    if (isMp4Tool && !fileName.endsWith('.mp4')) {
+      setErrorMessage("Only .mp4 files are supported in MP4 to Text. To transcribe audio files, please switch to 'MP3 to Text'.");
+      return;
+    }
+
     const maxBytes = 100 * 1024 * 1024; // 100MB
     if (file.size > maxBytes) {
       setErrorMessage('The selected file exceeds 100 MB. Please choose a file under 100 MB.');
@@ -283,17 +299,34 @@ export function AudioTranscriber({
   // Get dynamic titles based on sidebar tool
   const getToolMeta = () => {
     switch (toolId) {
+      case 'transcriber':
+      case 'mp3-to-text':
+        return {
+          title: 'MP3 to Text Converter - Playzy Audio AI',
+          subtitle: 'Convert speech, podcasts, and audio recordings to text with 99% accuracy. Strictly accepts MP3 files.',
+          placeholder: 'Paste direct audio stream link or upload MP3 file below...',
+          badge: 'MP3 Audio Only',
+        };
+      case 'mp4-to-text':
+        return {
+          title: 'MP4 to Text Converter - Playzy Video AI',
+          subtitle: 'Extract and transcribe speech directly from MP4 video files with automatic speaker detection. Strictly accepts MP4 files.',
+          placeholder: 'Paste direct MP4 stream link or upload MP4 video below...',
+          badge: 'MP4 Video Only',
+        };
       case 'youtube-to-mp3':
         return {
-          title: 'YouTube to MP3 Converter - Audio Transcriber AI',
-          subtitle: 'Convert YouTube videos and shorts into high-quality MP3 audio files instantly. No sign-up required.',
+          title: 'YouTube to MP3 Converter - Playzy Tools',
+          subtitle: 'Convert YouTube videos and shorts into high-quality MP3 audio files instantly. Link input only.',
           placeholder: 'Paste YouTube URL (e.g. https://www.youtube.com/watch?v=...)',
+          badge: 'Link Only',
         };
       case 'tiktok-to-mp3':
         return {
-          title: 'TikTok to MP3 Converter - Audio Transcriber AI',
-          subtitle: 'Extract original TikTok sounds and background music without watermarks.',
+          title: 'TikTok to MP3 Converter - Playzy Tools',
+          subtitle: 'Extract original TikTok sounds and background music without watermarks. Link input only.',
           placeholder: 'Paste TikTok video link (e.g. https://www.tiktok.com/@user/video/...)',
+          badge: 'Link Only',
         };
       case 'video-to-mp3':
       case 'mp4-to-mp3':
@@ -301,43 +334,50 @@ export function AudioTranscriber({
           title: 'Video to MP3 Converter - Free & Instant',
           subtitle: 'Extract pristine MP3 audio from any MP4, MOV, MKV, or AVI video file.',
           placeholder: 'Paste video stream URL or drop your video file below',
+          badge: 'Video to MP3',
         };
       case 'youtube-to-wav':
         return {
           title: 'YouTube to WAV Converter - Lossless Audio',
-          subtitle: 'Extract uncompressed high-fidelity WAV audio from YouTube videos with zero quality loss.',
+          subtitle: 'Extract uncompressed high-fidelity WAV audio from YouTube video links with zero quality loss. Link input only.',
           placeholder: 'Paste YouTube video URL for WAV extraction',
+          badge: 'Link Only',
         };
       case 'extract-audio':
         return {
           title: 'Extract Audio from Video - Free Online Tool',
           subtitle: 'Strip video track and convert to pure MP3 or WAV audio stream in seconds.',
           placeholder: 'Paste video link or drop video file to extract audio',
+          badge: 'Audio Demuxer',
         };
       case 'english-to-tamil':
         return {
-          title: 'English to Tamil Audio Translator - Audio Transcriber AI',
+          title: 'English to Tamil Audio Translator - Playzy AI',
           subtitle: 'Convert spoken English audio into Tamil transcripts and translated subtitles with 99% accuracy.',
           placeholder: 'Paste audio link or upload file to translate into Tamil',
+          badge: 'Tamil Subtitles',
         };
       case 'audio-translator':
         return {
           title: 'Free AI Audio Translator - 120+ Languages',
           subtitle: 'Translate speech from any language into English, Spanish, French, German, Arabic, and more.',
           placeholder: 'Paste audio/video link or drop media file to translate',
+          badge: 'Multi-lingual',
         };
       case 'voice-to-text':
       case 'speech-transcriber':
         return {
-          title: 'Voice to Text Converter - Speech Transcriber AI',
+          title: 'Voice to Text Converter - Playzy Speech AI',
           subtitle: 'Turn voice memos, podcasts, interviews, and meetings into readable timestamped text.',
           placeholder: 'Paste direct audio URL or drop voice note',
+          badge: 'Voice to Text',
         };
       default:
         return {
-          title: 'Transcribe Audio to Text Free Online - Audio Transcriber AI',
-          subtitle: 'Simply Upload Audio file and get up to 99% with free Audio Transcriber AI. No sign-up, Unlimited and works with 120+ languages.',
-          placeholder: 'Paste direct audio link or YouTube / TikTok / Facebook URL...',
+          title: 'MP3 to Text Converter - Playzy AI',
+          subtitle: 'Convert MP3 audio recordings to text with 99% accuracy. Strictly accepts MP3 files.',
+          placeholder: 'Paste direct audio link or upload MP3 file...',
+          badge: 'MP3 Only',
         };
     }
   };
@@ -369,7 +409,7 @@ export function AudioTranscriber({
       <input
         ref={fileInputRef}
         type="file"
-        accept="audio/*,video/*,.mp3,.wav,.m4a,.aac,.flac,.mp4,.mov,.mkv,.webm,.avi"
+        accept={acceptFormat}
         className="hidden"
         onChange={(e) => {
           if (e.target.files && e.target.files[0]) {
@@ -482,10 +522,18 @@ export function AudioTranscriber({
 
               <div className="space-y-1">
                 <h3 className="text-lg sm:text-xl font-extrabold text-slate-900">
-                  Upload an audio file or paste a direct audio link.
+                  {isMp3Tool
+                    ? 'Upload an MP3 audio file or paste direct MP3 link'
+                    : isMp4Tool
+                    ? 'Upload an MP4 video file or paste direct MP4 link'
+                    : 'Upload media file or paste direct audio link'}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-400">
-                  Supported formats: MP3, WAV, M4A, AAC, FLAC, MP4, MOV, AVI, MKV, WEBM, up to 100 MB
+                  {isMp3Tool
+                    ? 'Strictly accepts .mp3 audio files up to 100 MB'
+                    : isMp4Tool
+                    ? 'Strictly accepts .mp4 video files up to 100 MB'
+                    : 'Supported formats: MP3, WAV, M4A, AAC, FLAC, MP4, up to 100 MB'}
                 </p>
               </div>
 
@@ -498,7 +546,9 @@ export function AudioTranscriber({
                   className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-purple-500/25 transition-all transform active:scale-95 disabled:opacity-50"
                 >
                   <UploadCloud className="w-4 h-4" />
-                  <span>Upload Audio</span>
+                  <span>
+                    {isMp3Tool ? 'Upload MP3' : isMp4Tool ? 'Upload MP4' : 'Upload Audio'}
+                  </span>
                 </button>
 
                 <button

@@ -34,6 +34,7 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { ToolId } from '../AppSidebar';
+import { generateTtsAudio } from '../../lib/api';
 
 interface AiVoiceStudioProps {
   toolId: ToolId;
@@ -667,8 +668,8 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
     window.speechSynthesis.speak(utterance);
   };
 
-  // Main Speech Generation
-  const handleGenerateSpeech = () => {
+  // Main Speech Generation (Neural Backend + Web Speech Fallback)
+  const handleGenerateSpeech = async () => {
     if (!scriptText.trim()) {
       setError('Please enter or drop some text to generate voice.');
       return;
@@ -676,6 +677,33 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
     setIsGenerating(true);
     setError(null);
+
+    // 1. Try high-fidelity backend Neural TTS (MP3)
+    try {
+      const langPrefix = activeVoice.langCode.split('-')[0].toLowerCase();
+      const blob = await generateTtsAudio(
+        scriptText,
+        langPrefix,
+        speedRate,
+        pitchOffset,
+        activeVoice.id
+      );
+
+      if (generatedAudioUrl) URL.revokeObjectURL(generatedAudioUrl);
+      const url = URL.createObjectURL(blob);
+      setGeneratedAudioUrl(url);
+      setIsPlaying(true);
+
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.src = url;
+        audioPlayerRef.current.play().catch(() => {});
+      }
+      setIsGenerating(false);
+      return;
+    } catch (apiErr) {
+      // 2. Seamless fallback to browser Web Speech API
+      console.warn('Backend TTS fallback to browser synthesis:', apiErr);
+    }
 
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
@@ -710,7 +738,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
       // Synthesize high fidelity offline audio wave for player & download
       createStudioAudioBlob(scriptText, finalRate, finalPitch);
     } else {
-      setError('Speech synthesis is not supported on this browser.');
+      setError('Speech synthesis failed. Please check network connection.');
       setIsGenerating(false);
     }
   };

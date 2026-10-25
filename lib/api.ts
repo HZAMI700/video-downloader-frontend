@@ -474,6 +474,28 @@ export async function runAiDetector(text: string): Promise<AiDetectorResponse> {
   return res.json();
 }
 
+export async function generateTtsAudio(
+  text: string,
+  lang: string = 'en',
+  speed: number = 1.0,
+  pitch: number = 1.0,
+  voiceId?: string
+): Promise<Blob> {
+  const endpoint = getApiEndpoint('ai/tts');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, lang, speed, pitch, voice_id: voiceId }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Speech generation failed (${res.status})`);
+  }
+  return res.blob();
+}
+
+
 
 
 
