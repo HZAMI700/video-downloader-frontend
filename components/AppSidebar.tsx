@@ -30,6 +30,7 @@ import {
   CheckCircle2,
   Globe,
   Sliders,
+  ShieldAlert,
 } from 'lucide-react';
 import { CategoryId } from '../lib/categories';
 
@@ -60,6 +61,7 @@ export type ToolId =
   | 'ai-chat'
   | 'paraphrasing-tool'
   | 'grammar-checker'
+  | 'ai-detector'
   | 'summarizer'
   | 'ai-humanizer'
   | 'translator'
@@ -191,7 +193,7 @@ export function AppSidebar({
                         : 'bg-emerald-500 text-zinc-950'
                     }`}
                   >
-                    7 TOOLS
+                    8 TOOLS
                   </span>
                 </button>
                 <button
@@ -211,7 +213,7 @@ export function AppSidebar({
               <button
                 type="button"
                 onClick={() => handleCategoryClick('ai-section')}
-                title="AI Section (7 Tools)"
+                title="AI Section (8 Tools)"
                 className="w-full py-2.5 flex justify-center text-emerald-400 hover:bg-white/5 rounded-xl mb-1"
               >
                 <Sparkles className="w-4 h-4" />
@@ -244,6 +246,13 @@ export function AppSidebar({
                   }
                   isCollapsed={isCollapsed}
                   onClick={() => handleToolClick('grammar-checker', 'ai-section')}
+                />
+                <SidebarToolPill
+                  icon={<ShieldAlert className="w-3.5 h-3.5 text-emerald-400" />}
+                  label="AI Detector"
+                  isActive={activeCategory === 'ai-section' && activeTool === 'ai-detector'}
+                  isCollapsed={isCollapsed}
+                  onClick={() => handleToolClick('ai-detector', 'ai-section')}
                 />
                 <SidebarToolPill
                   icon={<AlignLeft className="w-3.5 h-3.5 text-purple-400" />}

@@ -21,6 +21,7 @@ import {
   Wand2,
   DownloadCloud,
   FolderOpen,
+  ShieldAlert,
 } from 'lucide-react';
 import { ToolId } from '../components/AppSidebar';
 
@@ -61,11 +62,11 @@ export const CATEGORIES: CategoryDefinition[] = [
   {
     id: 'ai-section',
     name: 'AI Section',
-    badge: '7 TOOLS',
+    badge: '8 TOOLS',
     heroBadge: 'QuillBot AI Suite • 100% Free & No Sign-up',
     heroTitle: 'AI Writing & Creative Suite',
     heroDescription:
-      'Rewrite, edit, humanize, translate, scan, and generate with high-performance AI tools.',
+      'Rewrite, edit, humanize, translate, scan, and detect with high-performance QuillBot AI tools.',
     themeColor: 'emerald',
     tools: [
       {
@@ -111,6 +112,21 @@ export const CATEGORIES: CategoryDefinition[] = [
         iconBg: 'bg-white text-rose-600 shadow-sm',
         badgeColor: 'text-rose-600',
         pillTag: '0 Errors',
+      },
+      {
+        id: 'ai-detector',
+        name: 'AI Detector',
+        category: 'ai-section',
+        categoryName: 'AI Section',
+        shortDesc: 'Detect AI text with a precise 0-100 probability score',
+        fullDesc:
+          'Scan essays, articles, and documents to detect AI generation with sentence-level scoring and breakdown.',
+        iconName: 'ShieldAlert',
+        pastelBg: 'bg-[#F0FDF4]',
+        iconBg: 'bg-white text-emerald-700 shadow-sm',
+        badgeColor: 'text-emerald-700',
+        pillTag: 'Score / 100',
+        popular: true,
       },
 
       {

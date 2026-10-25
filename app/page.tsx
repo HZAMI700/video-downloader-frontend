@@ -387,6 +387,7 @@ export default function Home() {
                   activeTool === 'ai-chat' ||
                   activeTool === 'paraphrasing-tool' ||
                   activeTool === 'grammar-checker' ||
+                  activeTool === 'ai-detector' ||
                   activeTool === 'summarizer' ||
                   activeTool === 'ai-humanizer' ||
                   activeTool === 'translator' ||

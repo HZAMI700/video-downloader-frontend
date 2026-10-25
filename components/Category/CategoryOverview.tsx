@@ -23,6 +23,7 @@ import {
   Wand2,
   ChevronRight,
   ArrowRight,
+  ShieldAlert,
   Search,
 } from 'lucide-react';
 import { CategoryDefinition, CategoryToolItem } from '../../lib/categories';
@@ -89,6 +90,8 @@ export function CategoryOverview({
         return <Volume2 className={className} />;
       case 'Wand2':
         return <Wand2 className={className} />;
+      case 'ShieldAlert':
+        return <ShieldAlert className={className} />;
       default:
         return <Sparkles className={className} />;
     }

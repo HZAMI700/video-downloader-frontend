@@ -441,5 +441,39 @@ export async function runPlagiarismCheck(
   return res.json();
 }
 
+export interface AiDetectorSentence {
+  text: string;
+  ai_probability: number;
+  classification: 'ai' | 'mixed' | 'human';
+  reason?: string;
+}
+
+export interface AiDetectorResponse {
+  original_text: string;
+  ai_score: number;
+  human_score: number;
+  verdict: string;
+  analysis_summary: string;
+  total_words: number;
+  total_sentences: number;
+  sentences: AiDetectorSentence[];
+}
+
+export async function runAiDetector(text: string): Promise<AiDetectorResponse> {
+  const endpoint = getApiEndpoint('ai/ai-detector');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({ text }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `AI Detector failed (${res.status})`);
+  }
+  return res.json();
+}
+
+
 
 
