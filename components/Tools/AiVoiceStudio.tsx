@@ -683,6 +683,12 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
     setIsGenerating(true);
     setError(null);
+    if (generatedAudioUrl) {
+      URL.revokeObjectURL(generatedAudioUrl);
+      setGeneratedAudioUrl(null);
+    }
+    setIsPlaying(false);
+    setPlaybackTime(0);
 
     // 1. Try high-fidelity backend Neural TTS (MP3)
     try {
@@ -695,19 +701,13 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
         activeVoice.id
       );
 
-      if (generatedAudioUrl) URL.revokeObjectURL(generatedAudioUrl);
       const url = URL.createObjectURL(blob);
       setGeneratedAudioUrl(url);
 
       if (audioPlayerRef.current) {
         audioPlayerRef.current.src = url;
         audioPlayerRef.current.currentTime = 0;
-        audioPlayerRef.current.play().then(() => {
-          setIsPlaying(true);
-        }).catch((playErr) => {
-          console.warn('Playback notice:', playErr);
-          setIsPlaying(false);
-        });
+        audioPlayerRef.current.load();
       }
       setIsGenerating(false);
       return;
@@ -742,12 +742,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
         setIsPlaying(false);
       };
 
-      window.speechSynthesis.speak(utterance);
-      setIsPlaying(true);
-      setIsGenerating(false);
-
       // Synthesize high fidelity offline audio wave for player & download
       createStudioAudioBlob(scriptText, finalRate, finalPitch);
+      setIsGenerating(false);
     } else {
       setError('Speech synthesis failed. Please check network connection.');
       setIsGenerating(false);
@@ -795,6 +792,11 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
       const url = URL.createObjectURL(blob);
       setGeneratedAudioUrl(url);
       setAudioDuration(durationSecs);
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.src = url;
+        audioPlayerRef.current.currentTime = 0;
+        audioPlayerRef.current.load();
+      }
     } catch {
       // Fallback
     }
@@ -808,23 +810,46 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
   // Toggle Play / Pause on synthesized audio
   const togglePlayAudio = () => {
+    const audio = audioPlayerRef.current;
+    if (!audio || !generatedAudioUrl) return;
+
     if (isPlaying) {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
-      if (audioPlayerRef.current) audioPlayerRef.current.pause();
+      audio.pause();
       setIsPlaying(false);
     } else {
-      if (audioPlayerRef.current && generatedAudioUrl) {
-        audioPlayerRef.current.play().then(() => {
-          setIsPlaying(true);
-        }).catch(() => {
-          handleGenerateSpeech();
-        });
-      } else {
-        handleGenerateSpeech();
+      if (audio.ended || (audioDuration > 0 && Math.abs(audio.currentTime - audioDuration) < 0.2)) {
+        audio.currentTime = 0;
       }
+      audio
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch((playErr) => {
+          console.warn('Playback error:', playErr);
+          setIsPlaying(false);
+        });
     }
+  };
+
+  const formatTime = (secs: number) => {
+    if (!secs || isNaN(secs)) return '0:00';
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioPlayerRef.current || !audioDuration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+    const newTime = ratio * audioDuration;
+    audioPlayerRef.current.currentTime = newTime;
+    setPlaybackTime(newTime);
   };
 
   // Voice Clone: Mic recorder
@@ -1232,57 +1257,89 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
               </div>
             )}
 
-            {/* Primary Action Button */}
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={handleGenerateSpeech}
-                disabled={isGenerating || !scriptText.trim()}
-                className="flex-1 flex items-center justify-center gap-2 py-4 px-8 rounded-2xl bg-[#499557] hover:bg-[#3d7d49] text-white font-extrabold text-sm sm:text-base shadow-md transition-all active:scale-[0.99] disabled:opacity-50"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Synthesizing Voice...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5" />
-                    <span>Generate Speech ({activeVoice.name} • {activeVoice.language})</span>
-                  </>
-                )}
-              </button>
+            {/* 1. STATE: GENERATING (Keep loading until voice is generated) */}
+            {isGenerating && (
+              <div className="space-y-4 animate-apple-in">
+                <button
+                  type="button"
+                  disabled
+                  className="w-full flex items-center justify-center gap-2.5 py-4 px-8 rounded-2xl bg-[#2E7D32]/85 text-white font-extrabold text-sm sm:text-base shadow-md cursor-wait"
+                >
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Generating Voice with {activeVoice.name}... Please wait</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={togglePlayAudio}
-                className={`p-4 rounded-2xl border text-slate-700 hover:bg-slate-50 transition-all ${
-                  isPlaying ? 'bg-[#edf7ee] border-[#499557] text-[#499557]' : 'border-slate-200'
-                }`}
-                title={isPlaying ? 'Pause' : 'Play / Replay'}
-              >
-                {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-              </button>
-            </div>
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-slate-50 border border-emerald-200/90 flex flex-col items-center justify-center text-center space-y-3 shadow-xs">
+                  <div className="w-12 h-12 rounded-2xl bg-[#2E7D32] text-white flex items-center justify-center shadow-md shadow-emerald-700/20">
+                    <Radio className="w-6 h-6 animate-pulse" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-extrabold text-emerald-950">
+                      Synthesizing Neural Speech...
+                    </h4>
+                    <p className="text-xs text-emerald-700 max-w-md">
+                      Generating voice for <span className="font-bold">{activeVoice.name}</span> ({activeVoice.language}). Please keep this tab open while audio is generated.
+                    </p>
+                  </div>
+                  {/* Animated Wave Equalizer */}
+                  <div className="flex items-center gap-1.5 h-8 pt-1">
+                    {Array.from({ length: 24 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="w-1 bg-[#2E7D32] rounded-full animate-bounce"
+                        style={{
+                          animationDelay: `${(i * 0.08) % 0.8}s`,
+                          height: `${25 + ((i * 19) % 75)}%`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
-            {/* Live Audio Waveform & Player Container */}
-            {(isPlaying || generatedAudioUrl) && (
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white space-y-4 animate-fadeIn shadow-2xl border border-slate-800">
-                <div className="flex items-center justify-between">
+            {/* 2. STATE: PRISTINE (Show Generate Button only - no premature play/download buttons) */}
+            {!isGenerating && !generatedAudioUrl && (
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={handleGenerateSpeech}
+                  disabled={!scriptText.trim()}
+                  className="w-full flex items-center justify-center gap-2.5 py-4 px-8 rounded-2xl bg-[#2E7D32] hover:bg-[#256628] text-white font-extrabold text-sm sm:text-base shadow-md transition-all active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  <span>Generate Voice ({activeVoice.name} • {activeVoice.language})</span>
+                </button>
+              </div>
+            )}
+
+            {/* 3. STATE: GENERATED (Show Play Button & Download Button!) */}
+            {!isGenerating && generatedAudioUrl && (
+              <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white space-y-5 animate-apple-in shadow-2xl border border-slate-800">
+                {/* Header Row */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center border border-purple-500/30">
-                      <Volume2 className="w-5 h-5" />
+                    <div className="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30 text-lg">
+                      {activeVoice.flag}
                     </div>
                     <div>
-                      <h4 className="text-sm font-extrabold">{activeVoice.name} Speech Output</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-sm font-extrabold text-white">
+                          {activeVoice.name} Speech Ready
+                        </h4>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          Voice Generated
+                        </span>
+                      </div>
                       <p className="text-[11px] text-slate-400">
-                        {activeVoice.language} • {activeVoice.category} • 24kHz Lossless Audio
+                        {activeVoice.language} • {activeVoice.category} • Lossless Audio
                       </p>
                     </div>
                   </div>
 
                   {/* Playback Speed selector */}
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 self-start sm:self-auto">
+                    <span className="text-[10px] text-slate-400 mr-1 font-medium">Speed:</span>
                     {[0.75, 1.0, 1.25, 1.5].map((spd) => (
                       <button
                         key={spd}
@@ -1293,7 +1350,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                         }}
                         className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
                           playbackSpeed === spd
-                            ? 'bg-purple-600 text-white'
+                            ? 'bg-[#2E7D32] text-white'
                             : 'bg-slate-800 text-slate-400 hover:text-white'
                         }`}
                       >
@@ -1303,42 +1360,89 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                   </div>
                 </div>
 
-                {/* Animated Waveform Visualizer */}
-                <div className="flex items-center justify-between gap-1 h-12 py-2 px-3 rounded-xl bg-slate-900/80 border border-slate-800">
-                  {Array.from({ length: 48 }).map((_, i) => {
-                    const heightPercent = isPlaying
-                      ? 20 + Math.sin(i * 0.4 + Date.now() * 0.005) * 35 + Math.random() * 30
-                      : 15 + Math.sin(i * 0.5) * 10;
-                    return (
-                      <div
-                        key={i}
-                        className={`w-1 rounded-full transition-all duration-150 ${
-                          isPlaying
-                            ? 'bg-gradient-to-t from-purple-500 via-indigo-400 to-cyan-300'
-                            : 'bg-slate-700'
-                        }`}
-                        style={{ height: `${Math.max(10, Math.min(100, heightPercent))}%` }}
-                      />
-                    );
-                  })}
+                {/* Animated Waveform Visualizer & Seek Timeline */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-1 h-14 py-2 px-3 rounded-xl bg-slate-900/90 border border-slate-800/80">
+                    {Array.from({ length: 48 }).map((_, i) => {
+                      const heightPercent = isPlaying
+                        ? 20 + Math.sin(i * 0.4 + Date.now() * 0.005) * 35 + Math.random() * 30
+                        : 15 + Math.sin(i * 0.5) * 10;
+                      return (
+                        <div
+                          key={i}
+                          className={`w-1 rounded-full transition-all duration-150 ${
+                            isPlaying
+                              ? 'bg-gradient-to-t from-emerald-400 via-teal-300 to-cyan-200'
+                              : 'bg-slate-700'
+                          }`}
+                          style={{ height: `${Math.max(12, Math.min(100, heightPercent))}%` }}
+                        />
+                      );
+                    })}
+                  </div>
+
+                  {/* Scrubbable Timeline */}
+                  <div
+                    onClick={handleSeek}
+                    className="relative w-full h-2.5 bg-slate-800 hover:bg-slate-700/80 rounded-full cursor-pointer group transition-colors"
+                    title="Click to seek"
+                  >
+                    <div
+                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all"
+                      style={{
+                        width: `${audioDuration > 0 ? Math.min(100, (playbackTime / audioDuration) * 100) : 0}%`,
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex justify-between text-[11px] font-mono text-slate-400">
+                    <span>{formatTime(playbackTime)}</span>
+                    <span>{formatTime(audioDuration)}</span>
+                  </div>
                 </div>
 
-                {/* Action buttons: Play/Pause + Download Audio */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-                  <span className="text-xs text-slate-400 font-mono">
-                    Status: {isPlaying ? 'Playing Audio...' : 'Audio Ready'}
-                  </span>
+                {/* SHOW TO USER: PLAY BUTTON AND DOWNLOAD BUTTON */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    {/* The Play / Pause Button */}
+                    <button
+                      type="button"
+                      onClick={togglePlayAudio}
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#2E7D32] hover:bg-[#256628] text-white font-extrabold text-sm shadow-lg shadow-emerald-900/30 active:scale-95 transition cursor-pointer"
+                    >
+                      {isPlaying ? (
+                        <>
+                          <Pause className="w-5 h-5 fill-current" />
+                          <span>Pause Voice</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-5 h-5 fill-current" />
+                          <span>Play Voice</span>
+                        </>
+                      )}
+                    </button>
 
-                  {generatedAudioUrl && (
+                    {/* The Download Button */}
                     <a
                       href={generatedAudioUrl}
-                      download={`elevenlabs_${activeVoice.name.toLowerCase()}_${Date.now()}.wav`}
-                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+                      download={`playzy_${activeVoice.name.toLowerCase()}_${Date.now()}.mp3`}
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-sm shadow-md active:scale-95 transition cursor-pointer"
                     >
-                      <Download className="w-4 h-4" />
-                      <span>Download Master Audio (WAV)</span>
+                      <Download className="w-5 h-5 text-[#2E7D32]" />
+                      <span>Download Audio (MP3)</span>
                     </a>
-                  )}
+                  </div>
+
+                  {/* Regenerate Voice Button */}
+                  <button
+                    type="button"
+                    onClick={handleGenerateSpeech}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs transition active:scale-95 cursor-pointer"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Regenerate Voice</span>
+                  </button>
                 </div>
               </div>
             )}
@@ -1452,6 +1556,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
             <button
               type="button"
+              disabled={isGenerating}
               onClick={() => {
                 if (!sampleAudio && !recordedBlob) {
                   setError('Please record or drop a voice sample first.');
@@ -1460,10 +1565,54 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                 setCloneSuccess(true);
                 handleGenerateSpeech();
               }}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold text-sm shadow-xl shadow-purple-500/25 transition-all"
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold text-sm shadow-xl shadow-purple-500/25 transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
-              Synthesize with Cloned Voice Profile
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Synthesizing Cloned Voice... Please wait</span>
+                </>
+              ) : (
+                <span>Synthesize with Cloned Voice Profile</span>
+              )}
             </button>
+
+            {/* Generated Cloned Audio Output */}
+            {!isGenerating && generatedAudioUrl && cloneSuccess && (
+              <div className="p-6 rounded-2xl bg-slate-900 text-white space-y-4 animate-apple-in border border-purple-500/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                      <Mic className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-extrabold">{cloneVoiceName} Ready</h4>
+                      <p className="text-[11px] text-slate-400">Neural Cloned Voice Audio</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={togglePlayAudio}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs shadow-md transition active:scale-95"
+                  >
+                    {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
+                    <span>{isPlaying ? 'Pause' : 'Play Voice'}</span>
+                  </button>
+
+                  <a
+                    href={generatedAudioUrl}
+                    download={`playzy_clone_${Date.now()}.mp3`}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-xs shadow-md transition active:scale-95"
+                  >
+                    <Download className="w-4 h-4 text-purple-600" />
+                    <span>Download Audio (MP3)</span>
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
