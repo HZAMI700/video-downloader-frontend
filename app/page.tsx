@@ -196,11 +196,11 @@ export default function Home() {
   const currentToolDef = activeTool ? getToolById(activeTool) : undefined;
 
   return (
-    <div className="min-h-screen p-2 sm:p-4 lg:p-6 flex items-center justify-center font-sans">
-      {/* Outer Apple macOS Window Frame */}
+    <div className="min-h-screen w-full p-1 sm:p-2 bg-[#f4f5f8] flex flex-col font-sans">
+      {/* Outer Apple macOS Window Frame - Full Screen Edge & Light Stroke */}
       <div
         id="appShell"
-        className="apple-shell w-full max-w-[1540px] min-h-[900px] bg-[#14151a] rounded-[34px] p-2.5 sm:p-3.5 flex flex-col lg:flex-row gap-3 transition-colors duration-300 shadow-2xl relative"
+        className="apple-shell w-full min-h-[calc(100vh-1rem)] bg-[#181920] rounded-[22px] p-1.5 sm:p-2 flex flex-col lg:flex-row gap-2.5 transition-colors duration-300 border border-zinc-700/30 relative flex-1"
       >
         {/* Left Dark Apple Sidebar */}
         <AppSidebar
@@ -214,8 +214,8 @@ export default function Home() {
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
         />
 
-        {/* Main Inner Apple Canvas (White rounded sheet inside dark shell) */}
-        <main className="flex-1 bg-[#F9FAFC] rounded-[26px] p-4 sm:p-6 lg:p-8 flex flex-col justify-between overflow-x-hidden min-h-[860px] relative">
+        {/* Main Inner Apple Canvas (White rounded sheet with light clean stroke) */}
+        <main className="flex-1 bg-[#F9FAFC] rounded-[18px] p-3.5 sm:p-5 lg:p-6 flex flex-col justify-between overflow-x-hidden min-h-[calc(100vh-2.5rem)] border border-zinc-200/60 shadow-xs relative">
           <div>
             {/* Top Navigation & Breadcrumb Header */}
             <header className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-zinc-200/70">
@@ -387,7 +387,6 @@ export default function Home() {
                   activeTool === 'ai-chat' ||
                   activeTool === 'paraphrasing-tool' ||
                   activeTool === 'grammar-checker' ||
-                  activeTool === 'ai-image-generator' ||
                   activeTool === 'summarizer' ||
                   activeTool === 'ai-humanizer' ||
                   activeTool === 'translator' ||

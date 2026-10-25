@@ -39,8 +39,8 @@ body {
 /* Apple / macOS Window Shell & Bento Card Physics */
 .apple-shell {
   box-shadow:
-    0 30px 70px -15px rgba(15, 23, 42, 0.16),
-    0 0 1px 1px rgba(15, 23, 42, 0.06);
+    0 12px 36px -10px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
 }
 
 .apple-card {

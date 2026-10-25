@@ -5,7 +5,6 @@ import {
   MessageSquare,
   RefreshCw,
   CheckCheck,
-  Image as ImageIcon,
   AlignLeft,
   UserCheck,
   Languages,
@@ -80,14 +79,6 @@ export const QUILLBOT_TOOLS: AiToolCardConfig[] = [
     icon: <CheckCheck className="w-5 h-5 text-rose-500" />,
     iconBg: 'bg-rose-50 border-rose-200/80',
     badgeColor: 'text-rose-700 bg-rose-50 border-rose-200',
-  },
-  {
-    id: 'ai-image-generator',
-    title: 'AI Image Generator',
-    description: "Create AI images, photos, and graphics online with QuillBot's...",
-    icon: <ImageIcon className="w-5 h-5 text-amber-500" />,
-    iconBg: 'bg-amber-50 border-amber-200/80',
-    badgeColor: 'text-amber-700 bg-amber-50 border-amber-200',
   },
   {
     id: 'summarizer',
@@ -186,12 +177,6 @@ export function QuillBotAiStudio({
   const [humanizeTone, setHumanizeTone] = useState('balanced');
   const [aiScore, setAiScore] = useState<number | null>(null);
 
-  // AI Image Generator state
-  const [imagePrompt, setImagePrompt] = useState('A futuristic glowing crystal city at sunset, 8k cinematic hyperrealistic');
-  const [imageStyle, setImageStyle] = useState('cinematic');
-  const [aspectRatio, setAspectRatio] = useState('1:1');
-  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
-
   // AI Chat state
   const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string }>>([
     {
@@ -227,13 +212,6 @@ export function QuillBotAiStudio({
   const processIncomingFile = (file: File) => {
     setLoadedFileName(file.name);
     setErrorMessage(null);
-
-    // If it's an image and user is in image generator
-    if (file.type.startsWith('image/')) {
-      const promptFromImg = `Variation inspired by image ${file.name.replace(/\.[^/.]+$/, '')}, high resolution studio detail`;
-      setImagePrompt(promptFromImg);
-      return;
-    }
 
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -346,34 +324,7 @@ export function QuillBotAiStudio({
     }
   };
 
-  // 5. Run AI Image Generator
-  const handleGenerateImage = () => {
-    if (!imagePrompt.trim()) return;
-    setIsLoading(true);
-    setErrorMessage(null);
-
-    const encodedPrompt = encodeURIComponent(`${imagePrompt}, ${imageStyle} style, 8k wallpaper`);
-    let dims = 'width=1024&height=1024';
-    if (aspectRatio === '16:9') dims = 'width=1280&height=720';
-    if (aspectRatio === '9:16') dims = 'width=720&height=1280';
-
-    const seed = Math.floor(Math.random() * 100000);
-    const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?${dims}&seed=${seed}&nologo=true`;
-
-    const img = new Image();
-    img.src = url;
-    img.onload = () => {
-      setGeneratedImageUrl(url);
-      setIsLoading(false);
-    };
-    img.onerror = () => {
-      // Fallback
-      setGeneratedImageUrl(url);
-      setIsLoading(false);
-    };
-  };
-
-  // 6. Run AI Chat
+  // 5. Run AI Chat
   const handleSendChat = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!chatInput.trim() || isLoading) return;
@@ -950,82 +901,7 @@ export function QuillBotAiStudio({
           </div>
         )}
 
-        {/* 5. AI IMAGE GENERATOR WORKSPACE */}
-        {currentTool === 'ai-image-generator' && (
-          <div className="p-4 sm:p-8 space-y-6">
-            <div className="space-y-4 max-w-3xl mx-auto">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-                  Image Prompt Description
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={imagePrompt}
-                    onChange={(e) => setImagePrompt(e.target.value)}
-                    placeholder="Describe the image you want to generate (or drop prompt file)..."
-                    className="flex-1 px-4 py-3 rounded-2xl border border-slate-200 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-amber-500 shadow-inner"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleGenerateImage}
-                    disabled={isLoading || !imagePrompt.trim()}
-                    className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
-                  >
-                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
-                    <span>Generate</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Style presets */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold text-slate-500 mr-1">Style:</span>
-                {['cinematic', 'photorealistic', 'anime', 'digital-art', '3d-render', 'fantasy'].map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => setImageStyle(s)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold capitalize transition-all ${
-                      imageStyle === s
-                        ? 'bg-amber-500 text-white'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                    }`}
-                  >
-                    {s.replace('-', ' ')}
-                  </button>
-                ))}
-              </div>
-
-              {/* Generated Image Showcase */}
-              {generatedImageUrl && (
-                <div className="pt-4 flex flex-col items-center space-y-4 animate-fadeIn">
-                  <div className="relative rounded-3xl overflow-hidden border-2 border-slate-200 shadow-2xl max-h-[500px] w-full max-w-lg bg-slate-950 flex items-center justify-center">
-                    <img
-                      src={generatedImageUrl}
-                      alt={imagePrompt}
-                      className="w-full h-auto object-cover max-h-[500px]"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <a
-                      href={generatedImageUrl}
-                      download={`quillbot_ai_${Date.now()}.jpg`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-md transition-all active:scale-95"
-                    >
-                      <Download className="w-4 h-4" />
-                      <span>Download High-Res Image</span>
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* 6. AI CHAT WORKSPACE */}
+        {/* 5. AI CHAT WORKSPACE */}
         {currentTool === 'ai-chat' && (
           <div className="flex flex-col h-[520px]">
             {/* Messages Scroll Area */}

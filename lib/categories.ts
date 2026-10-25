@@ -61,7 +61,7 @@ export const CATEGORIES: CategoryDefinition[] = [
   {
     id: 'ai-section',
     name: 'AI Section',
-    badge: '8 TOOLS',
+    badge: '7 TOOLS',
     heroBadge: 'QuillBot AI Suite • 100% Free & No Sign-up',
     heroTitle: 'AI Writing & Creative Suite',
     heroDescription:
@@ -112,20 +112,7 @@ export const CATEGORIES: CategoryDefinition[] = [
         badgeColor: 'text-rose-600',
         pillTag: '0 Errors',
       },
-      {
-        id: 'ai-image-generator',
-        name: 'AI Image Generator',
-        category: 'ai-section',
-        categoryName: 'AI Section',
-        shortDesc: 'Create AI images, photos, and graphics online',
-        fullDesc:
-          'Generate photorealistic renders, artistic illustrations, and vector icons from text prompts.',
-        iconName: 'ImageIcon',
-        pastelBg: 'bg-[#FFF8EB]',
-        iconBg: 'bg-white text-amber-600 shadow-sm',
-        badgeColor: 'text-amber-600',
-        pillTag: '4K Studio',
-      },
+
       {
         id: 'summarizer',
         name: 'Summarizer',

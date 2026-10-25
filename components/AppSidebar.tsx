@@ -60,7 +60,6 @@ export type ToolId =
   | 'ai-chat'
   | 'paraphrasing-tool'
   | 'grammar-checker'
-  | 'ai-image-generator'
   | 'summarizer'
   | 'ai-humanizer'
   | 'translator'
@@ -115,7 +114,7 @@ export function AppSidebar({
 
       {/* Apple Dark Sidebar Container */}
       <aside
-        className={`apple-sidebar-dark text-zinc-300 w-full lg:w-[276px] shrink-0 rounded-[26px] px-3.5 py-4 flex flex-col justify-between select-none transition-all duration-300 z-50 ${
+        className={`apple-sidebar-dark text-zinc-300 w-full lg:w-[276px] shrink-0 rounded-[18px] px-3.5 py-4 flex flex-col justify-between select-none transition-all duration-300 border border-white/5 z-50 ${
           isCollapsed ? 'lg:w-[84px]' : 'lg:w-[276px]'
         } ${
           isMobileOpen
@@ -192,7 +191,7 @@ export function AppSidebar({
                         : 'bg-emerald-500 text-zinc-950'
                     }`}
                   >
-                    8 TOOLS
+                    7 TOOLS
                   </span>
                 </button>
                 <button
@@ -212,7 +211,7 @@ export function AppSidebar({
               <button
                 type="button"
                 onClick={() => handleCategoryClick('ai-section')}
-                title="AI Section (8 Tools)"
+                title="AI Section (7 Tools)"
                 className="w-full py-2.5 flex justify-center text-emerald-400 hover:bg-white/5 rounded-xl mb-1"
               >
                 <Sparkles className="w-4 h-4" />
@@ -245,15 +244,6 @@ export function AppSidebar({
                   }
                   isCollapsed={isCollapsed}
                   onClick={() => handleToolClick('grammar-checker', 'ai-section')}
-                />
-                <SidebarToolPill
-                  icon={<ImageIcon className="w-3.5 h-3.5 text-amber-400" />}
-                  label="AI Image Generator"
-                  isActive={
-                    activeCategory === 'ai-section' && activeTool === 'ai-image-generator'
-                  }
-                  isCollapsed={isCollapsed}
-                  onClick={() => handleToolClick('ai-image-generator', 'ai-section')}
                 />
                 <SidebarToolPill
                   icon={<AlignLeft className="w-3.5 h-3.5 text-purple-400" />}
