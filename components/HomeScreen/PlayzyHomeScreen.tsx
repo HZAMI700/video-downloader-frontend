@@ -606,21 +606,28 @@ export function PlayzyHomeScreen({
 
       {/* CENTER HERO & SKYWORK PROMPT COMMAND CENTER */}
       <div className="w-full max-w-[820px] flex flex-col items-center my-auto pt-2 pb-6 px-3">
-        {/* Skywork 3D Orb Avatar / Crystal Icon */}
+        {/* Playzy Signature 3D Prism Avatar */}
         <div className="relative mb-5 flex items-center justify-center">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-[#00A9C0] via-[#00c9a7] to-[#2495ff] p-0.5 shadow-[0_0_40px_rgba(0,201,167,0.35)] animate-pulse-glow">
-            <div className="w-full h-full bg-white dark:bg-[#0F131A] rounded-[22px] flex items-center justify-center transition-colors">
-              <svg className="w-9 h-9 text-[#00c9a7]" viewBox="0 0 32 32" fill="none">
-                <path
-                  d="M16 2L20.3 11.7L30 16L20.3 20.3L16 30L11.7 20.3L2 16L11.7 11.7L16 2Z"
-                  fill="url(#skyworkStarGrad)"
-                />
-                <circle cx="16" cy="16" r="3.5" fill="#FFFFFF" />
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-[#00A9C0] via-[#00c9a7] to-[#2495ff] p-0.5 shadow-[0_0_45px_rgba(0,201,167,0.4)] animate-pulse-glow">
+            <div className="w-full h-full bg-[#0A0E14] rounded-[22px] flex items-center justify-center p-3 transition-colors overflow-hidden">
+              <svg className="w-full h-full" viewBox="0 0 128 128" fill="none">
+                <path d="M28 20C28 15.39 33.02 12.55 37.01 14.89L96.01 49.89C99.98 52.24 99.98 57.76 96.01 60.11L62 80L28 58V20Z" fill="url(#heroLogoGrad)"/>
+                <path d="M28 58L62 80L37.01 94.41C33.02 96.72 28 93.88 28 89.27V58Z" fill="url(#heroLogoFacet)"/>
+                <path d="M28 58L62 80L96.01 60.11" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeOpacity="0.8"/>
+                <path d="M104 46C109 52 112 59 112 66C112 73 109 80 104 86" stroke="url(#heroLogoGrad)" strokeWidth="5" strokeLinecap="round" strokeOpacity="0.95"/>
+                <g transform="translate(62, 58)">
+                  <path d="M0 -15C0.8 -5 5 -0.8 15 0C5 0.8 0.8 5 0 15C-0.8 5 -5 0.8 -15 0C-5 -0.8 -0.8 -5 0 -15Z" fill="#FFFFFF"/>
+                  <circle cx="0" cy="0" r="2.5" fill="#00C9A7"/>
+                </g>
                 <defs>
-                  <linearGradient id="skyworkStarGrad" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#00A9C0" />
-                    <stop offset="0.5" stopColor="#00c9a7" />
-                    <stop offset="1" stopColor="#2495ff" />
+                  <linearGradient id="heroLogoGrad" x1="16" y1="16" x2="112" y2="112" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#00F5D4"/>
+                    <stop offset="45%" stopColor="#00C9A7"/>
+                    <stop offset="100%" stopColor="#0284C7"/>
+                  </linearGradient>
+                  <linearGradient id="heroLogoFacet" x1="20" y1="50" x2="70" y2="110" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#7000FF" stopOpacity="0.95"/>
+                    <stop offset="100%" stopColor="#00C9A7"/>
                   </linearGradient>
                 </defs>
               </svg>

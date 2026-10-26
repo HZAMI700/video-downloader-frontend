@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="logoGrad" x1="16" y1="16" x2="112" y2="112" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00F5D4"/>
+      <stop offset="40%" stop-color="#00C9A7"/>
+      <stop offset="80%" stop-color="#00A9C0"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <linearGradient id="logoFacet" x1="20" y1="50" x2="70" y2="110" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7000FF" stop-opacity="0.9"/>
+      <stop offset="60%" stop-color="#00C9A7"/>
+      <stop offset="100%" stop-color="#29CC5F"/>
+    </linearGradient>
+    <linearGradient id="logoStar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="60%" stop-color="#A7F3D0"/>
+      <stop offset="100%" stop-color="#00C9A7"/>
+    </linearGradient>
+    <filter id="logoGlow" x="-15%" y="-15%" width="130%" height="130%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#logoGlow)">
+    <!-- Main Upper Prism -->
+    <path d="M28 20C28 15.39 33.02 12.55 37.01 14.89L96.01 49.89C99.98 52.24 99.98 57.76 96.01 60.11L62 80L28 58V20Z"
+          fill="url(#logoGrad)"/>
+    <!-- Lower Depth Facet -->
+    <path d="M28 58L62 80L37.01 94.41C33.02 96.72 28 93.88 28 89.27V58Z"
+          fill="url(#logoFacet)"/>
+    <!-- Dividing Facet Line -->
+    <path d="M28 58L62 80L96.01 60.11" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.7"/>
+
+    <!-- Soundwave/Signal Arc -->
+    <path d="M104 46C109 52 112 59 112 66C112 73 109 80 104 86"
+          stroke="url(#logoGrad)" stroke-width="4" stroke-linecap="round" stroke-opacity="0.85"/>
+
+    <!-- Neural Center Sparkle -->
+    <g transform="translate(62, 58)">
+      <path d="M0 -14C0.8 -5 5 -0.8 14 0C5 0.8 0.8 5 0 14C-0.8 5 -5 0.8 -14 0C-5 -0.8 -0.8 -5 0 -14Z"
+            fill="url(#logoStar)"/>
+      <circle cx="0" cy="0" r="2" fill="#FFFFFF"/>
+    </g>
+  </g>
+</svg>

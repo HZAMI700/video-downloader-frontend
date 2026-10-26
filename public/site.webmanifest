@@ -1,0 +1,17 @@
+{
+  "name": "Playzy — AI Writing, Audio Studio & Video Downloader",
+  "short_name": "Playzy",
+  "description": "Free all-in-one AI Writing, Audio Voice Generator, Transcriber, and 4K Video Downloader suite.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F131A",
+  "theme_color": "#00C9A7",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

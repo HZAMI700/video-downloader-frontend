@@ -31,6 +31,9 @@ import {
   Zap,
   Sun,
   Moon,
+  FileText,
+  Headphones,
+  Wand2,
 } from 'lucide-react';
 import { useTheme } from './ThemeContext';
 import { CategoryId, CATEGORIES } from '../lib/categories';
@@ -113,60 +116,60 @@ export function AppSidebar({
     {
       id: 'ai-chat',
       name: 'Deep Research',
-      icon: <Search className="w-4 h-4" />,
+      icon: <Search className="w-4 h-4 text-cyan-500" />,
       category: 'ai-section',
       badge: 'Agent',
     },
     {
       id: 'paraphrasing-tool',
       name: 'Document Agent',
-      icon: <RefreshCw className="w-4 h-4" />,
+      icon: <FileText className="w-4 h-4 text-emerald-500" />,
       category: 'ai-section',
     },
     {
       id: 'ai-voice-generator',
       name: 'AI Voice Studio',
-      icon: <Volume2 className="w-4 h-4" />,
+      icon: <Volume2 className="w-4 h-4 text-purple-500" />,
       category: 'ai-voice',
       badge: '36+ Voices',
     },
     {
       id: 'mp3-to-text',
       name: 'Transcriber',
-      icon: <FileAudio className="w-4 h-4" />,
+      icon: <Headphones className="w-4 h-4 text-teal-500" />,
       category: 'audio-tools',
       badge: 'MP3 / MP4',
     },
     {
       id: 'video-downloader',
       name: 'Media Downloader',
-      icon: <DownloadCloud className="w-4 h-4" />,
+      icon: <DownloadCloud className="w-4 h-4 text-sky-500" />,
       category: 'video-downloader',
       badge: '4K',
     },
     {
       id: 'ai-detector',
       name: 'AI Detector',
-      icon: <ShieldAlert className="w-4 h-4" />,
+      icon: <ShieldAlert className="w-4 h-4 text-rose-500" />,
       category: 'ai-section',
       badge: '0-100%',
     },
     {
       id: 'ai-humanizer',
       name: 'AI Humanizer',
-      icon: <UserCheck className="w-4 h-4" />,
+      icon: <Wand2 className="w-4 h-4 text-indigo-500" />,
       category: 'ai-section',
     },
     {
       id: 'grammar-checker',
       name: 'Grammar Engine',
-      icon: <CheckCheck className="w-4 h-4" />,
+      icon: <CheckCheck className="w-4 h-4 text-emerald-500" />,
       category: 'ai-section',
     },
     {
       id: 'workspace',
       name: 'Saved Workspace',
-      icon: <FolderOpen className="w-4 h-4" />,
+      icon: <FolderOpen className="w-4 h-4 text-amber-500" />,
       category: 'workspace',
     },
   ];
@@ -207,20 +210,39 @@ export function AppSidebar({
               }}
               className="flex items-center gap-2.5 group cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] p-0.5 shadow-[0_0_15px_rgba(0,201,167,0.3)]">
-                <div className="w-full h-full bg-white dark:bg-[#0F131A] rounded-[10px] flex items-center justify-center transition-colors">
-                  <svg className="w-4 h-4 text-[#00c9a7]" viewBox="0 0 32 32" fill="none">
-                    <path
-                      d="M16 2L20.3 11.7L30 16L20.3 20.3L16 30L11.7 20.3L2 16L11.7 11.7L16 2Z"
-                      fill="currentColor"
-                    />
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] p-[1.5px] shadow-[0_0_15px_rgba(0,201,167,0.35)] group-hover:shadow-[0_0_22px_rgba(0,201,167,0.55)] transition-all">
+                <div className="w-full h-full bg-[#0A0E14] rounded-[10.5px] flex items-center justify-center p-1 overflow-hidden transition-colors">
+                  <svg className="w-full h-full" viewBox="0 0 128 128" fill="none">
+                    <path d="M28 20C28 15.39 33.02 12.55 37.01 14.89L96.01 49.89C99.98 52.24 99.98 57.76 96.01 60.11L62 80L28 58V20Z" fill="url(#sidebarLogoGrad)"/>
+                    <path d="M28 58L62 80L37.01 94.41C33.02 96.72 28 93.88 28 89.27V58Z" fill="url(#sidebarLogoFacet)"/>
+                    <path d="M28 58L62 80L96.01 60.11" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.75"/>
+                    <path d="M104 46C109 52 112 59 112 66C112 73 109 80 104 86" stroke="url(#sidebarLogoGrad)" strokeWidth="4.5" strokeLinecap="round" strokeOpacity="0.9"/>
+                    <g transform="translate(62, 58)">
+                      <path d="M0 -14C0.8 -5 5 -0.8 14 0C5 0.8 0.8 5 0 14C-0.8 5 -5 0.8 -14 0C-5 -0.8 -0.8 -5 0 -14Z" fill="#FFFFFF"/>
+                    </g>
+                    <defs>
+                      <linearGradient id="sidebarLogoGrad" x1="16" y1="16" x2="112" y2="112" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stopColor="#00F5D4"/>
+                        <stop offset="50%" stopColor="#00C9A7"/>
+                        <stop offset="100%" stopColor="#0284C7"/>
+                      </linearGradient>
+                      <linearGradient id="sidebarLogoFacet" x1="20" y1="50" x2="70" y2="110" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stopColor="#7000FF" stopOpacity="0.9"/>
+                        <stop offset="100%" stopColor="#00C9A7"/>
+                      </linearGradient>
+                    </defs>
                   </svg>
                 </div>
               </div>
               <div className="flex flex-col text-left">
-                <span className="text-[17px] font-black tracking-tight text-slate-900 dark:text-white font-display">
-                  playzy
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[17px] font-black tracking-tight text-slate-900 dark:text-white font-display">
+                    playzy
+                  </span>
+                  <span className="px-1 py-0.2 rounded text-[8.5px] font-extrabold uppercase bg-[#00c9a7]/15 text-[#009688] dark:text-[#00c9a7]">
+                    AI
+                  </span>
+                </div>
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Skywork Agent Hub</span>
               </div>
             </button>
@@ -265,14 +287,14 @@ export function AppSidebar({
                     key={tool.id}
                     type="button"
                     onClick={() => handleToolClick(tool.id, tool.category)}
-                    className={`w-full px-2.5 py-2 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer font-medium ${
+                    className={`w-full px-2.5 py-2 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer font-medium relative group/item ${
                       isActive
-                        ? 'bg-white dark:bg-[#1C232D] text-[#009688] dark:text-white border border-slate-300 dark:border-[#00c9a7]/40 shadow-xs font-bold'
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white'
+                        ? 'bg-white dark:bg-[#1C232D] text-[#009688] dark:text-white border border-slate-300 dark:border-[#00c9a7]/40 shadow-xs font-bold before:absolute before:left-1 before:top-2 before:bottom-2 before:w-1 before:bg-[#00c9a7] before:rounded-full'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5'
                     }`}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className={isActive ? 'text-[#009688] dark:text-[#00c9a7]' : 'text-slate-400'}>
+                    <div className="flex items-center gap-2.5 min-w-0 pl-1">
+                      <div className={`shrink-0 transition-transform group-hover/item:scale-110 ${isActive ? 'scale-105' : ''}`}>
                         {tool.icon}
                       </div>
                       <span className="truncate text-xs">{tool.name}</span>
