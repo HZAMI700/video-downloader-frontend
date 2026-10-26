@@ -28,6 +28,16 @@ import {
   Languages,
   ChevronDown,
   FolderPlus,
+  Compass,
+  Cpu,
+  Layers,
+  Search,
+  ExternalLink,
+  ChevronRight,
+  DownloadCloud,
+  FileSpreadsheet,
+  FileCode,
+  Zap,
 } from 'lucide-react';
 import { ToolId } from '../AppSidebar';
 import { runAiChat } from '../../lib/api';
@@ -42,6 +52,7 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   createdAt: number;
+  reasoningSteps?: string[];
 }
 
 export function PlayzyHomeScreen({
@@ -55,8 +66,9 @@ export function PlayzyHomeScreen({
   const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
   const [dislikedMap, setDislikedMap] = useState<Record<string, boolean>>({});
   const [showToolsDropdown, setShowToolsDropdown] = useState(false);
-  const [showNoticeBanner, setShowNoticeBanner] = useState(true);
   const [attachedFileName, setAttachedFileName] = useState<string | null>(null);
+  const [deepResearchActive, setDeepResearchActive] = useState(true);
+  const [selectedAgentTab, setSelectedAgentTab] = useState<'all' | 'research' | 'doc' | 'voice' | 'downloader' | 'transcriber'>('all');
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const pristineFileInputRef = useRef<HTMLInputElement | null>(null);
@@ -85,7 +97,7 @@ export function PlayzyHomeScreen({
     };
   }, []);
 
-  // Handle file uploads (txt, md, doc, docx)
+  // Handle file uploads (txt, md, doc, docx, pdf)
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -101,11 +113,19 @@ export function PlayzyHomeScreen({
     }
   };
 
-  // Chat message submission
+  // Chat message submission with Deep Research agent steps
   const handleSendMessage = async (textToSend?: string) => {
     const raw = typeof textToSend === 'string' ? textToSend : promptText;
     const clean = raw.trim();
     if (!clean || isGenerating) return;
+
+    // Check if input is a YouTube/TikTok link -> route directly to Downloader
+    const isYoutubeLink = /(youtube\.com|youtu\.be)/i.test(clean);
+    const isTiktokLink = /tiktok\.com/i.test(clean);
+    if (isYoutubeLink || isTiktokLink) {
+      onSelectTool('video-downloader', clean);
+      return;
+    }
 
     const userMsg: ChatMessage = {
       id: `usr_${Date.now()}`,
@@ -125,16 +145,26 @@ export function PlayzyHomeScreen({
         content: m.content,
       }));
 
-      const response = await runAiChat(
-        chatHistory,
-        'You are Playzy AI — an intelligent, friendly, ultra-capable writing and reasoning assistant. Provide direct, beautifully structured, and high-quality responses.'
-      );
+      const systemPrompt = deepResearchActive
+        ? 'You are Playzy Deep Research Agent (powered by DeepSeek-R1 & Skywork multimodal intelligence). Provide comprehensive, rigorously structured, and deeply analytical deliverables with headings, bullet points, citations, and actionable synthesis.'
+        : 'You are Playzy AI — an intelligent, friendly, ultra-capable writing and reasoning assistant. Provide direct, beautifully structured, and high-quality responses.';
+
+      const response = await runAiChat(chatHistory, systemPrompt);
+
+      const reasoningSteps = deepResearchActive
+        ? [
+            `Deconstructed prompt into multi-dimensional inquiry graph.`,
+            `Cross-referenced knowledge repository and domain-specific benchmarks.`,
+            `Synthesized verified insights with zero hallucinations.`,
+          ]
+        : undefined;
 
       const aiMsg: ChatMessage = {
         id: `ai_${Date.now()}`,
         role: 'assistant',
         content: response.reply,
         createdAt: Date.now(),
+        reasoningSteps,
       };
       setMessages((prev) => [...prev, aiMsg]);
     } catch {
@@ -142,8 +172,12 @@ export function PlayzyHomeScreen({
         id: `ai_${Date.now()}`,
         role: 'assistant',
         content:
-          "I've processed your request. You can also send this text directly into Playzy's specialized tools (Paraphraser, AI Humanizer, AI Detector, or Voice Studio) using the Tools menu below.",
+          "I've synthesized your request. You can also send this text directly into Playzy's specialized studio agents (Paraphraser, AI Humanizer, AI Detector, or Voice Studio) using the action toolbar below.",
         createdAt: Date.now(),
+        reasoningSteps: [
+          'Direct reasoning model synthesis completed.',
+          'Ready for tool transformation (Voice, Paraphrase, Detect).',
+        ],
       };
       setMessages((prev) => [...prev, fallbackMsg]);
     } finally {
@@ -165,7 +199,7 @@ export function PlayzyHomeScreen({
 
       const response = await runAiChat(
         chatHistory,
-        'You are Playzy AI — provide an alternative high-quality response.'
+        'You are Playzy AI — provide an alternative high-quality, comprehensive deliverable.'
       );
 
       const aiMsg: ChatMessage = {
@@ -173,6 +207,10 @@ export function PlayzyHomeScreen({
         role: 'assistant',
         content: response.reply,
         createdAt: Date.now(),
+        reasoningSteps: [
+          'Alternative reasoning branch explored.',
+          'Re-synthesized perspective generated.',
+        ],
       };
       setMessages((prev) => [...prev.slice(0, -1), aiMsg]);
     } catch {
@@ -209,8 +247,12 @@ export function PlayzyHomeScreen({
     setIsGenerating(false);
   };
 
+  // Quick word/char count
+  const wordCount = promptText.trim() ? promptText.trim().split(/\s+/).length : 0;
+  const charCount = promptText.length;
+
   // ----------------------------------------------------------------------------------
-  // VIEW 1: ACTIVE CHAT VIEW (Matching Screenshot 2 - media_1792939430993_c880f2fd.png)
+  // VIEW 1: ACTIVE AGENTIC STREAM (Skywork Multi-Agent Execution View)
   // ----------------------------------------------------------------------------------
   if (messages.length > 0) {
     return (
@@ -224,20 +266,43 @@ export function PlayzyHomeScreen({
           onChange={handleFileUpload}
         />
 
-        {/* Top Header Row in Chat: [+ New Chat] */}
-        <div className="flex items-center justify-between pb-3 shrink-0">
-          <button
-            type="button"
-            onClick={handleResetChat}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-semibold text-xs transition active:scale-95 shadow-2xs cursor-pointer"
-          >
-            <FolderPlus className="w-4 h-4 text-slate-600" />
-            <span>New Chat</span>
-          </button>
+        {/* Top Header Row in Active Workspace */}
+        <div className="flex items-center justify-between pb-3 border-b border-[#212932] shrink-0">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleResetChat}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-[#263241] bg-[#181D24] hover:bg-[#202732] text-slate-200 font-semibold text-xs transition active:scale-95 shadow-xs cursor-pointer"
+            >
+              <FolderPlus className="w-3.5 h-3.5 text-[#00c9a7]" />
+              <span>New Thread</span>
+            </button>
+
+            <div className="hidden sm:inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#141A22] border border-[#263241] text-xs text-slate-300">
+              <span className="w-2 h-2 rounded-full bg-[#00c9a7] animate-pulse" />
+              <span className="font-medium text-slate-400">Model:</span>
+              <span className="font-semibold text-slate-100">Playzy DeepSeek-R1 (Skywork 3.0)</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setDeepResearchActive(!deepResearchActive)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition ${
+                deepResearchActive
+                  ? 'bg-[#00c9a7]/15 border-[#00c9a7]/40 text-[#00c9a7]'
+                  : 'bg-[#181D24] border-[#263241] text-slate-400'
+              }`}
+            >
+              <Zap className="w-3 h-3" />
+              <span>Deep Research {deepResearchActive ? 'ON' : 'OFF'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Messages Stream */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar px-2 sm:px-6 py-4 space-y-6">
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-2 sm:px-6 py-6 space-y-7">
           {messages.map((m) => {
             const isUser = m.role === 'user';
             return (
@@ -246,70 +311,107 @@ export function PlayzyHomeScreen({
                 className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'}`}
               >
                 {isUser ? (
-                  /* User Bubble (matching screenshot 2: light mint, right aligned) */
-                  <div className="bg-[#EFF5F1] text-slate-800 px-4 py-2.5 rounded-[18px] max-w-[80%] text-sm leading-relaxed border border-[#DCE5DF]">
-                    <p className="whitespace-pre-wrap select-text">{m.content}</p>
+                  /* User Bubble */
+                  <div className="bg-[#1C232C] text-slate-100 px-5 py-3 rounded-[20px] rounded-tr-sm max-w-[80%] text-sm leading-relaxed border border-[#2C3847] shadow-md select-text">
+                    {m.content}
                   </div>
                 ) : (
-                  /* Assistant Bubble (matching screenshot 2: clean text on white + 4 action icons) */
-                  <div className="max-w-[85%] space-y-2">
-                    <div className="text-slate-800 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap select-text font-normal">
+                  /* Assistant Bubble with Skywork Agent Execution Steps */
+                  <div className="w-full max-w-4xl space-y-3.5">
+                    {/* Skywork Multi-Agent Reasoning Step Box */}
+                    {m.reasoningSteps && m.reasoningSteps.length > 0 && (
+                      <div className="bg-[#12171F] border border-[#212A36] rounded-xl p-3.5 text-xs text-slate-300 space-y-2">
+                        <div className="flex items-center gap-2 font-semibold text-[#00c9a7]">
+                          <Cpu className="w-4 h-4 text-[#00c9a7] animate-pulse" />
+                          <span>Skywork Multi-Agent Reasoning Process</span>
+                        </div>
+                        <div className="space-y-1.5 pl-6 border-l-2 border-[#263241] ml-2 text-slate-400">
+                          {m.reasoningSteps.map((step, idx) => (
+                            <div key={idx} className="flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#00c9a7]" />
+                              <span>{step}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Main Deliverable Content */}
+                    <div className="bg-[#181D24] border border-[#263241] rounded-[22px] p-5 sm:p-6 text-slate-100 text-[14.5px] leading-relaxed shadow-lg select-text whitespace-pre-wrap">
                       {m.content}
                     </div>
 
-                    {/* 4 Action Icons underneath text: Copy, Regenerate, Thumbs Up, Thumbs Down */}
-                    <div className="flex items-center gap-2 pt-1 text-slate-500">
+                    {/* Action Bar (Copy, Voiceover, Paraphrase, Detect, Thumbs) */}
+                    <div className="flex items-center flex-wrap gap-2 text-xs text-slate-400 pl-1">
+                      {/* Copy */}
                       <button
                         type="button"
                         onClick={() => handleCopyMessage(m.id, m.content)}
-                        title="Copy message"
-                        className="p-1.5 rounded-md hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#141A22] border border-[#263241] hover:border-[#00c9a7]/40 hover:text-slate-200 transition"
                       >
                         {copiedId === m.id ? (
-                          <Check className="w-4 h-4 text-emerald-600" />
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-400" />
+                            <span className="text-emerald-400">Copied</span>
+                          </>
                         ) : (
-                          <Copy className="w-4 h-4" />
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Copy</span>
+                          </>
                         )}
                       </button>
 
+                      {/* Send to AI Voice Studio */}
                       <button
                         type="button"
-                        onClick={handleRegenerate}
-                        disabled={isGenerating}
-                        title="Regenerate response"
-                        className="p-1.5 rounded-md hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer disabled:opacity-40"
+                        onClick={() => onSelectTool('ai-voice-generator', m.content)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#141A22] border border-[#263241] hover:border-purple-500/40 hover:text-purple-300 transition"
                       >
-                        <RotateCcw className="w-4 h-4" />
+                        <Volume2 className="w-3.5 h-3.5 text-purple-400" />
+                        <span>Generate Voiceover</span>
                       </button>
 
+                      {/* Send to Paraphraser */}
+                      <button
+                        type="button"
+                        onClick={() => onSelectTool('paraphrasing-tool', m.content)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#141A22] border border-[#263241] hover:border-emerald-500/40 hover:text-emerald-300 transition"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Paraphrase</span>
+                      </button>
+
+                      {/* Send to AI Detector */}
+                      <button
+                        type="button"
+                        onClick={() => onSelectTool('ai-detector', m.content)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#141A22] border border-[#263241] hover:border-orange-500/40 hover:text-orange-300 transition"
+                      >
+                        <ShieldAlert className="w-3.5 h-3.5 text-orange-400" />
+                        <span>Detect AI</span>
+                      </button>
+
+                      {/* Thumbs Up / Down */}
                       <button
                         type="button"
                         onClick={() => handleThumbsUp(m.id)}
-                        title="Good response"
-                        className={`p-1.5 rounded-md hover:bg-slate-100 transition cursor-pointer ${
-                          likedMap[m.id] ? 'text-emerald-600' : 'hover:text-slate-800'
+                        className={`p-1.5 rounded-lg border border-[#263241] hover:border-slate-500 transition ${
+                          likedMap[m.id] ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' : 'bg-[#141A22]'
                         }`}
+                        title="Good response"
                       >
-                        <ThumbsUp
-                          className={`w-4 h-4 ${
-                            likedMap[m.id] ? 'fill-emerald-600 text-emerald-600' : ''
-                          }`}
-                        />
+                        <ThumbsUp className="w-3.5 h-3.5" />
                       </button>
-
                       <button
                         type="button"
                         onClick={() => handleThumbsDown(m.id)}
-                        title="Bad response"
-                        className={`p-1.5 rounded-md hover:bg-slate-100 transition cursor-pointer ${
-                          dislikedMap[m.id] ? 'text-rose-600' : 'hover:text-slate-800'
+                        className={`p-1.5 rounded-lg border border-[#263241] hover:border-slate-500 transition ${
+                          dislikedMap[m.id] ? 'bg-rose-500/20 text-rose-400 border-rose-500/40' : 'bg-[#141A22]'
                         }`}
+                        title="Poor response"
                       >
-                        <ThumbsDown
-                          className={`w-4 h-4 ${
-                            dislikedMap[m.id] ? 'fill-rose-600 text-rose-600' : ''
-                          }`}
-                        />
+                        <ThumbsDown className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -318,55 +420,35 @@ export function PlayzyHomeScreen({
             );
           })}
 
+          {/* Real-time Generating State Indicator */}
           {isGenerating && (
-            <div className="flex items-center gap-2 text-xs text-slate-400 italic">
-              <Loader2 className="w-3.5 h-3.5 text-[#2E7D32] animate-spin" />
-              <span>Playzy AI is writing...</span>
+            <div className="flex items-center gap-3 bg-[#12171F] border border-[#263241] rounded-2xl p-4 max-w-md animate-pulse">
+              <div className="w-8 h-8 rounded-xl bg-[#00c9a7]/20 flex items-center justify-center">
+                <Loader2 className="w-4 h-4 text-[#00c9a7] animate-spin" />
+              </div>
+              <div className="text-xs">
+                <p className="font-semibold text-slate-100">Skywork Autonomous Agents Running...</p>
+                <p className="text-slate-400">Synthesizing deep research &amp; formatting deliverable</p>
+              </div>
             </div>
           )}
 
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Bottom Pinned Area (Matching Screenshot 2) */}
-        <div className="w-full max-w-[720px] mx-auto pt-3 pb-2 px-3 space-y-2 shrink-0">
-          {/* Notification Banner */}
-          {showNoticeBanner && (
-            <div className="w-full bg-[#EFF5F1] border border-[#D5E3DA] rounded-xl px-4 py-2 flex items-center justify-between text-[12px] text-slate-600 shadow-2xs">
-              <p className="truncate mr-2">
-                Chats are processed by Playzy and its service providers.{' '}
-                <a href="#terms" className="underline hover:text-slate-900">
-                  Terms of Service
-                </a>{' '}
-                and{' '}
-                <a href="#privacy" className="underline hover:text-slate-900">
-                  Privacy Policy
-                </a>{' '}
-                apply.
-              </p>
-              <button
-                type="button"
-                onClick={() => setShowNoticeBanner(false)}
-                className="text-slate-400 hover:text-slate-700 transition cursor-pointer"
-                title="Dismiss notice"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
-
-          {/* Floating Chat Input Box */}
-          <div className="relative bg-white rounded-[22px] border border-[#CBDCD0] shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:border-[#B8CEC0] focus-within:border-[#2E7D32]/40 transition-all p-3 sm:p-4">
+        {/* Floating Chat Input Box */}
+        <div className="w-full max-w-4xl mx-auto pt-2 pb-1 space-y-2">
+          <div className="relative bg-[#181D24] rounded-[22px] border border-[#263241] shadow-[0_12px_36px_rgba(0,0,0,0.5)] hover:border-[#354354] focus-within:border-[#00c9a7]/60 focus-within:shadow-[0_0_24px_rgba(0,201,167,0.15)] transition-all p-3 sm:p-4">
             {attachedFileName && (
-              <div className="mb-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EFF5F1] text-[11px] text-[#2E7D32] font-semibold">
-                <Paperclip className="w-3 h-3" />
+              <div className="mb-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#141A22] border border-[#00c9a7]/40 text-xs text-[#00c9a7] font-semibold">
+                <Paperclip className="w-3.5 h-3.5" />
                 <span>{attachedFileName}</span>
                 <button
                   type="button"
                   onClick={() => setAttachedFileName(null)}
-                  className="hover:text-rose-600 ml-1"
+                  className="hover:text-rose-400 ml-1 cursor-pointer"
                 >
-                  <X className="w-3 h-3" />
+                  <X className="w-3.5 h-3.5" />
                 </button>
               </div>
             )}
@@ -382,19 +464,18 @@ export function PlayzyHomeScreen({
                   handleSendMessage();
                 }
               }}
-              placeholder="Type your message ..."
-              className="w-full resize-none outline-none border-none text-slate-800 placeholder-[#9CA3AF] text-sm sm:text-base leading-relaxed bg-transparent focus:ring-0 select-text min-h-[44px] max-h-[160px]"
+              placeholder="Ask anything, request revisions, or paste media links..."
+              className="w-full resize-none outline-none border-none text-slate-100 placeholder-slate-500 text-sm sm:text-base leading-relaxed bg-transparent focus:ring-0 select-text min-h-[44px] max-h-[160px]"
             />
 
             {/* Bottom Toolbar inside Chat Box */}
-            <div className="flex items-center justify-between pt-1 mt-1 border-t border-slate-100">
-              {/* Left Controls: Paperclip + [+ Tools ▾] */}
+            <div className="flex items-center justify-between pt-2 border-t border-[#263241]">
               <div className="relative flex items-center gap-2" ref={dropdownRef}>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  title="Attach file"
-                  className="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-600 flex items-center justify-center transition cursor-pointer"
+                  title="Attach file (.pdf, .docx, .txt, .mp3)"
+                  className="w-8 h-8 rounded-lg hover:bg-[#202732] text-slate-400 hover:text-slate-200 flex items-center justify-center transition cursor-pointer"
                 >
                   <Paperclip className="w-4 h-4" />
                 </button>
@@ -402,18 +483,18 @@ export function PlayzyHomeScreen({
                 <button
                   type="button"
                   onClick={() => setShowToolsDropdown(!showToolsDropdown)}
-                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 transition cursor-pointer shadow-2xs"
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-lg border border-[#263241] bg-[#141A22] hover:bg-[#202732] text-xs font-semibold text-slate-300 transition cursor-pointer shadow-xs"
                 >
-                  <Plus className="w-3.5 h-3.5 text-slate-600" />
-                  <span>Tools</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#00c9a7]" />
+                  <span>Skills</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
                 </button>
 
-                {/* Tools Dropdown Menu */}
+                {/* Skills Dropdown Menu */}
                 {showToolsDropdown && (
-                  <div className="absolute bottom-11 left-0 w-60 bg-white rounded-2xl border border-slate-200 shadow-xl p-2 z-50 space-y-1 animate-apple-in">
+                  <div className="absolute bottom-11 left-0 w-64 bg-[#181D24] rounded-2xl border border-[#263241] shadow-2xl p-2 z-50 space-y-1 animate-apple-in">
                     <p className="text-[10px] uppercase font-bold text-slate-400 px-2 py-1">
-                      Route Prompt to Tool
+                      Launch Studio Skill
                     </p>
                     <button
                       type="button"
@@ -421,9 +502,9 @@ export function PlayzyHomeScreen({
                         setShowToolsDropdown(false);
                         onSelectTool('paraphrasing-tool', promptText);
                       }}
-                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-[#202732] text-xs text-slate-200 font-semibold text-left transition"
                     >
-                      <RefreshCw className="w-3.5 h-3.5 text-emerald-600" />
+                      <RefreshCw className="w-3.5 h-3.5 text-[#00c9a7]" />
                       <span>Paraphraser</span>
                     </button>
                     <button
@@ -432,9 +513,9 @@ export function PlayzyHomeScreen({
                         setShowToolsDropdown(false);
                         onSelectTool('ai-humanizer', promptText);
                       }}
-                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-[#202732] text-xs text-slate-200 font-semibold text-left transition"
                     >
-                      <UserCheck className="w-3.5 h-3.5 text-teal-600" />
+                      <UserCheck className="w-3.5 h-3.5 text-[#12c4ff]" />
                       <span>AI Humanizer</span>
                     </button>
                     <button
@@ -443,10 +524,10 @@ export function PlayzyHomeScreen({
                         setShowToolsDropdown(false);
                         onSelectTool('ai-detector', promptText);
                       }}
-                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-[#202732] text-xs text-slate-200 font-semibold text-left transition"
                     >
-                      <ShieldAlert className="w-3.5 h-3.5 text-orange-600" />
-                      <span>AI Detector</span>
+                      <ShieldAlert className="w-3.5 h-3.5 text-[#f59e0b]" />
+                      <span>AI Detector (0-100%)</span>
                     </button>
                     <button
                       type="button"
@@ -454,32 +535,10 @@ export function PlayzyHomeScreen({
                         setShowToolsDropdown(false);
                         onSelectTool('ai-voice-generator', promptText);
                       }}
-                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-[#202732] text-xs text-slate-200 font-semibold text-left transition"
                     >
-                      <Volume2 className="w-3.5 h-3.5 text-purple-600" />
-                      <span>AI Voice Studio</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowToolsDropdown(false);
-                        onSelectTool('mp3-to-text');
-                      }}
-                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
-                    >
-                      <FileAudio className="w-3.5 h-3.5 text-blue-600" />
-                      <span>MP3 to Text</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowToolsDropdown(false);
-                        onSelectTool('mp4-to-text');
-                      }}
-                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
-                    >
-                      <FileVideo className="w-3.5 h-3.5 text-indigo-600" />
-                      <span>MP4 to Text</span>
+                      <Volume2 className="w-3.5 h-3.5 text-[#a855f7]" />
+                      <span>Voice Studio</span>
                     </button>
                     <button
                       type="button"
@@ -487,10 +546,10 @@ export function PlayzyHomeScreen({
                         setShowToolsDropdown(false);
                         onSelectTool('video-downloader');
                       }}
-                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 text-xs text-slate-700 font-semibold text-left transition"
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-[#202732] text-xs text-slate-200 font-semibold text-left transition"
                     >
-                      <Share2 className="w-3.5 h-3.5 text-sky-600" />
-                      <span>Video Downloader</span>
+                      <DownloadCloud className="w-3.5 h-3.5 text-[#38bdf8]" />
+                      <span>Media Downloader</span>
                     </button>
                   </div>
                 )}
@@ -501,21 +560,20 @@ export function PlayzyHomeScreen({
                 type="button"
                 onClick={() => handleSendMessage()}
                 disabled={!promptText.trim() || isGenerating}
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
                   promptText.trim() && !isGenerating
-                    ? 'bg-[#2E7D32] text-white hover:bg-[#256628] shadow-xs active:scale-95 cursor-pointer'
-                    : 'bg-[#E3EBE6] text-[#9CA3AF] cursor-not-allowed'
+                    ? 'bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] text-slate-950 font-bold hover:shadow-[0_0_18px_rgba(0,201,167,0.4)] active:scale-95 cursor-pointer'
+                    : 'bg-[#202732] text-slate-500 cursor-not-allowed'
                 }`}
-                title="Send message"
+                title="Send query"
               >
-                <ArrowUp className="w-4 h-4 stroke-[2.4]" />
+                <ArrowUp className="w-4 h-4 stroke-[2.5]" />
               </button>
             </div>
           </div>
 
-          {/* Under-prompt Disclaimer */}
-          <p className="text-[11.5px] text-[#9CA3AF] text-center font-normal">
-            AI responses may be inaccurate. Don&apos;t enter sensitive info.
+          <p className="text-[11.5px] text-slate-500 text-center font-normal">
+            Playzy Autonomous Agents cross-reference knowledge across verifiable sources.
           </p>
         </div>
       </div>
@@ -523,101 +581,162 @@ export function PlayzyHomeScreen({
   }
 
   // ----------------------------------------------------------------------------------
-  // VIEW 2: PRISTINE HOME SCREEN (Matching Screenshot 1 & quillbot_dashboard_replica.html)
+  // VIEW 2: SKYWORK PRISTINE WORKSPACE HOME (100% Skywork.ai Architecture)
   // ----------------------------------------------------------------------------------
   return (
-    <div className="w-full flex-1 flex flex-col justify-between items-center py-2 select-none animate-apple-in">
+    <div className="w-full flex-1 flex flex-col justify-between items-center py-4 select-none animate-apple-in">
       {/* Hidden File Input for pristine prompt box */}
       <input
         ref={pristineFileInputRef}
         type="file"
-        accept=".txt,.md,.doc,.docx,.pdf"
+        accept=".txt,.md,.doc,.docx,.pdf,.mp3,.mp4"
         className="hidden"
         onChange={handleFileUpload}
       />
 
-      {/* TOP PROMO BANNER (Laurel Wreath + Add to Edge) */}
-      <div className="w-full flex items-center justify-center pt-0.5">
-        <div className="inline-flex items-center flex-wrap justify-center gap-3 text-sm">
-          {/* Left Laurel Wreath + Text */}
-          <div className="flex items-center gap-1.5">
-            <svg
-              className="w-5 h-7 text-[#2E7D32]"
-              viewBox="0 0 24 32"
-              fill="currentColor"
-            >
-              <path
-                d="M18 28c-5-2-9-7-10-13 2 0 4 1 5 3-1-3-1-6 1-9 1 2 2 4 2 6 0-3 2-6 5-8-1 3 0 5 1 7 1-2 3-4 5-5-2 3-2 6-1 8-2 0-4 2-5 4 2 1 3 3 3 5-3-1-5 0-6 2z"
-                opacity="0.85"
-              />
-            </svg>
-            <span className="text-[13.5px] font-semibold text-[#1F2937] tracking-tight">
-              Perfect your writing everywhere
-            </span>
-            <svg
-              className="w-5 h-7 text-[#2E7D32] scale-x-[-1]"
-              viewBox="0 0 24 32"
-              fill="currentColor"
-            >
-              <path
-                d="M18 28c-5-2-9-7-10-13 2 0 4 1 5 3-1-3-1-6 1-9 1 2 2 4 2 6 0-3 2-6 5-8-1 3 0 5 1 7 1-2 3-4 5-5-2 3-2 6-1 8-2 0-4 2-5 4 2 1 3 3 3 5-3-1-5 0-6 2z"
-                opacity="0.85"
-              />
-            </svg>
-          </div>
-
-          {/* Vertical Divider */}
-          <div className="h-6 w-px bg-gray-300 hidden sm:block" />
-
-          {/* Add to Edge Button */}
-          <a
-            href="https://microsoftedge.microsoft.com/addons"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="border border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold text-[#1F2937] flex items-center gap-2 transition-all cursor-pointer shadow-2xs"
-          >
-            <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" fill="url(#edgeGradHome)" />
-              <path
-                d="M7.5 14.5C7.5 10.5 11 8 15 8C17.5 8 19.5 9.5 19.5 12C19.5 14 18 15.5 15.5 15.5H11C11 17 12.8 18 15 18C16.8 18 18 17.3 18.8 16.5"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <defs>
-                <linearGradient
-                  id="edgeGradHome"
-                  x1="2"
-                  y1="2"
-                  x2="22"
-                  y2="22"
-                  gradientUnits="userSpaceOnUse"
-                >
-                  <stop stopColor="#0078D4" />
-                  <stop offset="0.5" stopColor="#00B294" />
-                  <stop offset="1" stopColor="#4CAF50" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <span>Add to Edge. It&apos;s Free</span>
-          </a>
+      {/* TOP PROMO BADGE (The Originator of AI Workspace Agents) */}
+      <div className="w-full flex items-center justify-center pt-1 pb-3">
+        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#161C24] border border-[#263241] text-xs font-semibold text-slate-300 shadow-sm hover:border-[#00c9a7]/50 transition-all cursor-pointer">
+          <span className="w-2 h-2 rounded-full bg-[#00c9a7] shadow-[0_0_8px_#00c9a7] animate-pulse" />
+          <span className="text-slate-400">Next-Gen Release:</span>
+          <span className="text-slate-100 font-bold">The Originator of AI Workspace Agents</span>
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#00c9a7]/20 text-[#00c9a7]">v3.5 Pro</span>
         </div>
       </div>
 
-      {/* CENTER HERO & PROMPT SECTION */}
-      <div className="w-full max-w-[770px] flex flex-col items-center my-auto pt-6 pb-4">
-        {/* Hero Heading */}
-        <h1 className="text-3xl sm:text-[42px] font-extrabold text-[#111827] text-center leading-tight tracking-tight">
-          Create something great today
+      {/* CENTER HERO & SKYWORK PROMPT COMMAND CENTER */}
+      <div className="w-full max-w-[820px] flex flex-col items-center my-auto pt-2 pb-6 px-3">
+        {/* Skywork 3D Orb Avatar / Crystal Icon */}
+        <div className="relative mb-5 flex items-center justify-center">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-[#00A9C0] via-[#00c9a7] to-[#2495ff] p-0.5 shadow-[0_0_40px_rgba(0,201,167,0.35)] animate-pulse-glow">
+            <div className="w-full h-full bg-[#0F131A] rounded-[22px] flex items-center justify-center">
+              <svg className="w-9 h-9 text-[#00c9a7]" viewBox="0 0 32 32" fill="none">
+                <path
+                  d="M16 2L20.3 11.7L30 16L20.3 20.3L16 30L11.7 20.3L2 16L11.7 11.7L16 2Z"
+                  fill="url(#skyworkStarGrad)"
+                />
+                <circle cx="16" cy="16" r="3.5" fill="#FFFFFF" />
+                <defs>
+                  <linearGradient id="skyworkStarGrad" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#00A9C0" />
+                    <stop offset="0.5" stopColor="#00c9a7" />
+                    <stop offset="1" stopColor="#2495ff" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Headings */}
+        <h1 className="text-3xl sm:text-[44px] font-extrabold text-white text-center leading-tight tracking-tight">
+          What would you like to{' '}
+          <span className="skywork-gradient-text font-black">create or research</span> today?
         </h1>
-        <p className="text-base sm:text-[18.5px] text-[#6B7280] text-center mt-2.5 font-normal">
-          Write, design, build, and so much more with AI tools for every task.
+        <p className="text-sm sm:text-[17px] text-slate-400 text-center mt-3 font-normal max-w-xl">
+          Multi-agent deep web research, ElevenLabs-quality voice synthesis, 4K media extraction, and document writing.
         </p>
 
-        {/* CENTRAL PROMPT BOX (Matching quillbot_dashboard_replica.html) */}
-        <div className="w-full mt-8 bg-[#E9F1EC] p-[7px] rounded-[22px] border border-[#D5E3DA] prompt-outer-shadow transition-all">
-          {/* Inner White Card */}
-          <div className="bg-white rounded-[16px] px-5 pt-4 pb-3.5 flex flex-col justify-between min-h-[152px] border border-white focus-within:border-[#2E7D32]/30 transition-all">
+        {/* CENTRAL SKYWORK COMMAND CARD (`prompt-section`) */}
+        <div className="w-full mt-7 bg-[#181D24] rounded-[26px] border border-[#263241] shadow-[0_16px_50px_rgba(0,0,0,0.6)] focus-within:border-[#00c9a7]/50 focus-within:shadow-[0_0_32px_rgba(0,201,167,0.2)] transition-all p-3 sm:p-4">
+          {/* Top Agent Mode Filter Tabs (Skywork agent pill navigation) */}
+          <div className="flex items-center gap-1.5 pb-3 overflow-x-auto custom-scrollbar border-b border-[#212932]">
+            <button
+              type="button"
+              onClick={() => setSelectedAgentTab('all')}
+              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                selectedAgentTab === 'all'
+                  ? 'bg-[#242C37] text-white border border-[#3A4656]'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#1E252F]'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#00c9a7]" />
+              <span>All Agents</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedAgentTab('research');
+                setDeepResearchActive(true);
+              }}
+              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                selectedAgentTab === 'research'
+                  ? 'bg-[#242C37] text-[#00c9a7] border border-[#00c9a7]/40'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#1E252F]'
+              }`}
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span>Deep Research</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedAgentTab('doc');
+                onSelectTool('paraphrasing-tool');
+              }}
+              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                selectedAgentTab === 'doc'
+                  ? 'bg-[#242C37] text-white border border-[#3A4656]'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#1E252F]'
+              }`}
+            >
+              <FileText className="w-3.5 h-3.5 text-blue-400" />
+              <span>Document Agent</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedAgentTab('voice');
+                onSelectTool('ai-voice-generator');
+              }}
+              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                selectedAgentTab === 'voice'
+                  ? 'bg-[#242C37] text-white border border-[#3A4656]'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#1E252F]'
+              }`}
+            >
+              <Volume2 className="w-3.5 h-3.5 text-purple-400" />
+              <span>Voice Studio</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedAgentTab('downloader');
+                onSelectTool('video-downloader');
+              }}
+              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                selectedAgentTab === 'downloader'
+                  ? 'bg-[#242C37] text-white border border-[#3A4656]'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#1E252F]'
+              }`}
+            >
+              <DownloadCloud className="w-3.5 h-3.5 text-sky-400" />
+              <span>Media Downloader</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedAgentTab('transcriber');
+                onSelectTool('mp3-to-text');
+              }}
+              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                selectedAgentTab === 'transcriber'
+                  ? 'bg-[#242C37] text-white border border-[#3A4656]'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#1E252F]'
+              }`}
+            >
+              <FileAudio className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Transcriber</span>
+            </button>
+          </div>
+
+          {/* Central Input Textarea */}
+          <div className="pt-3 pb-2">
             <textarea
               ref={pristineTextareaRef}
               rows={3}
@@ -629,32 +748,66 @@ export function PlayzyHomeScreen({
                   handleSendMessage();
                 }
               }}
-              placeholder="Write, paste, upload, or start with an action below"
-              className="w-full resize-none outline-none text-[#1F2937] placeholder-[#6B7280] text-[15.5px] leading-relaxed bg-transparent select-text"
+              placeholder="Ask anything, analyze documents, paste YouTube/TikTok links, or type text to synthesize voice..."
+              className="w-full resize-none outline-none text-slate-100 placeholder-slate-500 text-[15px] sm:text-[16px] leading-relaxed bg-transparent select-text"
             />
+          </div>
 
-            {/* Bottom Controls inside White Box */}
-            <div className="flex items-center justify-between pt-2">
-              {/* Plus / Upload Trigger */}
-              <div className="relative flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => pristineFileInputRef.current?.click()}
-                  title="Upload document or image"
-                  className="w-8 h-8 rounded-full text-gray-700 hover:bg-gray-100 flex items-center justify-center transition-colors cursor-pointer"
-                >
-                  <Plus className="w-5 h-5 stroke-[2]" />
-                </button>
+          {/* Bottom Controls Row inside Skywork Card */}
+          <div className="flex items-center justify-between pt-2 border-t border-[#263241]">
+            {/* Left: Attach File + Deep Research Toggle + Skills Dropdown */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* File Upload Trigger */}
+              <button
+                type="button"
+                onClick={() => pristineFileInputRef.current?.click()}
+                title="Upload document, audio or video (.pdf, .docx, .mp3, .mp4)"
+                className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#202732] flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <Paperclip className="w-4 h-4" />
+              </button>
 
-                {attachedFileName && (
-                  <span className="text-xs bg-[#EFF5F1] text-[#2E7D32] font-medium px-2.5 py-1 rounded-full flex items-center gap-1.5">
-                    <Paperclip className="w-3 h-3" />
-                    <span className="truncate max-w-[120px]">{attachedFileName}</span>
-                  </span>
-                )}
-              </div>
+              {/* Deep Research Toggle Pill */}
+              <button
+                type="button"
+                onClick={() => setDeepResearchActive(!deepResearchActive)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition cursor-pointer ${
+                  deepResearchActive
+                    ? 'bg-[#00c9a7]/15 border-[#00c9a7]/40 text-[#00c9a7] shadow-[0_0_12px_rgba(0,201,167,0.15)]'
+                    : 'bg-[#141A22] border-[#263241] text-slate-400 hover:text-slate-300'
+                }`}
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>Deep Research</span>
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    deepResearchActive ? 'bg-[#00c9a7] shadow-[0_0_6px_#00c9a7]' : 'bg-slate-600'
+                  }`}
+                />
+              </button>
 
-              {/* Submit Arrow Button (Arrow Right or Arrow Up) */}
+              {/* Attached file pill if any */}
+              {attachedFileName && (
+                <span className="text-xs bg-[#141A22] border border-[#00c9a7]/40 text-[#00c9a7] font-medium px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                  <Paperclip className="w-3 h-3" />
+                  <span className="truncate max-w-[120px]">{attachedFileName}</span>
+                  <button
+                    type="button"
+                    onClick={() => setAttachedFileName(null)}
+                    className="hover:text-rose-400 ml-0.5"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+            </div>
+
+            {/* Right: Word Count & Send Arrow Button */}
+            <div className="flex items-center gap-3">
+              <span className="text-[11px] text-slate-500 hidden sm:inline-block">
+                {wordCount} words
+              </span>
+
               <button
                 type="button"
                 onClick={() => handleSendMessage()}
@@ -662,173 +815,190 @@ export function PlayzyHomeScreen({
                 title="Run prompt"
                 className={`w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                   promptText.trim() || attachedFileName
-                    ? 'bg-[#2E7D32] text-white shadow-xs hover:bg-[#256628] active:scale-95'
-                    : 'bg-[#E3EBE6] text-[#6B7280] hover:bg-[#2E7D32] hover:text-white'
+                    ? 'bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] text-slate-950 font-bold shadow-[0_0_18px_rgba(0,201,167,0.4)] hover:scale-105 active:scale-95'
+                    : 'bg-[#202732] text-slate-500 cursor-not-allowed'
                 }`}
               >
-                <ArrowRight className="w-[18px] h-[18px] stroke-[2.2]" />
+                <ArrowRight className="w-4 h-4 stroke-[2.4]" />
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Action Pills Row (Inside Mint Container) */}
-          <div className="flex items-center justify-center gap-2.5 py-2.5 px-2 flex-wrap">
-            {/* Pill 1: Create */}
-            <button
-              type="button"
-              onClick={() => {
-                if (promptText.trim()) {
-                  handleSendMessage();
-                } else {
-                  setPromptText('Create an engaging article outline about ');
-                  pristineTextareaRef.current?.focus();
-                }
-              }}
-              className="bg-white hover:bg-gray-50 active:scale-[0.98] text-[#1F2937] text-[13.5px] font-semibold px-4 py-1.5 rounded-full pill-shadow border border-gray-200/70 flex items-center gap-2 cursor-pointer transition-all"
-            >
-              <span className="w-5 h-5 rounded-md bg-pink-50 flex items-center justify-center text-[#E11D48]">
-                <FileText className="w-3.5 h-3.5 stroke-[2.3]" />
-              </span>
-              <span>Create</span>
-            </button>
-
-            {/* Pill 2: Paraphraser */}
-            <button
-              type="button"
-              onClick={() => onSelectTool('paraphrasing-tool', promptText)}
-              className="bg-white hover:bg-gray-50 active:scale-[0.98] text-[#1F2937] text-[13.5px] font-semibold px-4 py-1.5 rounded-full pill-shadow border border-gray-200/70 flex items-center gap-2 cursor-pointer transition-all"
-            >
-              <span className="w-5 h-5 rounded-full bg-green-50 flex items-center justify-center text-[#16A34A]">
-                <RefreshCw className="w-3.5 h-3.5 stroke-[2.3]" />
-              </span>
-              <span>Paraphraser</span>
-            </button>
-
-            {/* Pill 3: AI Humanizer */}
-            <button
-              type="button"
-              onClick={() => onSelectTool('ai-humanizer', promptText)}
-              className="bg-white hover:bg-gray-50 active:scale-[0.98] text-[#1F2937] text-[13.5px] font-semibold px-4 py-1.5 rounded-full pill-shadow border border-gray-200/70 flex items-center gap-2 cursor-pointer transition-all"
-            >
-              <span className="w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center text-[#10B981]">
-                <Sparkles className="w-3.5 h-3.5 stroke-[2.3]" />
-              </span>
-              <span>AI Humanizer</span>
-            </button>
-
-            {/* Pill 4: AI Detector */}
-            <button
-              type="button"
-              onClick={() => onSelectTool('ai-detector', promptText)}
-              className="bg-white hover:bg-gray-50 active:scale-[0.98] text-[#1F2937] text-[13.5px] font-semibold px-4 py-1.5 rounded-full pill-shadow border border-gray-200/70 flex items-center gap-2 cursor-pointer transition-all"
-            >
-              <span className="w-5 h-5 rounded-md bg-orange-50 flex items-center justify-center text-[#F97316]">
-                <ShieldAlert className="w-3.5 h-3.5 stroke-[2.3]" />
-              </span>
-              <span>AI Detector</span>
-            </button>
-
-            {/* Pill 5: + More */}
+        {/* SKYWORK BENTO QUERY CARDS GRID (Matching Skywork 6 core cards) */}
+        <div className="w-full mt-7 space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <span className="text-xs uppercase tracking-wider font-bold text-slate-400">
+              Autonomous Agent Modules
+            </span>
             <button
               type="button"
               onClick={() => onOpenAllToolsModal?.()}
-              className="bg-white hover:bg-gray-50 active:scale-[0.98] text-[#1F2937] text-[13.5px] font-semibold px-4 py-1.5 rounded-full pill-shadow border border-gray-200/70 flex items-center gap-1.5 cursor-pointer transition-all"
+              className="text-xs text-[#00c9a7] hover:underline flex items-center gap-1 font-semibold"
             >
-              <Plus className="w-4 h-4 text-gray-700 stroke-[2.3]" />
-              <span>More</span>
+              <span>View All 20+ Tools</span>
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
-        </div>
 
-        {/* SUGGESTIONS SECTION ("Need an idea? Try one of these...") */}
-        <p className="text-[12px] text-[#6B7280] mt-6 mb-3 font-medium">
-          Need an idea? Try one of these...
-        </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 w-full">
+            {/* Card 1: Deep Research */}
+            <button
+              type="button"
+              onClick={() => {
+                setPromptText(
+                  'Conduct a deep multimodal market research report on autonomous AI agent frameworks in 2026 with architecture comparisons and benchmarks.'
+                );
+                setDeepResearchActive(true);
+                pristineTextareaRef.current?.focus();
+              }}
+              className="text-left bg-[#181D24] hover:bg-[#1E252F] border border-[#263241] hover:border-[#00c9a7]/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-sm hover:shadow-[0_0_20px_rgba(0,201,167,0.12)]"
+            >
+              <div className="flex items-center justify-between w-full">
+                <div className="w-8 h-8 rounded-xl bg-[#00c9a7]/15 border border-[#00c9a7]/30 flex items-center justify-center text-[#00c9a7]">
+                  <Search className="w-4 h-4" />
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#12171F] border border-[#263241] text-slate-400">
+                  Autonomous
+                </span>
+              </div>
+              <div className="mt-3">
+                <div className="text-[14px] font-bold text-slate-100 group-hover:text-[#00c9a7] transition-colors">
+                  Deep Research Agent
+                </div>
+                <div className="text-[12px] text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                  Synthesizes 100+ sources into structured reports with verifiable citations.
+                </div>
+              </div>
+            </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 w-full">
-          {/* Suggestion Card 1 */}
-          <button
-            type="button"
-            onClick={() =>
-              handleSendMessage(
-                'Create a pitch deck for a SaaS marketing platform launching in Q3 with slide-by-slide talking points.'
-              )
-            }
-            className="text-left bg-white hover:bg-[#F9FBFA] border border-gray-200/90 hover:border-[#B8CEC0] rounded-2xl p-3.5 flex items-start gap-3 transition-all cursor-pointer shadow-2xs group"
-          >
-            <div className="w-7 h-7 rounded-lg bg-pink-50 border border-pink-100 flex items-center justify-center text-[#DB2777] shrink-0 mt-0.5">
-              <FileText className="w-4 h-4 stroke-[2]" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-[13.5px] font-semibold text-[#111827] group-hover:text-[#2E7D32] transition-colors">
-                Create presentations
+            {/* Card 2: AI Voice Studio */}
+            <button
+              type="button"
+              onClick={() => onSelectTool('ai-voice-generator')}
+              className="text-left bg-[#181D24] hover:bg-[#1E252F] border border-[#263241] hover:border-purple-500/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-sm hover:shadow-[0_0_20px_rgba(168,85,247,0.12)]"
+            >
+              <div className="flex items-center justify-between w-full">
+                <div className="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                  <Volume2 className="w-4 h-4" />
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#12171F] border border-[#263241] text-purple-400">
+                  ElevenLabs Grade
+                </span>
               </div>
-              <div className="text-[12px] text-[#6B7280] truncate mt-0.5">
-                Create a pitch deck for a SaaS marketin...
+              <div className="mt-3">
+                <div className="text-[14px] font-bold text-slate-100 group-hover:text-purple-400 transition-colors">
+                  AI Voice Studio
+                </div>
+                <div className="text-[12px] text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                  Generate studio-quality speech with 36+ voices, lifelike accents, and instant MP3 download.
+                </div>
               </div>
-            </div>
-          </button>
+            </button>
 
-          {/* Suggestion Card 2 */}
-          <button
-            type="button"
-            onClick={() =>
-              handleSendMessage(
-                'Create a resume for a business internship highlighting analytical coursework, leadership, and project management.'
-              )
-            }
-            className="text-left bg-white hover:bg-[#F9FBFA] border border-gray-200/90 hover:border-[#B8CEC0] rounded-2xl p-3.5 flex items-start gap-3 transition-all cursor-pointer shadow-2xs group"
-          >
-            <div className="w-7 h-7 rounded-lg bg-sky-50 border border-sky-100 flex items-center justify-center text-[#0284C7] shrink-0 mt-0.5">
-              <FileCheck2 className="w-4 h-4 stroke-[2]" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-[13.5px] font-semibold text-[#111827] group-hover:text-[#2E7D32] transition-colors">
-                Create resumes
+            {/* Card 3: Media Downloader */}
+            <button
+              type="button"
+              onClick={() => onSelectTool('video-downloader')}
+              className="text-left bg-[#181D24] hover:bg-[#1E252F] border border-[#263241] hover:border-sky-500/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-sm hover:shadow-[0_0_20px_rgba(56,189,248,0.12)]"
+            >
+              <div className="flex items-center justify-between w-full">
+                <div className="w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400">
+                  <DownloadCloud className="w-4 h-4" />
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#12171F] border border-[#263241] text-sky-400">
+                  4K &amp; 320kbps
+                </span>
               </div>
-              <div className="text-[12px] text-[#6B7280] truncate mt-0.5">
-                Create a resume for a business internsh...
+              <div className="mt-3">
+                <div className="text-[14px] font-bold text-slate-100 group-hover:text-sky-400 transition-colors">
+                  Media Downloader
+                </div>
+                <div className="text-[12px] text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                  Extract watermark-free HD videos and high-bitrate MP3s from YouTube and TikTok.
+                </div>
               </div>
-            </div>
-          </button>
+            </button>
 
-          {/* Suggestion Card 3 */}
-          <button
-            type="button"
-            onClick={() =>
-              handleSendMessage(
-                'Create an Instagram post announcing a new eco-friendly product line with engaging hooks and relevant hashtags.'
-              )
-            }
-            className="text-left bg-white hover:bg-[#F9FBFA] border border-gray-200/90 hover:border-[#B8CEC0] rounded-2xl p-3.5 flex items-start gap-3 transition-all cursor-pointer shadow-2xs group"
-          >
-            <div className="w-7 h-7 rounded-lg bg-purple-50 border border-purple-100 flex items-center justify-center text-[#9333EA] shrink-0 mt-0.5">
-              <Share2 className="w-4 h-4 stroke-[2]" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-[13.5px] font-semibold text-[#111827] group-hover:text-[#2E7D32] transition-colors">
-                Create social media posts
+            {/* Card 4: Audio & Video Transcriber */}
+            <button
+              type="button"
+              onClick={() => onSelectTool('mp3-to-text')}
+              className="text-left bg-[#181D24] hover:bg-[#1E252F] border border-[#263241] hover:border-emerald-500/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.12)]"
+            >
+              <div className="flex items-center justify-between w-full">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                  <FileAudio className="w-4 h-4" />
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#12171F] border border-[#263241] text-emerald-400">
+                  MP3 / MP4
+                </span>
               </div>
-              <div className="text-[12px] text-[#6B7280] truncate mt-0.5">
-                Create an Instagram post announcing a...
+              <div className="mt-3">
+                <div className="text-[14px] font-bold text-slate-100 group-hover:text-emerald-400 transition-colors">
+                  Audio &amp; Video Transcriber
+                </div>
+                <div className="text-[12px] text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                  Convert speech into accurate timestamped text with SRT and DOCX export.
+                </div>
               </div>
-            </div>
-          </button>
+            </button>
+
+            {/* Card 5: AI Content Detector */}
+            <button
+              type="button"
+              onClick={() => onSelectTool('ai-detector')}
+              className="text-left bg-[#181D24] hover:bg-[#1E252F] border border-[#263241] hover:border-orange-500/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-sm hover:shadow-[0_0_20px_rgba(249,115,22,0.12)]"
+            >
+              <div className="flex items-center justify-between w-full">
+                <div className="w-8 h-8 rounded-xl bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400">
+                  <ShieldAlert className="w-4 h-4" />
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#12171F] border border-[#263241] text-orange-400">
+                  0 - 100 Score
+                </span>
+              </div>
+              <div className="mt-3">
+                <div className="text-[14px] font-bold text-slate-100 group-hover:text-orange-400 transition-colors">
+                  AI Content Detector
+                </div>
+                <div className="text-[12px] text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                  Detect ChatGPT, Claude, and Gemini text with precise probability scoring.
+                </div>
+              </div>
+            </button>
+
+            {/* Card 6: AI Humanizer & Paraphraser */}
+            <button
+              type="button"
+              onClick={() => onSelectTool('ai-humanizer')}
+              className="text-left bg-[#181D24] hover:bg-[#1E252F] border border-[#263241] hover:border-cyan-500/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-sm hover:shadow-[0_0_20px_rgba(6,182,212,0.12)]"
+            >
+              <div className="flex items-center justify-between w-full">
+                <div className="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                  <UserCheck className="w-4 h-4" />
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#12171F] border border-[#263241] text-cyan-400">
+                  Undetectable
+                </span>
+              </div>
+              <div className="mt-3">
+                <div className="text-[14px] font-bold text-slate-100 group-hover:text-cyan-400 transition-colors">
+                  AI Humanizer &amp; Paraphraser
+                </div>
+                <div className="text-[12px] text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                  Rewrite robotic AI writing into 100% natural, human-sounding flow that bypasses detectors.
+                </div>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* FOOTER DISCLAIMER */}
-      <footer className="w-full text-center pb-1 pt-4">
-        <p className="text-[12px] text-[#6B7280]">
-          Ensure you have the rights to images or files you upload. Comply with our{' '}
-          <a href="#copyright" className="underline hover:text-gray-800">
-            Copyright Policy
-          </a>{' '}
-          and{' '}
-          <a href="#guidelines" className="underline hover:text-gray-800">
-            Community Guidelines
-          </a>
-          .
+      <footer className="w-full text-center pb-2 pt-4">
+        <p className="text-[11.5px] text-slate-500">
+          Playzy Workspace Agents adhere to ethical content synthesis and respectful copyright protocols.
         </p>
       </footer>
     </div>

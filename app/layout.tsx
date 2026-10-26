@@ -183,8 +183,16 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="dark scroll-smooth">
       <head>
+        {/* Google Fonts - Outfit & Plus Jakarta Sans for Skywork Design */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+
         {/* Google AdSense */}
         <script
           async
@@ -224,7 +232,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }}
         />
       </head>
-      <body className="bg-[#EFF5F1] text-slate-900 antialiased min-h-screen flex flex-col font-sans selection:bg-[#2E7D32] selection:text-white">
+      <body className="bg-[#0F131A] text-slate-100 antialiased min-h-screen flex flex-col font-sans selection:bg-[#00c9a7] selection:text-black">
         {children}
       </body>
     </html>

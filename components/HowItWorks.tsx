@@ -40,15 +40,15 @@ export const HowItWorks: React.FC = () => {
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-purple-50 to-indigo-50 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-xs"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#181D24] text-[#00c9a7] text-xs font-bold border border-[#263241] shadow-xs"
         >
-          <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+          <Sparkles className="w-3.5 h-3.5 text-[#00c9a7]" />
           <span>Simple 3-Step Process</span>
         </motion.div>
-        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-          How to Download Videos with <span className="bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] bg-clip-text text-transparent">Playzy</span>
+        <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+          How to Download Videos with <span className="skywork-gradient-text">Playzy</span>
         </h2>
-        <p className="text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
+        <p className="text-sm sm:text-base text-slate-400 max-w-xl mx-auto">
           Save public media in three simple steps without registering, installing software, or viewing intrusive ads.
         </p>
       </div>
@@ -64,7 +64,7 @@ export const HowItWorks: React.FC = () => {
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-black text-slate-200 tracking-tight">
+                  <span className="text-3xl font-black text-slate-700 tracking-tight">
                     {item.step}
                   </span>
                   <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full text-white bg-gradient-to-r ${item.accent} shadow-xs`}>
@@ -72,15 +72,15 @@ export const HowItWorks: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-800 shadow-xs">
+                <div className="w-12 h-12 rounded-2xl bg-[#12171F] border border-[#263241] flex items-center justify-center text-[#00c9a7] shadow-xs">
                   <Icon className="w-6 h-6 stroke-[2.2]" />
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">
+                  <h3 className="text-lg font-extrabold text-white tracking-tight">
                     {item.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
                     {item.description}
                   </p>
                 </div>

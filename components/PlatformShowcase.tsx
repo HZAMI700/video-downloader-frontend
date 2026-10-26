@@ -60,14 +60,14 @@ export const PlatformShowcase: React.FC = () => {
   return (
     <section id="supported-sites" className="w-full max-w-5xl mx-auto py-12 px-2">
       <div className="text-center space-y-3 mb-10">
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-cyan-50 text-cyan-700 text-xs font-bold border border-cyan-200/80 shadow-xs">
-          <Zap className="w-3.5 h-3.5 text-cyan-600" />
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#181D24] text-[#00c9a7] text-xs font-bold border border-[#263241] shadow-xs">
+          <Zap className="w-3.5 h-3.5 text-[#00c9a7]" />
           <span>Universal Platform Support</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+        <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
           Supported Video &amp; Audio Platforms
         </h2>
-        <p className="text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
+        <p className="text-sm sm:text-base text-slate-400 max-w-xl mx-auto">
           Playzy automatically detects the source URL and extracts the highest possible bitrate for every platform.
         </p>
       </div>
@@ -76,22 +76,22 @@ export const PlatformShowcase: React.FC = () => {
         {platforms.map((p) => (
           <SpotlightCard
             key={p.name}
-            spotlightColor="rgba(6, 182, 212, 0.12)"
+            spotlightColor="rgba(0, 201, 167, 0.12)"
             className="flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between mb-4">
-                <span className="text-lg font-black text-slate-900">{p.name}</span>
+                <span className="text-lg font-black text-white">{p.name}</span>
                 <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${p.tagColor}`}>
                   {p.badge}
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
                 {p.description}
               </p>
             </div>
 
-            <div className="mt-5 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-bold text-emerald-600">
+            <div className="mt-5 pt-4 border-t border-[#263241] flex items-center gap-2 text-xs font-bold text-[#00c9a7]">
               <Check className="w-4 h-4" />
               <span>Full Speed &amp; No Throttling</span>
             </div>

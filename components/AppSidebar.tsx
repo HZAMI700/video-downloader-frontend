@@ -23,6 +23,12 @@ import {
   ChevronRight,
   ExternalLink,
   Crown,
+  Search,
+  Plus,
+  Compass,
+  Cpu,
+  Layers,
+  Zap,
 } from 'lucide-react';
 import { CategoryId, CATEGORIES } from '../lib/categories';
 
@@ -92,60 +98,72 @@ export function AppSidebar({
   const isMoreModalOpen = controlledIsMoreOpen !== undefined ? controlledIsMoreOpen : internalIsMoreModalOpen;
   const setIsMoreModalOpen = controlledSetIsMoreOpen || setInternalIsMoreModalOpen;
 
-  // Exact vertical rail tools matching screenshot
-  const PRIMARY_TOOLS: {
+  // Skywork Workspace Agents Navigation
+  const SKYWORK_AGENTS: {
     id: ToolId;
     name: string;
     icon: React.ReactNode;
     category: CategoryId;
+    badge?: string;
   }[] = [
     {
-      id: 'paraphrasing-tool',
-      name: 'Paraphraser',
-      icon: <RefreshCw className="w-5 h-5" />,
-      category: 'ai-section',
-    },
-    {
-      id: 'grammar-checker',
-      name: 'Grammar Checker',
-      icon: <CheckCheck className="w-5 h-5" />,
-      category: 'ai-section',
-    },
-    {
-      id: 'ai-detector',
-      name: 'AI Detector',
-      icon: <ShieldAlert className="w-5 h-5" />,
-      category: 'ai-section',
-    },
-    {
-      id: 'plagiarism-checker',
-      name: 'Plagiarism Checker',
-      icon: <FileSearch className="w-5 h-5" />,
-      category: 'ai-section',
-    },
-    {
-      id: 'ai-humanizer',
-      name: 'AI Humanizer',
-      icon: <UserCheck className="w-5 h-5" />,
-      category: 'ai-section',
-    },
-    {
       id: 'ai-chat',
-      name: 'AI Chat',
-      icon: <MessageSquare className="w-5 h-5" />,
+      name: 'Deep Research',
+      icon: <Search className="w-4 h-4" />,
+      category: 'ai-section',
+      badge: 'Agent',
+    },
+    {
+      id: 'paraphrasing-tool',
+      name: 'Document Agent',
+      icon: <RefreshCw className="w-4 h-4" />,
       category: 'ai-section',
     },
     {
       id: 'ai-voice-generator',
-      name: 'AI Voice Generator',
-      icon: <Volume2 className="w-5 h-5" />,
+      name: 'AI Voice Studio',
+      icon: <Volume2 className="w-4 h-4" />,
       category: 'ai-voice',
+      badge: '36+ Voices',
     },
     {
-      id: 'translator',
-      name: 'Translate',
-      icon: <Languages className="w-5 h-5" />,
+      id: 'mp3-to-text',
+      name: 'Transcriber',
+      icon: <FileAudio className="w-4 h-4" />,
+      category: 'audio-tools',
+      badge: 'MP3 / MP4',
+    },
+    {
+      id: 'video-downloader',
+      name: 'Media Downloader',
+      icon: <DownloadCloud className="w-4 h-4" />,
+      category: 'video-downloader',
+      badge: '4K',
+    },
+    {
+      id: 'ai-detector',
+      name: 'AI Detector',
+      icon: <ShieldAlert className="w-4 h-4" />,
       category: 'ai-section',
+      badge: '0-100%',
+    },
+    {
+      id: 'ai-humanizer',
+      name: 'AI Humanizer',
+      icon: <UserCheck className="w-4 h-4" />,
+      category: 'ai-section',
+    },
+    {
+      id: 'grammar-checker',
+      name: 'Grammar Engine',
+      icon: <CheckCheck className="w-4 h-4" />,
+      category: 'ai-section',
+    },
+    {
+      id: 'workspace',
+      name: 'Saved Workspace',
+      icon: <FolderOpen className="w-4 h-4" />,
+      category: 'workspace',
     },
   ];
 
@@ -161,76 +179,157 @@ export function AppSidebar({
       {/* Mobile Backdrop */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-black/70 backdrop-blur-xs z-40 lg:hidden"
           onClick={onCloseMobile}
         />
       )}
 
-      {/* Slim Light Sidebar Rail Matching Screenshot & Replica */}
+      {/* Skywork Dark Sidebar (Matching Skywork.ai layout) */}
       <aside
-        className={`bg-[#EFF5F1] w-[78px] shrink-0 py-2.5 flex flex-col items-center gap-1.5 text-[11px] text-[#374151] font-medium select-none z-30 transition-all ${
+        className={`bg-[#0F131A] border-r border-[#212932] w-[230px] shrink-0 py-3.5 px-3 flex flex-col justify-between text-xs text-slate-300 select-none z-30 transition-all ${
           isMobileOpen
-            ? 'fixed inset-y-0 left-0 z-50 shadow-2xl flex bg-[#EFF5F1]'
+            ? 'fixed inset-y-0 left-0 z-50 shadow-2xl flex bg-[#0F131A]'
             : 'hidden lg:flex'
         }`}
       >
-        {/* Vertical Tool Navigation List Matching Screenshot */}
-        <div className="w-full flex-1 overflow-y-auto custom-scrollbar flex flex-col items-center gap-1 px-1">
-          {PRIMARY_TOOLS.map((tool) => {
-            const isActive = activeTool === tool.id;
-            return (
-              <button
-                key={tool.id}
-                type="button"
-                onClick={() => handleToolClick(tool.id, tool.category)}
-                title={tool.name}
-                className={`w-16 py-2 rounded-xl flex flex-col items-center gap-1 transition-all cursor-pointer ${
-                  isActive
-                    ? 'bg-white text-[#2E7D32] shadow-2xs font-bold'
-                    : 'text-[#374151] hover:bg-white/70 hover:text-[#2E7D32]'
-                }`}
-              >
-                <div className={isActive ? 'text-[#2E7D32]' : 'text-gray-700'}>
-                  {tool.icon}
+        <div className="flex flex-col gap-4">
+          {/* Top Logo & Title */}
+          <div className="flex items-center justify-between px-2 pt-1 pb-2">
+            <button
+              type="button"
+              onClick={() => {
+                onSelectCategory('ai-section');
+                handleToolClick('ai-chat', 'ai-section');
+              }}
+              className="flex items-center gap-2.5 group cursor-pointer"
+            >
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] p-0.5 shadow-[0_0_15px_rgba(0,201,167,0.3)]">
+                <div className="w-full h-full bg-[#0F131A] rounded-[10px] flex items-center justify-center">
+                  <svg className="w-4 h-4 text-[#00c9a7]" viewBox="0 0 32 32" fill="none">
+                    <path
+                      d="M16 2L20.3 11.7L30 16L20.3 20.3L16 30L11.7 20.3L2 16L11.7 11.7L16 2Z"
+                      fill="currentColor"
+                    />
+                  </svg>
                 </div>
-                <span className="text-[10px] leading-tight text-center line-clamp-2 max-w-[62px]">
-                  {tool.name}
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-[17px] font-black tracking-tight text-white font-display">
+                  playzy
                 </span>
-              </button>
-            );
-          })}
+                <span className="text-[10px] text-slate-400 font-medium">Skywork Agent Hub</span>
+              </div>
+            </button>
 
-          {/* "More" Trigger Button */}
+            {isMobileOpen && (
+              <button
+                type="button"
+                onClick={onCloseMobile}
+                className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {/* [+ New Chat / Project] Button (Skywork Primary Action) */}
+          <button
+            type="button"
+            onClick={() => {
+              onSelectCategory('ai-section');
+              handleToolClick('ai-chat', 'ai-section');
+            }}
+            className="w-full py-2.5 px-3 rounded-xl bg-[#181D24] hover:bg-[#202732] border border-[#263241] hover:border-[#00c9a7]/50 text-slate-100 font-semibold text-xs flex items-center gap-2.5 transition-all shadow-xs cursor-pointer group"
+          >
+            <div className="w-5 h-5 rounded-lg bg-[#00c9a7]/20 flex items-center justify-center text-[#00c9a7] group-hover:scale-110 transition-transform">
+              <Plus className="w-3.5 h-3.5" />
+            </div>
+            <span>New Chat / Project</span>
+          </button>
+
+          {/* Workspace Agent Navigation Section */}
+          <div className="space-y-1">
+            <p className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              Workspace Agents
+            </p>
+
+            <div className="space-y-0.5">
+              {SKYWORK_AGENTS.map((tool) => {
+                const isActive = activeTool === tool.id;
+                return (
+                  <button
+                    key={tool.id}
+                    type="button"
+                    onClick={() => handleToolClick(tool.id, tool.category)}
+                    className={`w-full px-2.5 py-2 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer font-medium ${
+                      isActive
+                        ? 'bg-[#1C232D] text-white border border-[#00c9a7]/40 shadow-xs'
+                        : 'text-slate-300 hover:bg-[#151B22] hover:text-white'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className={isActive ? 'text-[#00c9a7]' : 'text-slate-400'}>
+                        {tool.icon}
+                      </div>
+                      <span className="truncate text-xs">{tool.name}</span>
+                    </div>
+
+                    {tool.badge && (
+                      <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#12171F] border border-[#263241] text-slate-400">
+                        {tool.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section: Pro Status & All Tools Modal Trigger */}
+        <div className="space-y-3 pt-3 border-t border-[#212932]">
+          {/* All Tools Trigger */}
           <button
             type="button"
             onClick={() => setIsMoreModalOpen(true)}
-            title="More Tools"
-            className="w-16 py-2 rounded-xl flex flex-col items-center gap-1 transition-all cursor-pointer text-[#374151] hover:bg-white/70 hover:text-[#2E7D32] mt-0.5"
+            className="w-full px-2.5 py-2 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-[#151B22]"
           >
-            <MoreHorizontal className="w-5 h-5 text-gray-700" />
-            <span className="text-[10px] leading-tight">More</span>
+            <div className="flex items-center gap-2.5">
+              <MoreHorizontal className="w-4 h-4 text-slate-400" />
+              <span className="text-xs font-medium">All 20+ Tools</span>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
           </button>
+
+          {/* Access Status Card */}
+          <div className="p-2.5 rounded-xl bg-[#141A22] border border-[#263241] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]" />
+              <span className="text-[11px] font-semibold text-slate-200">Free Pro Access</span>
+            </div>
+            <span className="text-[10px] text-[#00c9a7] font-bold">ACTIVE</span>
+          </div>
         </div>
       </aside>
 
-      {/* "More Tools" Full Suite Flyout / Modal */}
+      {/* "More Tools" Full Modal */}
       {isMoreModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-xs animate-apple-in">
-          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto p-5 sm:p-7 space-y-6">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md animate-apple-in">
+          <div className="bg-[#181D24] rounded-3xl border border-[#263241] shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto p-5 sm:p-7 space-y-6 text-slate-200">
+            <div className="flex items-center justify-between pb-3 border-b border-[#263241]">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-2xl bg-[#edf7ee] text-[#499557] flex items-center justify-center font-black">
+                <div className="w-9 h-9 rounded-2xl bg-[#00c9a7]/20 text-[#00c9a7] flex items-center justify-center font-black">
                   ✦
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-slate-900 tracking-tight">Playzy All Tools Suite</h3>
-                  <p className="text-xs text-slate-500">Pick any audio, video, or AI writing tool to begin</p>
+                  <h3 className="text-lg font-black text-white tracking-tight">Playzy All Tools Suite</h3>
+                  <p className="text-xs text-slate-400">Pick any audio, video, or AI writing agent to begin</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setIsMoreModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition"
+                className="w-8 h-8 rounded-full bg-[#202732] hover:bg-[#2A3442] text-slate-300 flex items-center justify-center transition cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -238,124 +337,102 @@ export function AppSidebar({
 
             {/* Audio & Video Extraction Suite */}
             <div className="space-y-3">
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
-                Audio &amp; Video Transcriber
-              </h4>
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                <DownloadCloud className="w-4 h-4 text-sky-400" />
+                <span>Media Download &amp; Conversion</span>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
                 <button
                   type="button"
-                  onClick={() => handleToolClick('mp3-to-text', 'audio-tools')}
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200/80 text-left transition"
+                  onClick={() => handleToolClick('video-downloader', 'video-downloader')}
+                  className="p-3 rounded-2xl bg-[#12171F] border border-[#263241] hover:border-sky-500/50 hover:bg-[#1A222D] text-left transition"
                 >
-                  <FileAudio className="w-5 h-5 text-blue-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">MP3 to Text</p>
-                    <p className="text-[10.5px] text-slate-400">Strictly .mp3 audio only</p>
-                  </div>
+                  <p className="text-xs font-bold text-slate-100">Playzy Video Downloader</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">YouTube, TikTok, 4K &amp; MP3</p>
                 </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('mp4-to-text', 'audio-tools')}
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-indigo-50/80 border border-slate-200/80 text-left transition"
-                >
-                  <FileVideo className="w-5 h-5 text-indigo-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">MP4 to Text</p>
-                    <p className="text-[10.5px] text-slate-400">Strictly .mp4 video only</p>
-                  </div>
-                </button>
-
                 <button
                   type="button"
                   onClick={() => handleToolClick('youtube-to-mp3', 'audio-tools')}
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-rose-50/80 border border-slate-200/80 text-left transition"
+                  className="p-3 rounded-2xl bg-[#12171F] border border-[#263241] hover:border-sky-500/50 hover:bg-[#1A222D] text-left transition"
                 >
-                  <Youtube className="w-5 h-5 text-rose-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">YouTube to MP3</p>
-                    <p className="text-[10.5px] text-slate-400">Link input only (320kbps)</p>
-                  </div>
+                  <p className="text-xs font-bold text-slate-100">YouTube to MP3</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">320kbps high quality audio</p>
                 </button>
-
                 <button
                   type="button"
                   onClick={() => handleToolClick('tiktok-to-mp3', 'audio-tools')}
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-amber-50/80 border border-slate-200/80 text-left transition"
+                  className="p-3 rounded-2xl bg-[#12171F] border border-[#263241] hover:border-sky-500/50 hover:bg-[#1A222D] text-left transition"
                 >
-                  <Music2 className="w-5 h-5 text-amber-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">TikTok to MP3</p>
-                    <p className="text-[10.5px] text-slate-400">Link input only (No watermark)</p>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('video-downloader', 'video-downloader')}
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-purple-50/80 border border-slate-200/80 text-left transition"
-                >
-                  <DownloadCloud className="w-5 h-5 text-purple-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">Playzy Video Downloader</p>
-                    <p className="text-[10.5px] text-slate-400">YouTube, TikTok, Vimeo, 1000+</p>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('workspace', 'workspace')}
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-left transition"
-                >
-                  <FolderOpen className="w-5 h-5 text-slate-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">Saved Workspace</p>
-                    <p className="text-[10.5px] text-slate-400">History &amp; exported files</p>
-                  </div>
+                  <p className="text-xs font-bold text-slate-100">TikTok to MP3</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Audio &amp; watermark-free video</p>
                 </button>
               </div>
             </div>
 
-            {/* Audio DSP & Voice Mastering */}
+            {/* Transcription & Speech */}
             <div className="space-y-3">
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
-                Audio DSP &amp; Studio Tools
-              </h4>
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                <FileAudio className="w-4 h-4 text-emerald-400" />
+                <span>Transcription &amp; Voice Studio</span>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
                 <button
                   type="button"
-                  onClick={() => handleToolClick('volume-booster', 'ai-voice')}
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-amber-50/80 border border-slate-200/80 text-left transition"
+                  onClick={() => handleToolClick('mp3-to-text', 'audio-tools')}
+                  className="p-3 rounded-2xl bg-[#12171F] border border-[#263241] hover:border-emerald-500/50 hover:bg-[#1A222D] text-left transition"
                 >
-                  <Volume2 className="w-5 h-5 text-amber-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">Volume Booster</p>
-                    <p className="text-[10.5px] text-slate-400">Up to 400% loudness</p>
-                  </div>
+                  <p className="text-xs font-bold text-slate-100">MP3 to Text</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Speech-to-text with timestamps</p>
                 </button>
-
                 <button
                   type="button"
-                  onClick={() => handleToolClick('ai-voice-cleaner', 'ai-voice')}
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-emerald-50/80 border border-slate-200/80 text-left transition"
+                  onClick={() => handleToolClick('mp4-to-text', 'audio-tools')}
+                  className="p-3 rounded-2xl bg-[#12171F] border border-[#263241] hover:border-emerald-500/50 hover:bg-[#1A222D] text-left transition"
                 >
-                  <Sparkles className="w-5 h-5 text-emerald-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">AI Voice Cleaner</p>
-                    <p className="text-[10.5px] text-slate-400">Remove hiss, hum &amp; clicks</p>
-                  </div>
+                  <p className="text-xs font-bold text-slate-100">MP4 to Text</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Extract dialogue from video</p>
                 </button>
-
                 <button
                   type="button"
-                  onClick={() => handleToolClick('ai-vocal-remover', 'ai-voice')}
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-rose-50/80 border border-slate-200/80 text-left transition"
+                  onClick={() => handleToolClick('ai-voice-generator', 'ai-voice')}
+                  className="p-3 rounded-2xl bg-[#12171F] border border-[#263241] hover:border-purple-500/50 hover:bg-[#1A222D] text-left transition"
                 >
-                  <Music2 className="w-5 h-5 text-rose-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">AI Vocal Remover</p>
-                    <p className="text-[10.5px] text-slate-400">Acapella &amp; Karaoke isolation</p>
-                  </div>
+                  <p className="text-xs font-bold text-slate-100">AI Voice Generator</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">ElevenLabs-quality 36+ voices</p>
+                </button>
+              </div>
+            </div>
+
+            {/* AI Writing & Detection */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                <Sparkles className="w-4 h-4 text-[#00c9a7]" />
+                <span>AI Writing &amp; Content Detection</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => handleToolClick('ai-detector', 'ai-section')}
+                  className="p-3 rounded-2xl bg-[#12171F] border border-[#263241] hover:border-[#00c9a7]/50 hover:bg-[#1A222D] text-left transition"
+                >
+                  <p className="text-xs font-bold text-slate-100">AI Content Detector</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">0-100% Probability Score</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleToolClick('ai-humanizer', 'ai-section')}
+                  className="p-3 rounded-2xl bg-[#12171F] border border-[#263241] hover:border-[#00c9a7]/50 hover:bg-[#1A222D] text-left transition"
+                >
+                  <p className="text-xs font-bold text-slate-100">AI Humanizer</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Bypass AI Detection</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleToolClick('paraphrasing-tool', 'ai-section')}
+                  className="p-3 rounded-2xl bg-[#12171F] border border-[#263241] hover:border-[#00c9a7]/50 hover:bg-[#1A222D] text-left transition"
+                >
+                  <p className="text-xs font-bold text-slate-100">Paraphraser</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Fluent, Creative, Academic</p>
                 </button>
               </div>
             </div>

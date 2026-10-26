@@ -42,13 +42,13 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-900 leading-tight">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-tight">
           Download{' '}
           <ShinyText text="Any Video" speed={3.5} />{' '}
-          with <span className="text-[#499557]">Playzy</span>
+          with <span className="skywork-gradient-text">Playzy</span>
         </h1>
 
-        <p className="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
+        <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
           The fastest free online tool to download videos from TikTok, Pinterest, Facebook, Instagram Reels, and YouTube without watermarks. 100% free, secure &amp; unlimited.
         </p>
       </motion.div>
@@ -66,7 +66,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
         }}
       />
 
-      {/* Input Box with Colorful Glowing Outline matching screenshot */}
+      {/* Input Box with Skywork Styling */}
       <motion.div
         className="w-full max-w-3xl px-2"
         initial={{ opacity: 0, y: 20 }}
@@ -89,15 +89,14 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
           }}
           className="relative"
         >
-          {/* Clean refined outline matching Playzy studio tokens */}
           <div
             className={`rounded-2xl sm:rounded-3xl p-[1.5px] transition-all duration-300 ${
               isDragOver
-                ? 'bg-[#499557] ring-4 ring-emerald-100 shadow-xl scale-[1.01]'
-                : 'bg-slate-200 hover:bg-slate-300 shadow-xl shadow-slate-200/50'
+                ? 'bg-[#00c9a7] ring-4 ring-[#00c9a7]/20 shadow-xl scale-[1.01]'
+                : 'bg-[#263241] hover:border-[#00c9a7]/40 shadow-xl'
             }`}
           >
-            <div className="flex items-center bg-white rounded-[14px] sm:rounded-[22px] p-2 sm:p-2.5">
+            <div className="flex items-center bg-[#181D24] rounded-[14px] sm:rounded-[22px] p-2 sm:p-2.5">
               <input
                 type="url"
                 value={url}
@@ -112,7 +111,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
                 }
                 required
                 disabled={isLoading}
-                className="w-full bg-transparent px-4 sm:px-5 py-2.5 sm:py-3 text-slate-800 placeholder-slate-400 focus:outline-none text-sm sm:text-base md:text-lg font-normal"
+                className="w-full bg-transparent px-4 sm:px-5 py-2.5 sm:py-3 text-slate-100 placeholder-slate-500 focus:outline-none text-sm sm:text-base md:text-lg font-normal"
               />
 
               {url && (
@@ -122,7 +121,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
                     setUrl('');
                     setClientValidationNotice(null);
                   }}
-                  className="p-2 text-slate-400 hover:text-slate-600 transition"
+                  className="p-2 text-slate-400 hover:text-slate-200 transition"
                   title="Clear input"
                 >
                   <X className="w-4 h-4" />
@@ -134,7 +133,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
                 disabled={!url.trim() || isLoading}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="shrink-0 flex items-center justify-center gap-1.5 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base text-white bg-[#499557] hover:bg-[#3d7d49] shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="shrink-0 flex items-center justify-center gap-1.5 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base text-slate-950 bg-gradient-to-r from-[#00A9C0] to-[#00c9a7] hover:from-[#00c9a7] hover:to-[#29CC5F] shadow-[0_0_18px_rgba(0,201,167,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <>
@@ -156,7 +155,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
         {onFileDrop && (
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="mt-2.5 text-center text-xs text-slate-400 hover:text-purple-600 cursor-pointer font-medium transition-colors flex items-center justify-center gap-1.5"
+            className="mt-2.5 text-center text-xs text-slate-500 hover:text-[#00c9a7] cursor-pointer font-medium transition-colors flex items-center justify-center gap-1.5"
           >
             <UploadCloud className="w-3.5 h-3.5" />
             <span>Or drag & drop local video or audio file to convert</span>
@@ -170,16 +169,16 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="mt-4 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm text-left flex items-start gap-2.5 shadow-sm"
+              className="mt-4 p-3.5 rounded-2xl bg-rose-950/40 border border-rose-500/40 text-rose-300 text-xs sm:text-sm text-left flex items-start gap-2.5 shadow-sm"
             >
-              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
               <span>{clientValidationNotice || error}</span>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Supported Platforms icons row matching screenshot */}
-        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 mt-6 text-sm text-slate-600">
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 mt-6 text-sm text-slate-400">
           {/* YouTube */}
           <motion.div whileHover={{ scale: 1.15 }} className="w-8 h-8 rounded-lg bg-[#FF0000] flex items-center justify-center text-white shadow-sm cursor-pointer">
             <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">

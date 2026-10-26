@@ -56,7 +56,7 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       whileHover={{ y: -4, transition: { type: 'spring', stiffness: 350, damping: 25 } }}
-      className={`relative overflow-hidden rounded-3xl border border-slate-100 bg-white/85 p-6 shadow-sm transition-shadow duration-300 hover:shadow-xl hover:shadow-indigo-500/5 ${className}`}
+      className={`relative overflow-hidden rounded-3xl border border-[#263241] bg-[#181D24] p-6 shadow-sm transition-all duration-300 hover:border-[#00c9a7]/40 hover:shadow-xl ${className}`}
       {...props}
     >
       <div

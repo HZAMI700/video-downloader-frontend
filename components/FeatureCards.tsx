@@ -47,10 +47,10 @@ export const FeatureCards: React.FC = () => {
                 <Icon className={`w-5 h-5 ${item.iconFill ? 'fill-current' : ''}`} />
               </div>
               <div>
-                <h3 className="font-black text-sm sm:text-base text-slate-900 tracking-tight">
+                <h3 className="font-black text-sm sm:text-base text-white tracking-tight">
                   {item.title}
                 </h3>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
                   {item.description}
                 </p>
               </div>

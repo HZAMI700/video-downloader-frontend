@@ -210,21 +210,21 @@ export default function Home() {
   const currentToolDef = activeTool ? getToolById(activeTool) : undefined;
 
   return (
-    <div className="min-h-screen w-full bg-[#EFF5F1] flex flex-col font-sans text-[#1F2937]">
-      {/* Top Global Navigation Bar Matching Screenshot & Replica */}
-      <header className="w-full bg-[#EFF5F1] sticky top-0 z-40 px-3 sm:px-6 h-14 flex items-center justify-between shrink-0">
-        {/* Left: Mobile Toggle + Playzy Logo + Nav links */}
-        <div className="flex items-center gap-4 sm:gap-7">
+    <div className="min-h-screen w-full bg-[#0F131A] flex flex-col font-sans text-slate-100">
+      {/* Top Global Navigation Bar - Skywork Design */}
+      <header className="w-full bg-[#0F131A] border-b border-[#212932] sticky top-0 z-40 px-3 sm:px-6 h-14 flex items-center justify-between shrink-0">
+        {/* Left: Mobile Toggle + Skywork Logo + Workspace & Model Selectors */}
+        <div className="flex items-center gap-3 sm:gap-6">
           <button
             type="button"
             onClick={() => setIsMobileSidebarOpen(true)}
             aria-label="Open Mobile Menu"
-            className="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-colors"
+            className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-[#181D24] transition-colors"
           >
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* Playzy Brand Logo Matching Screenshot */}
+          {/* Skywork Brand Logo */}
           <button
             type="button"
             onClick={() => {
@@ -232,44 +232,38 @@ export default function Home() {
               setActiveCategory('ai-section');
               setSearchQuery('');
             }}
-            className="flex items-center gap-2 group cursor-pointer focus:outline-none"
+            className="flex items-center gap-2.5 group cursor-pointer focus:outline-none"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#1B241E] flex items-center justify-center relative shadow-xs group-hover:bg-[#2E7D32] transition-colors">
-              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none">
-                <rect x="4" y="6" width="14" height="12" rx="4" stroke="currentColor" strokeWidth="2" />
-                <circle cx="8.5" cy="11.5" r="1.2" fill="currentColor" />
-                <circle cx="13.5" cy="11.5" r="1.2" fill="currentColor" />
-                <path d="M9 14.5C9.8 15.2 12.2 15.2 13 14.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                <path d="M16 3C18.5 3 20.5 5 20.5 7.5C18 7.5 16 5.5 16 3Z" fill="#4CAF50" />
-                <path d="M11 6V4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] p-0.5 shadow-[0_0_15px_rgba(0,201,167,0.3)] group-hover:shadow-[0_0_20px_rgba(0,201,167,0.5)] transition-all">
+              <div className="w-full h-full bg-[#0F131A] rounded-[10px] flex items-center justify-center">
+                <svg className="w-4 h-4 text-[#00c9a7]" viewBox="0 0 32 32" fill="none">
+                  <path
+                    d="M16 2L20.3 11.7L30 16L20.3 20.3L16 30L11.7 20.3L2 16L11.7 11.7L16 2Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </div>
             </div>
-            <span className="text-[21px] font-extrabold tracking-tight text-[#111827]">
+            <span className="text-[20px] font-black tracking-tight text-white font-display">
               playzy
             </span>
           </button>
 
-          {/* Desktop Nav Links Matching Screenshot */}
-          <nav className="hidden xl:flex items-center gap-7 text-[13.5px] font-semibold text-[#1F2937]">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTool(null);
-                setSearchQuery('');
-              }}
-              className="hover:text-[#2E7D32] transition py-1 font-semibold cursor-pointer"
-            >
-              Tools
-            </button>
-            <span className="hover:text-[#2E7D32] transition cursor-pointer py-1">Professional</span>
-            <span className="hover:text-[#2E7D32] transition cursor-pointer py-1">Academic</span>
-            <span className="hover:text-[#2E7D32] transition cursor-pointer py-1">Creators</span>
-            <span className="hover:text-[#2E7D32] transition cursor-pointer py-1">Personal</span>
-            <span className="hover:text-[#2E7D32] transition cursor-pointer py-1">Extensions &amp; apps</span>
-          </nav>
+          {/* Workspace Pill */}
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#141A22] border border-[#263241] text-xs text-slate-300">
+            <span className="w-2 h-2 rounded-full bg-[#00c9a7]" />
+            <span className="font-semibold text-slate-200">Personal Workspace</span>
+          </div>
+
+          {/* Model Pill (DeepSeek-R1 / Skywork 3.0) */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#141A22] border border-[#263241] text-xs text-slate-300">
+            <Sparkles className="w-3.5 h-3.5 text-[#00c9a7]" />
+            <span className="text-slate-400">Model:</span>
+            <span className="font-semibold text-slate-100">Playzy DeepSeek-R1</span>
+          </div>
         </div>
 
-        {/* Right: Search + Upgrade to Premium + Avatar */}
+        {/* Right: Search + Quick Downloader + Upgrade to Pro + Avatar */}
         <div className="flex items-center gap-2.5 sm:gap-3.5">
           {/* Quick Search */}
           <div className="relative hidden md:block">
@@ -278,14 +272,14 @@ export default function Home() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search tools..."
-              className="pl-9 pr-7 py-1.5 rounded-full bg-white border border-gray-300 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2E7D32]/20 focus:border-[#2E7D32] w-40 lg:w-52 transition"
+              placeholder="Search agents &amp; tools..."
+              className="pl-9 pr-7 py-1.5 rounded-full bg-[#141A22] border border-[#263241] text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-[#00c9a7] w-40 lg:w-52 transition"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -300,35 +294,36 @@ export default function Home() {
                 setActiveCategory('video-downloader');
                 setActiveTool('video-downloader');
               }}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-gray-300 text-xs font-semibold text-slate-700 transition active:scale-95 cursor-pointer shadow-2xs"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#181D24] hover:bg-[#202732] border border-[#263241] text-xs font-semibold text-slate-300 transition active:scale-95 cursor-pointer shadow-xs"
             >
-              <DownloadCloud className="w-3.5 h-3.5 text-purple-600" />
+              <DownloadCloud className="w-3.5 h-3.5 text-sky-400" />
               <span>Downloader</span>
             </button>
           )}
 
-          {/* Upgrade to Premium Button Matching Screenshot */}
+          {/* Upgrade to Pro Button (Skywork Vibrant Cyan Gradient) */}
           <button
             type="button"
-            className="bg-[#2E7D32] hover:bg-[#256628] active:scale-[0.99] text-white text-[13.5px] font-semibold px-4 py-1.5 rounded-full flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+            className="bg-gradient-to-r from-[#00A9C0] to-[#00c9a7] hover:from-[#00c9a7] hover:to-[#29CC5F] active:scale-[0.98] text-slate-950 text-[13px] font-bold px-4 py-1.5 rounded-full flex items-center gap-2 shadow-[0_0_18px_rgba(0,201,167,0.3)] transition-all cursor-pointer"
           >
-            <Crown className="w-4 h-4 text-white fill-current" />
-            <span>Upgrade to Premium</span>
+            <Crown className="w-3.5 h-3.5 text-slate-950 fill-current" />
+            <span>Upgrade to Pro</span>
           </button>
 
-          {/* User Profile Avatar Matching Screenshot */}
+          {/* User Profile Avatar with Online Ring */}
           <button
             type="button"
             aria-label="User Account"
-            className="w-8 h-8 rounded-full border border-gray-400/70 hover:border-gray-600 hover:bg-white/60 flex items-center justify-center text-gray-700 transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-[#181D24] border border-[#263241] hover:border-[#00c9a7]/50 flex items-center justify-center text-slate-200 transition-colors cursor-pointer relative"
           >
             <User className="w-4 h-4 stroke-[2.2]" />
+            <span className="w-2 h-2 rounded-full bg-[#00c9a7] border-2 border-[#0F131A] absolute -bottom-0.5 -right-0.5" />
           </button>
         </div>
       </header>
 
-      {/* Main Body Layout: Slim Left Rail + Main Rounded Canvas */}
-      <div className="flex-1 flex w-full min-h-0">
+      {/* Main Body Layout: Skywork Dark Sidebar + Main Canvas */}
+      <div className="flex-1 flex w-full min-h-0 bg-[#0F131A]">
         {/* Left Slim Vertical Rail Matching Screenshot */}
         <AppSidebar
           activeCategory={activeCategory}
@@ -343,12 +338,12 @@ export default function Home() {
           setIsMoreModalOpen={setIsMoreModalOpen}
         />
 
-        {/* Main Content Area: Rounded Top-Left White Surface Matching Replica */}
-        <main className="flex-1 bg-white rounded-tl-[26px] border-t border-l border-[#DCE5DF] shadow-xs p-4 sm:p-6 lg:p-8 overflow-y-auto min-h-[calc(100vh-3.5rem)] flex flex-col justify-between">
+        {/* Main Content Area: Skywork Dark Canvas */}
+        <main className="flex-1 bg-[#0F131A] p-3 sm:p-5 lg:p-7 overflow-y-auto min-h-[calc(100vh-3.5rem)] flex flex-col justify-between">
           <div>
             {/* Breadcrumb Row when inside a tool */}
             {activeTool !== null && (
-              <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#212932]">
                 <div className="flex items-center gap-2 text-xs">
                   <button
                     type="button"
@@ -356,13 +351,13 @@ export default function Home() {
                       setActiveTool(null);
                       setSearchQuery('');
                     }}
-                    className="text-slate-500 hover:text-slate-900 font-bold transition flex items-center gap-1"
+                    className="text-slate-400 hover:text-white font-bold transition flex items-center gap-1"
                   >
                     <ChevronLeft className="w-3.5 h-3.5" />
-                    <span>Home</span>
+                    <span>Workspace Home</span>
                   </button>
-                  <span className="text-slate-300">/</span>
-                  <span className="font-semibold text-slate-500">
+                  <span className="text-slate-600">/</span>
+                  <span className="font-semibold text-slate-400">
                     {activeCategory === 'video-downloader'
                       ? 'Playzy Video Downloader'
                       : activeCategory === 'workspace'
@@ -371,8 +366,8 @@ export default function Home() {
                   </span>
                   {currentToolDef && (
                     <>
-                      <span className="text-slate-300">/</span>
-                      <span className="font-extrabold text-[#499557]">
+                      <span className="text-slate-600">/</span>
+                      <span className="font-extrabold text-[#00c9a7]">
                         {currentToolDef.name}
                       </span>
                     </>
@@ -382,7 +377,7 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setActiveTool(null)}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-800"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-white px-2.5 py-1 rounded-lg bg-[#181D24] border border-[#263241]"
                 >
                   <span>Close Tool</span>
                   <X className="w-3.5 h-3.5" />
@@ -395,14 +390,14 @@ export default function Home() {
             {activeCategory === 'video-downloader' ? (
               <div className="space-y-10 md:space-y-12 animate-apple-in max-w-5xl mx-auto pt-2">
                 <div className="text-center max-w-2xl mx-auto space-y-2">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200">
-                    <DownloadCloud className="w-4 h-4 text-purple-600" />
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/30">
+                    <DownloadCloud className="w-4 h-4 text-sky-400" />
                     <span>Playzy Downloader • 4K Video &amp; 320kbps MP3</span>
                   </div>
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
                     Free Video &amp; Audio Downloader
                   </h1>
-                  <p className="text-xs sm:text-sm text-slate-500">
+                  <p className="text-xs sm:text-sm text-slate-400">
                     Download videos and audio from YouTube, TikTok, Vimeo, and 1000+ sites with zero registration.
                   </p>
                 </div>
@@ -491,17 +486,17 @@ export default function Home() {
                 ) : activeTool === 'podcast-generator' ? (
                   /* DEDICATED AI PODCAST STUDIO */
                   <div className="space-y-4">
-                    <div className="flex items-center gap-2 pb-1 border-b border-zinc-200/70">
+                    <div className="flex items-center gap-2 pb-1 border-b border-[#212932]">
                       <button
                         type="button"
                         onClick={() => setActiveTool(null)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-bold text-zinc-700 transition active:scale-95 shadow-2xs"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#181D24] hover:bg-[#202732] border border-[#263241] text-xs font-bold text-slate-200 transition active:scale-95 shadow-xs"
                       >
                         <ChevronLeft className="w-3.5 h-3.5" />
                         <span>Back to Audio Tools</span>
                       </button>
-                      <span className="text-zinc-300">/</span>
-                      <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+                      <span className="text-slate-600">/</span>
+                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
                         Free AI Podcast Generator
                       </span>
@@ -549,9 +544,9 @@ export default function Home() {
             )}
           </div>
 
-          {/* Minimal Clean Footer */}
-          <footer className="pt-10 pb-2 border-t border-slate-100 text-center text-xs text-slate-400">
-            <p>© {new Date().getFullYear()} Playzy AI Suite. 100% Free &amp; Secure. All tools active.</p>
+          {/* Minimal Clean Dark Footer */}
+          <footer className="pt-10 pb-2 border-t border-[#212932] text-center text-xs text-slate-500">
+            <p>© {new Date().getFullYear()} Playzy AI Suite. 100% Free &amp; Secure. All workspace tools active.</p>
           </footer>
         </main>
       </div>
