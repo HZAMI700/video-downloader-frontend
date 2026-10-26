@@ -454,9 +454,9 @@ export function AppSidebar({
 
       {/* Skywork Pro Sidebar Rail - All Tools Visible */}
       <aside
-        className={`bg-[#F8FAFC] dark:bg-[#0F131A] border-r border-slate-200 dark:border-[#212932] w-[268px] shrink-0 flex flex-col justify-between text-xs text-slate-700 dark:text-slate-300 select-none z-30 transition-all ${
+        className={`bg-[#F8FAFC] dark:bg-[#0F131A] border-r border-slate-200 dark:border-[#212932] w-[298px] shrink-0 flex flex-col justify-between text-xs text-slate-700 dark:text-slate-300 select-none z-30 transition-all ${
           isMobileOpen
-            ? 'fixed inset-y-0 left-0 z-50 shadow-2xl flex bg-[#F8FAFC] dark:bg-[#0F131A] h-full'
+            ? 'fixed inset-y-0 left-0 z-50 shadow-2xl flex bg-[#F8FAFC] dark:bg-[#0F131A] h-full w-[298px] max-w-[88vw]'
             : 'hidden lg:flex sticky top-14 h-[calc(100vh-3.5rem)]'
         }`}
       >
