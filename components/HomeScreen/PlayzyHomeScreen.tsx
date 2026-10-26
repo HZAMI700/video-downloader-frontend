@@ -317,7 +317,7 @@ export function PlayzyHomeScreen({
                   </div>
                 ) : (
                   /* Assistant Bubble with Skywork Agent Execution Steps */
-                  <div className="w-full max-w-4xl space-y-3.5">
+                  <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl space-y-3.5">
                     {/* Skywork Multi-Agent Reasoning Step Box */}
                     {m.reasoningSteps && m.reasoningSteps.length > 0 && (
                       <div className="bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#212A36] rounded-xl p-3.5 text-xs text-slate-700 dark:text-slate-300 space-y-2">
@@ -437,7 +437,7 @@ export function PlayzyHomeScreen({
         </div>
 
         {/* Floating Chat Input Box */}
-        <div className="w-full max-w-4xl mx-auto pt-2 pb-1 space-y-2">
+        <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto pt-2 pb-1 space-y-2">
           <div className="relative bg-white dark:bg-[#181D24] rounded-[22px] border border-slate-200 dark:border-[#263241] shadow-[0_8px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] hover:border-slate-300 dark:hover:border-[#354354] focus-within:border-[#00c9a7]/60 focus-within:shadow-[0_0_24px_rgba(0,201,167,0.15)] transition-all p-3 sm:p-4">
             {attachedFileName && (
               <div className="mb-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-[#141A22] border border-[#00c9a7]/40 text-xs text-[#00897b] dark:text-[#00c9a7] font-semibold">
@@ -605,11 +605,11 @@ export function PlayzyHomeScreen({
       </div>
 
       {/* CENTER HERO & SKYWORK PROMPT COMMAND CENTER */}
-      <div className="w-full max-w-[820px] flex flex-col items-center my-auto pt-2 pb-6 px-3">
+      <div className="w-full max-w-7xl 2xl:max-w-[1560px] flex flex-col items-center my-auto pt-2 pb-8 px-4 sm:px-6 lg:px-8 xl:px-10">
         {/* Playzy Signature 3D Prism Avatar */}
-        <div className="relative mb-5 flex items-center justify-center">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-[#00A9C0] via-[#00c9a7] to-[#2495ff] p-0.5 shadow-[0_0_45px_rgba(0,201,167,0.4)] animate-pulse-glow">
-            <div className="w-full h-full bg-[#0A0E14] rounded-[22px] flex items-center justify-center p-3 transition-colors overflow-hidden">
+        <div className="relative mb-6 flex items-center justify-center">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-tr from-[#00A9C0] via-[#00c9a7] to-[#2495ff] p-0.5 shadow-[0_0_50px_rgba(0,201,167,0.45)] animate-pulse-glow">
+            <div className="w-full h-full bg-[#0A0E14] rounded-[22px] flex items-center justify-center p-3.5 transition-colors overflow-hidden">
               <svg className="w-full h-full" viewBox="0 0 128 128" fill="none">
                 <path d="M28 20C28 15.39 33.02 12.55 37.01 14.89L96.01 49.89C99.98 52.24 99.98 57.76 96.01 60.11L62 80L28 58V20Z" fill="url(#heroLogoGrad)"/>
                 <path d="M28 58L62 80L37.01 94.41C33.02 96.72 28 93.88 28 89.27V58Z" fill="url(#heroLogoFacet)"/>
@@ -636,28 +636,28 @@ export function PlayzyHomeScreen({
         </div>
 
         {/* Hero Headings */}
-        <h1 className="text-3xl sm:text-[44px] font-extrabold text-slate-900 dark:text-white text-center leading-tight tracking-tight">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white text-center leading-[1.15] tracking-tight max-w-4xl">
           What would you like to{' '}
           <span className="skywork-gradient-text font-black">create or research</span> today?
         </h1>
-        <p className="text-sm sm:text-[17px] text-slate-600 dark:text-slate-400 text-center mt-3 font-normal max-w-xl">
+        <p className="text-sm sm:text-lg lg:text-xl text-slate-600 dark:text-slate-400 text-center mt-3 font-normal max-w-3xl leading-relaxed">
           Multi-agent deep web research, ElevenLabs-quality voice synthesis, 4K media extraction, and document writing.
         </p>
 
         {/* CENTRAL SKYWORK COMMAND CARD (`prompt-section`) */}
-        <div className="w-full mt-7 bg-white dark:bg-[#181D24] rounded-[26px] border border-slate-200 dark:border-[#263241] shadow-[0_12px_40px_-10px_rgba(0,0,0,0.08)] dark:shadow-[0_16px_50px_rgba(0,0,0,0.6)] focus-within:border-[#00c9a7]/50 focus-within:shadow-[0_0_32px_rgba(0,201,167,0.2)] transition-all p-3 sm:p-4">
+        <div className="w-full mt-8 bg-white dark:bg-[#181D24] rounded-[28px] sm:rounded-[36px] border border-slate-200 dark:border-[#263241] shadow-[0_16px_50px_-10px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.65)] focus-within:border-[#00c9a7]/60 focus-within:shadow-[0_0_36px_rgba(0,201,167,0.22)] transition-all p-4 sm:p-6 lg:p-7">
           {/* Top Agent Mode Filter Tabs (Skywork agent pill navigation) */}
-          <div className="flex items-center gap-1.5 pb-3 overflow-x-auto custom-scrollbar border-b border-slate-100 dark:border-[#212932]">
+          <div className="flex items-center gap-2 pb-4 overflow-x-auto custom-scrollbar border-b border-slate-100 dark:border-[#212932]">
             <button
               type="button"
               onClick={() => setSelectedAgentTab('all')}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-2 ${
                 selectedAgentTab === 'all'
-                  ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656]'
+                  ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-2xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#009688] dark:text-[#00c9a7]" />
+              <Sparkles className="w-4 h-4 text-[#009688] dark:text-[#00c9a7]" />
               <span>All Agents</span>
             </button>
 
@@ -667,7 +667,7 @@ export function PlayzyHomeScreen({
                 setSelectedAgentTab('research');
                 setDeepResearchActive(true);
               }}
-              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition cursor-pointer flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-2 ${
                 selectedAgentTab === 'research'
                   ? 'bg-slate-100 dark:bg-[#242C37] text-[#009688] dark:text-[#00c9a7] border border-[#00c9a7]/40 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
@@ -683,7 +683,7 @@ export function PlayzyHomeScreen({
                 setSelectedAgentTab('doc');
                 onSelectTool('paraphrasing-tool');
               }}
-              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition cursor-pointer flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-2 ${
                 selectedAgentTab === 'doc'
                   ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
@@ -699,7 +699,7 @@ export function PlayzyHomeScreen({
                 setSelectedAgentTab('voice');
                 onSelectTool('ai-voice-generator');
               }}
-              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition cursor-pointer flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-2 ${
                 selectedAgentTab === 'voice'
                   ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
@@ -715,7 +715,7 @@ export function PlayzyHomeScreen({
                 setSelectedAgentTab('downloader');
                 onSelectTool('video-downloader');
               }}
-              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition cursor-pointer flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-2 ${
                 selectedAgentTab === 'downloader'
                   ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
@@ -731,7 +731,7 @@ export function PlayzyHomeScreen({
                 setSelectedAgentTab('transcriber');
                 onSelectTool('mp3-to-text');
               }}
-              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition cursor-pointer flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-2 ${
                 selectedAgentTab === 'transcriber'
                   ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
@@ -743,7 +743,7 @@ export function PlayzyHomeScreen({
           </div>
 
           {/* Central Input Textarea */}
-          <div className="pt-3 pb-2">
+          <div className="pt-4 pb-3">
             <textarea
               ref={pristineTextareaRef}
               rows={3}
@@ -756,38 +756,38 @@ export function PlayzyHomeScreen({
                 }
               }}
               placeholder="Ask anything, analyze documents, paste YouTube/TikTok links, or type text to synthesize voice..."
-              className="w-full resize-none outline-none text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-[15px] sm:text-[16px] leading-relaxed bg-transparent select-text"
+              className="w-full resize-none outline-none text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-base sm:text-lg lg:text-[19px] leading-relaxed bg-transparent select-text min-h-[90px] sm:min-h-[110px]"
             />
           </div>
 
           {/* Bottom Controls Row inside Skywork Card */}
-          <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-[#263241]">
+          <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-[#263241]">
             {/* Left: Attach File + Deep Research Toggle + Skills Dropdown */}
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2.5 flex-wrap">
               {/* File Upload Trigger */}
               <button
                 type="button"
                 onClick={() => pristineFileInputRef.current?.click()}
                 title="Upload document, audio or video (.pdf, .docx, .mp3, .mp4)"
-                className="w-8 h-8 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#202732] flex items-center justify-center transition-colors cursor-pointer"
+                className="w-10 h-10 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#202732] flex items-center justify-center transition-colors cursor-pointer"
               >
-                <Paperclip className="w-4 h-4" />
+                <Paperclip className="w-5 h-5" />
               </button>
 
               {/* Deep Research Toggle Pill */}
               <button
                 type="button"
                 onClick={() => setDeepResearchActive(!deepResearchActive)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition cursor-pointer ${
+                className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold border transition cursor-pointer ${
                   deepResearchActive
                     ? 'bg-[#00c9a7]/10 dark:bg-[#00c9a7]/15 border-[#00c9a7]/30 dark:border-[#00c9a7]/40 text-[#00897b] dark:text-[#00c9a7] shadow-[0_0_12px_rgba(0,201,167,0.15)]'
                     : 'bg-slate-100 dark:bg-[#141A22] border-slate-200 dark:border-[#263241] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300'
                 }`}
               >
-                <Zap className="w-3.5 h-3.5" />
+                <Zap className="w-4 h-4" />
                 <span>Deep Research</span>
                 <span
-                  className={`w-2 h-2 rounded-full ${
+                  className={`w-2.5 h-2.5 rounded-full ${
                     deepResearchActive ? 'bg-[#00c9a7] shadow-[0_0_6px_#00c9a7]' : 'bg-slate-400 dark:bg-slate-600'
                   }`}
                 />
@@ -795,23 +795,23 @@ export function PlayzyHomeScreen({
 
               {/* Attached file pill if any */}
               {attachedFileName && (
-                <span className="text-xs bg-slate-100 dark:bg-[#141A22] border border-[#00c9a7]/40 text-[#00897b] dark:text-[#00c9a7] font-medium px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
-                  <Paperclip className="w-3 h-3" />
-                  <span className="truncate max-w-[120px]">{attachedFileName}</span>
+                <span className="text-xs sm:text-sm bg-slate-100 dark:bg-[#141A22] border border-[#00c9a7]/40 text-[#00897b] dark:text-[#00c9a7] font-medium px-3 py-1 rounded-full flex items-center gap-1.5">
+                  <Paperclip className="w-3.5 h-3.5" />
+                  <span className="truncate max-w-[140px]">{attachedFileName}</span>
                   <button
                     type="button"
                     onClick={() => setAttachedFileName(null)}
-                    className="hover:text-rose-500 ml-0.5"
+                    className="hover:text-rose-500 ml-1"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-3.5 h-3.5" />
                   </button>
                 </span>
               )}
             </div>
 
             {/* Right: Word Count & Send Arrow Button */}
-            <div className="flex items-center gap-3">
-              <span className="text-[11px] text-slate-400 dark:text-slate-500 hidden sm:inline-block">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <span className="text-xs text-slate-400 dark:text-slate-500 hidden sm:inline-block font-medium">
                 {wordCount} words
               </span>
 
@@ -820,35 +820,38 @@ export function PlayzyHomeScreen({
                 onClick={() => handleSendMessage()}
                 disabled={!promptText.trim() && !attachedFileName}
                 title="Run prompt"
-                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                   promptText.trim() || attachedFileName
-                    ? 'bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] text-slate-950 font-bold shadow-[0_0_18px_rgba(0,201,167,0.4)] hover:scale-105 active:scale-95'
+                    ? 'bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] text-slate-950 font-bold shadow-[0_0_20px_rgba(0,201,167,0.45)] hover:scale-105 active:scale-95'
                     : 'bg-slate-200 dark:bg-[#202732] text-slate-400 dark:text-slate-500 cursor-not-allowed'
                 }`}
               >
-                <ArrowRight className="w-4 h-4 stroke-[2.4]" />
+                <ArrowRight className="w-5 h-5 stroke-[2.5]" />
               </button>
             </div>
           </div>
         </div>
 
         {/* SKYWORK BENTO QUERY CARDS GRID (Matching Skywork 6 core cards) */}
-        <div className="w-full mt-7 space-y-3">
+        <div className="w-full mt-10 space-y-4">
           <div className="flex items-center justify-between px-1">
-            <span className="text-xs uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">
-              Autonomous Agent Modules
-            </span>
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]" />
+              <span className="text-xs sm:text-sm uppercase tracking-wider font-extrabold text-slate-700 dark:text-slate-300">
+                Autonomous Agent Modules &amp; Studio Tools
+              </span>
+            </div>
             <button
               type="button"
               onClick={() => onOpenAllToolsModal?.()}
-              className="text-xs text-[#009688] dark:text-[#00c9a7] hover:underline flex items-center gap-1 font-semibold"
+              className="text-xs sm:text-sm text-[#009688] dark:text-[#00c9a7] hover:underline flex items-center gap-1.5 font-bold"
             >
-              <span>View All 20+ Tools</span>
-              <ChevronRight className="w-3.5 h-3.5" />
+              <span>Explore All 28+ Studio Tools</span>
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 xl:gap-7 w-full">
             {/* Card 1: Deep Research */}
             <button
               type="button"
@@ -859,23 +862,29 @@ export function PlayzyHomeScreen({
                 setDeepResearchActive(true);
                 pristineTextareaRef.current?.focus();
               }}
-              className="text-left bg-white hover:bg-slate-50/80 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-2xs hover:shadow-md"
+              className="text-left bg-white hover:bg-slate-50/90 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/60 rounded-3xl p-6 sm:p-7 xl:p-8 min-h-[250px] flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 cursor-pointer group shadow-xs hover:shadow-xl"
             >
-              <div className="flex items-center justify-between w-full">
-                <div className="w-8 h-8 rounded-xl bg-[#00c9a7]/15 border border-[#00c9a7]/30 flex items-center justify-center text-[#009688] dark:text-[#00c9a7]">
-                  <Search className="w-4 h-4" />
+              <div>
+                <div className="flex items-center justify-between w-full">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#00c9a7]/15 border border-[#00c9a7]/30 flex items-center justify-center text-[#009688] dark:text-[#00c9a7] group-hover:scale-110 transition-transform duration-200 shadow-sm">
+                    <Search className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.2]" />
+                  </div>
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-slate-700 dark:text-slate-300">
+                    Autonomous
+                  </span>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-slate-600 dark:text-slate-400">
-                  Autonomous
-                </span>
+                <div className="mt-5">
+                  <div className="text-lg sm:text-xl xl:text-2xl font-black text-slate-900 dark:text-slate-100 group-hover:text-[#009688] dark:group-hover:text-[#00c9a7] transition-colors">
+                    Deep Research Agent
+                  </div>
+                  <div className="text-sm sm:text-[14.5px] text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                    Synthesizes 100+ sources into structured reports with verifiable citations, data tables, and key insights.
+                  </div>
+                </div>
               </div>
-              <div className="mt-3">
-                <div className="text-[14px] font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#009688] dark:group-hover:text-[#00c9a7] transition-colors">
-                  Deep Research Agent
-                </div>
-                <div className="text-[12px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                  Synthesizes 100+ sources into structured reports with verifiable citations.
-                </div>
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#222B36] flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-[#009688] dark:group-hover:text-[#00c9a7] transition-colors">
+                <span>Launch Research</span>
+                <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
 
@@ -883,23 +892,29 @@ export function PlayzyHomeScreen({
             <button
               type="button"
               onClick={() => onSelectTool('ai-voice-generator')}
-              className="text-left bg-white hover:bg-slate-50/80 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-purple-500/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-2xs hover:shadow-md"
+              className="text-left bg-white hover:bg-slate-50/90 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-purple-500/60 rounded-3xl p-6 sm:p-7 xl:p-8 min-h-[250px] flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 cursor-pointer group shadow-xs hover:shadow-xl"
             >
-              <div className="flex items-center justify-between w-full">
-                <div className="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
-                  <Volume2 className="w-4 h-4" />
+              <div>
+                <div className="flex items-center justify-between w-full">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform duration-200 shadow-sm">
+                    <Volume2 className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.2]" />
+                  </div>
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-purple-50 dark:bg-[#12171F] border border-purple-200 dark:border-purple-500/30 text-purple-600 dark:text-purple-400">
+                    ElevenLabs Grade
+                  </span>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-purple-600 dark:text-purple-400">
-                  ElevenLabs Grade
-                </span>
+                <div className="mt-5">
+                  <div className="text-lg sm:text-xl xl:text-2xl font-black text-slate-900 dark:text-slate-100 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                    AI Voice Studio
+                  </div>
+                  <div className="text-sm sm:text-[14.5px] text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                    Generate studio-grade speech with 36+ voices, lifelike accents, full DAW equalizer, and MP3/WAV download.
+                  </div>
+                </div>
               </div>
-              <div className="mt-3">
-                <div className="text-[14px] font-bold text-slate-900 dark:text-slate-100 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                  AI Voice Studio
-                </div>
-                <div className="text-[12px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                  Generate studio-quality speech with 36+ voices, lifelike accents, and instant MP3 download.
-                </div>
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#222B36] flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                <span>Open Voice Studio</span>
+                <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
 
@@ -907,23 +922,29 @@ export function PlayzyHomeScreen({
             <button
               type="button"
               onClick={() => onSelectTool('video-downloader')}
-              className="text-left bg-white hover:bg-slate-50/80 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-sky-500/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-2xs hover:shadow-md"
+              className="text-left bg-white hover:bg-slate-50/90 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-sky-500/60 rounded-3xl p-6 sm:p-7 xl:p-8 min-h-[250px] flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 cursor-pointer group shadow-xs hover:shadow-xl"
             >
-              <div className="flex items-center justify-between w-full">
-                <div className="w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-600 dark:text-sky-400">
-                  <DownloadCloud className="w-4 h-4" />
+              <div>
+                <div className="flex items-center justify-between w-full">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-600 dark:text-sky-400 group-hover:scale-110 transition-transform duration-200 shadow-sm">
+                    <DownloadCloud className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.2]" />
+                  </div>
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-sky-50 dark:bg-[#12171F] border border-sky-200 dark:border-sky-500/30 text-sky-600 dark:text-sky-400">
+                    4K &amp; 320kbps
+                  </span>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-sky-600 dark:text-sky-400">
-                  4K &amp; 320kbps
-                </span>
+                <div className="mt-5">
+                  <div className="text-lg sm:text-xl xl:text-2xl font-black text-slate-900 dark:text-slate-100 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
+                    Media Downloader
+                  </div>
+                  <div className="text-sm sm:text-[14.5px] text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                    Extract watermark-free HD/4K videos and high-bitrate MP3s from YouTube, TikTok, Vimeo, and 1000+ sites.
+                  </div>
+                </div>
               </div>
-              <div className="mt-3">
-                <div className="text-[14px] font-bold text-slate-900 dark:text-slate-100 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
-                  Media Downloader
-                </div>
-                <div className="text-[12px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                  Extract watermark-free HD videos and high-bitrate MP3s from YouTube and TikTok.
-                </div>
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#222B36] flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
+                <span>Extract Media</span>
+                <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
 
@@ -931,23 +952,29 @@ export function PlayzyHomeScreen({
             <button
               type="button"
               onClick={() => onSelectTool('mp3-to-text')}
-              className="text-left bg-white hover:bg-slate-50/80 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-emerald-500/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-2xs hover:shadow-md"
+              className="text-left bg-white hover:bg-slate-50/90 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-emerald-500/60 rounded-3xl p-6 sm:p-7 xl:p-8 min-h-[250px] flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 cursor-pointer group shadow-xs hover:shadow-xl"
             >
-              <div className="flex items-center justify-between w-full">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                  <FileAudio className="w-4 h-4" />
+              <div>
+                <div className="flex items-center justify-between w-full">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-200 shadow-sm">
+                    <FileAudio className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.2]" />
+                  </div>
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 dark:bg-[#12171F] border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                    MP3 / MP4
+                  </span>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-emerald-600 dark:text-emerald-400">
-                  MP3 / MP4
-                </span>
+                <div className="mt-5">
+                  <div className="text-lg sm:text-xl xl:text-2xl font-black text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    Audio &amp; Video Transcriber
+                  </div>
+                  <div className="text-sm sm:text-[14.5px] text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                    Convert recorded speech and media into millisecond-accurate timestamped text with SRT and DOCX export.
+                  </div>
+                </div>
               </div>
-              <div className="mt-3">
-                <div className="text-[14px] font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                  Audio &amp; Video Transcriber
-                </div>
-                <div className="text-[12px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                  Convert speech into accurate timestamped text with SRT and DOCX export.
-                </div>
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#222B36] flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                <span>Start Transcribing</span>
+                <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
 
@@ -955,23 +982,29 @@ export function PlayzyHomeScreen({
             <button
               type="button"
               onClick={() => onSelectTool('ai-detector')}
-              className="text-left bg-white hover:bg-slate-50/80 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-orange-500/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-2xs hover:shadow-md"
+              className="text-left bg-white hover:bg-slate-50/90 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-orange-500/60 rounded-3xl p-6 sm:p-7 xl:p-8 min-h-[250px] flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 cursor-pointer group shadow-xs hover:shadow-xl"
             >
-              <div className="flex items-center justify-between w-full">
-                <div className="w-8 h-8 rounded-xl bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
-                  <ShieldAlert className="w-4 h-4" />
+              <div>
+                <div className="flex items-center justify-between w-full">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-600 dark:text-orange-400 group-hover:scale-110 transition-transform duration-200 shadow-sm">
+                    <ShieldAlert className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.2]" />
+                  </div>
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-orange-50 dark:bg-[#12171F] border border-orange-200 dark:border-orange-500/30 text-orange-600 dark:text-orange-400">
+                    0 - 100 Score
+                  </span>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-orange-600 dark:text-orange-400">
-                  0 - 100 Score
-                </span>
+                <div className="mt-5">
+                  <div className="text-lg sm:text-xl xl:text-2xl font-black text-slate-900 dark:text-slate-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                    AI Content Detector
+                  </div>
+                  <div className="text-sm sm:text-[14.5px] text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                    Detect ChatGPT, Claude, and Gemini text with sentence-by-sentence perplexity and burstiness metrics.
+                  </div>
+                </div>
               </div>
-              <div className="mt-3">
-                <div className="text-[14px] font-bold text-slate-900 dark:text-slate-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                  AI Content Detector
-                </div>
-                <div className="text-[12px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                  Detect ChatGPT, Claude, and Gemini text with precise probability scoring.
-                </div>
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#222B36] flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                <span>Check AI Score</span>
+                <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
 
@@ -979,23 +1012,29 @@ export function PlayzyHomeScreen({
             <button
               type="button"
               onClick={() => onSelectTool('ai-humanizer')}
-              className="text-left bg-white hover:bg-slate-50/80 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-cyan-500/50 rounded-2xl p-4 flex flex-col justify-between transition-all cursor-pointer group shadow-2xs hover:shadow-md"
+              className="text-left bg-white hover:bg-slate-50/90 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-cyan-500/60 rounded-3xl p-6 sm:p-7 xl:p-8 min-h-[250px] flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 cursor-pointer group shadow-xs hover:shadow-xl"
             >
-              <div className="flex items-center justify-between w-full">
-                <div className="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
-                  <UserCheck className="w-4 h-4" />
+              <div>
+                <div className="flex items-center justify-between w-full">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform duration-200 shadow-sm">
+                    <UserCheck className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.2]" />
+                  </div>
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-cyan-50 dark:bg-[#12171F] border border-cyan-200 dark:border-cyan-500/30 text-cyan-600 dark:text-cyan-400">
+                    Undetectable
+                  </span>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-cyan-600 dark:text-cyan-400">
-                  Undetectable
-                </span>
+                <div className="mt-5">
+                  <div className="text-lg sm:text-xl xl:text-2xl font-black text-slate-900 dark:text-slate-100 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                    AI Humanizer &amp; Paraphraser
+                  </div>
+                  <div className="text-sm sm:text-[14.5px] text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                    Rewrite robotic AI writing into 100% natural, human-sounding flow that bypasses GPTZero and Turnitin.
+                  </div>
+                </div>
               </div>
-              <div className="mt-3">
-                <div className="text-[14px] font-bold text-slate-900 dark:text-slate-100 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-                  AI Humanizer &amp; Paraphraser
-                </div>
-                <div className="text-[12px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                  Rewrite robotic AI writing into 100% natural, human-sounding flow that bypasses detectors.
-                </div>
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#222B36] flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                <span>Humanize Text</span>
+                <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
           </div>
