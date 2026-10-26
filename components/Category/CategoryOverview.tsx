@@ -143,22 +143,22 @@ export function CategoryOverview({
                     </span>
                   </div>
 
-                  <h3 className="text-base font-extrabold tracking-tight text-slate-900 dark:text-white mb-1 group-hover:text-[#00c9a7] transition-colors">
+                  <h3 className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white mb-1.5 group-hover:text-[#009688] dark:group-hover:text-[#00c9a7] transition-colors">
                     {tool.name}
                   </h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed min-h-[36px]">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed min-h-[40px]">
                     {tool.shortDesc}
                   </p>
                 </div>
 
-                <div className="pt-3.5 mt-4 border-t border-slate-100 dark:border-[#263241] flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-[#00c9a7] transition">
-                  <span className="flex items-center gap-1.5">
-                    <span>Open Tool</span>
-                    <span className="text-[10px] font-medium text-slate-400">
+                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-[#263241] flex items-center justify-between text-sm font-bold text-slate-700 dark:text-slate-200 group-hover:text-[#009688] dark:group-hover:text-[#00c9a7] transition">
+                  <span className="flex items-center gap-2">
+                    <span className="px-3 py-1 rounded-xl bg-slate-100 hover:bg-[#00c9a7]/10 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] group-hover:border-[#00c9a7]/40">Launch Tool</span>
+                    <span className="text-xs font-medium text-slate-400">
                       • 100% Free
                     </span>
                   </span>
-                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-slate-400 group-hover:text-[#00c9a7]" />
+                  <ChevronRight className="w-4.5 h-4.5 transition-transform group-hover:translate-x-1 text-slate-400 group-hover:text-[#00c9a7]" />
                 </div>
               </article>
             ))}

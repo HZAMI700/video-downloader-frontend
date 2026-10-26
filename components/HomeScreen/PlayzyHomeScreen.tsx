@@ -492,8 +492,8 @@ export function PlayzyHomeScreen({
 
                 {/* Skills Dropdown Menu */}
                 {showToolsDropdown && (
-                  <div className="absolute bottom-11 left-0 w-64 bg-white dark:bg-[#181D24] rounded-2xl border border-slate-200 dark:border-[#263241] shadow-xl p-2 z-50 space-y-1 animate-apple-in">
-                    <p className="text-[10px] uppercase font-bold text-slate-400 px-2 py-1">
+                  <div className="absolute bottom-11 left-0 w-72 bg-white dark:bg-[#181D24] rounded-2xl border border-slate-200 dark:border-[#263241] shadow-2xl p-2 z-50 space-y-1 animate-apple-in">
+                    <p className="text-[11px] uppercase font-bold text-slate-500 dark:text-slate-400 px-3 py-1.5">
                       Launch Studio Skill
                     </p>
                     <button
@@ -502,9 +502,9 @@ export function PlayzyHomeScreen({
                         setShowToolsDropdown(false);
                         onSelectTool('paraphrasing-tool', promptText);
                       }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-[#202732] text-xs text-slate-800 dark:text-slate-200 font-semibold text-left transition"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#202732] text-sm text-slate-800 dark:text-slate-200 font-semibold text-left transition cursor-pointer"
                     >
-                      <RefreshCw className="w-3.5 h-3.5 text-[#009688] dark:text-[#00c9a7]" />
+                      <RefreshCw className="w-4 h-4 text-[#009688] dark:text-[#00c9a7]" />
                       <span>Paraphraser</span>
                     </button>
                     <button
@@ -513,9 +513,9 @@ export function PlayzyHomeScreen({
                         setShowToolsDropdown(false);
                         onSelectTool('ai-humanizer', promptText);
                       }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-[#202732] text-xs text-slate-800 dark:text-slate-200 font-semibold text-left transition"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#202732] text-sm text-slate-800 dark:text-slate-200 font-semibold text-left transition cursor-pointer"
                     >
-                      <UserCheck className="w-3.5 h-3.5 text-sky-600 dark:text-[#12c4ff]" />
+                      <UserCheck className="w-4 h-4 text-sky-600 dark:text-[#12c4ff]" />
                       <span>AI Humanizer</span>
                     </button>
                     <button
@@ -524,9 +524,9 @@ export function PlayzyHomeScreen({
                         setShowToolsDropdown(false);
                         onSelectTool('ai-detector', promptText);
                       }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-[#202732] text-xs text-slate-800 dark:text-slate-200 font-semibold text-left transition"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#202732] text-sm text-slate-800 dark:text-slate-200 font-semibold text-left transition cursor-pointer"
                     >
-                      <ShieldAlert className="w-3.5 h-3.5 text-amber-600 dark:text-[#f59e0b]" />
+                      <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-[#f59e0b]" />
                       <span>AI Detector (0-100%)</span>
                     </button>
                     <button
@@ -535,9 +535,9 @@ export function PlayzyHomeScreen({
                         setShowToolsDropdown(false);
                         onSelectTool('ai-voice-generator', promptText);
                       }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-[#202732] text-xs text-slate-800 dark:text-slate-200 font-semibold text-left transition"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#202732] text-sm text-slate-800 dark:text-slate-200 font-semibold text-left transition cursor-pointer"
                     >
-                      <Volume2 className="w-3.5 h-3.5 text-purple-600 dark:text-[#a855f7]" />
+                      <Volume2 className="w-4 h-4 text-purple-600 dark:text-[#a855f7]" />
                       <span>Voice Studio</span>
                     </button>
                     <button
@@ -546,9 +546,9 @@ export function PlayzyHomeScreen({
                         setShowToolsDropdown(false);
                         onSelectTool('video-downloader');
                       }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-[#202732] text-xs text-slate-800 dark:text-slate-200 font-semibold text-left transition"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#202732] text-sm text-slate-800 dark:text-slate-200 font-semibold text-left transition cursor-pointer"
                     >
-                      <DownloadCloud className="w-3.5 h-3.5 text-sky-500 dark:text-[#38bdf8]" />
+                      <DownloadCloud className="w-4 h-4 text-sky-500 dark:text-[#38bdf8]" />
                       <span>Media Downloader</span>
                     </button>
                   </div>
@@ -667,13 +667,13 @@ export function PlayzyHomeScreen({
                 setSelectedAgentTab('research');
                 setDeepResearchActive(true);
               }}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition cursor-pointer flex items-center gap-2 ${
                 selectedAgentTab === 'research'
-                  ? 'bg-slate-100 dark:bg-[#242C37] text-[#009688] dark:text-[#00c9a7] border border-[#00c9a7]/40'
+                  ? 'bg-slate-100 dark:bg-[#242C37] text-[#009688] dark:text-[#00c9a7] border border-[#00c9a7]/40 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
               }`}
             >
-              <Search className="w-3.5 h-3.5" />
+              <Search className="w-4 h-4" />
               <span>Deep Research</span>
             </button>
 
@@ -683,13 +683,13 @@ export function PlayzyHomeScreen({
                 setSelectedAgentTab('doc');
                 onSelectTool('paraphrasing-tool');
               }}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition cursor-pointer flex items-center gap-2 ${
                 selectedAgentTab === 'doc'
-                  ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656]'
+                  ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
               }`}
             >
-              <FileText className="w-3.5 h-3.5 text-blue-500" />
+              <FileText className="w-4 h-4 text-blue-500" />
               <span>Document Agent</span>
             </button>
 
@@ -699,13 +699,13 @@ export function PlayzyHomeScreen({
                 setSelectedAgentTab('voice');
                 onSelectTool('ai-voice-generator');
               }}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition cursor-pointer flex items-center gap-2 ${
                 selectedAgentTab === 'voice'
-                  ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656]'
+                  ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
               }`}
             >
-              <Volume2 className="w-3.5 h-3.5 text-purple-500" />
+              <Volume2 className="w-4 h-4 text-purple-500" />
               <span>Voice Studio</span>
             </button>
 
@@ -715,13 +715,13 @@ export function PlayzyHomeScreen({
                 setSelectedAgentTab('downloader');
                 onSelectTool('video-downloader');
               }}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition cursor-pointer flex items-center gap-2 ${
                 selectedAgentTab === 'downloader'
-                  ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656]'
+                  ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
               }`}
             >
-              <DownloadCloud className="w-3.5 h-3.5 text-sky-500" />
+              <DownloadCloud className="w-4 h-4 text-sky-500" />
               <span>Media Downloader</span>
             </button>
 
@@ -731,13 +731,13 @@ export function PlayzyHomeScreen({
                 setSelectedAgentTab('transcriber');
                 onSelectTool('mp3-to-text');
               }}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition cursor-pointer flex items-center gap-2 ${
                 selectedAgentTab === 'transcriber'
-                  ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656]'
+                  ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
               }`}
             >
-              <FileAudio className="w-3.5 h-3.5 text-emerald-500" />
+              <FileAudio className="w-4 h-4 text-emerald-500" />
               <span>Transcriber</span>
             </button>
           </div>

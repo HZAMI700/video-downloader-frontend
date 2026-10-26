@@ -574,13 +574,13 @@ export function AppSidebar({
 
           {/* In-sidebar Tool Filter Search Box */}
           <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               value={sidebarSearch}
               onChange={(e) => setSidebarSearch(e.target.value)}
               placeholder="Search 28 tools..."
-              className="w-full bg-slate-100/80 dark:bg-[#141A22] border border-slate-200 dark:border-[#222B36] rounded-lg pl-8 pr-7 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-[#00c9a7]/60 transition"
+              className="w-full bg-slate-100/80 dark:bg-[#141A22] border border-slate-200 dark:border-[#222B36] rounded-xl pl-8 pr-7 py-2 text-[13px] font-medium text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-[#00c9a7]/60 transition"
             />
             {sidebarSearch && (
               <button
@@ -588,18 +588,18 @@ export function AppSidebar({
                 onClick={() => setSidebarSearch('')}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5"
               >
-                <X className="w-3 h-3" />
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
         </div>
 
         {/* Scrollable Tool Navigation Rail */}
-        <div className="flex-1 overflow-y-auto px-2 py-2 space-y-3.5 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto px-2 py-2.5 space-y-4 custom-scrollbar">
           {/* SEARCH RESULTS VIEW */}
           {searchResults !== null ? (
-            <div className="space-y-1">
-              <div className="flex items-center justify-between px-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between px-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 <span>Matching Tools ({searchResults.length})</span>
                 <button
                   type="button"
@@ -615,7 +615,7 @@ export function AppSidebar({
                   No tools found for &quot;{sidebarSearch}&quot;
                 </div>
               ) : (
-                <div className="space-y-0.5">
+                <div className="space-y-1">
                   {searchResults.map((tool) => {
                     const active = isToolActive(tool.id);
                     return (
@@ -623,17 +623,17 @@ export function AppSidebar({
                         key={tool.id}
                         type="button"
                         onClick={() => handleToolClick(tool.id, tool.category)}
-                        className={`w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-left transition-all cursor-pointer font-medium relative group/item ${
+                        className={`w-full px-3 py-2.5 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer font-medium relative group/item ${
                           active
-                            ? 'bg-white dark:bg-[#1C232D] text-[#009688] dark:text-white border border-slate-300 dark:border-[#00c9a7]/40 shadow-xs font-bold before:absolute before:left-1 before:top-1.5 before:bottom-1.5 before:w-1 before:bg-[#00c9a7] before:rounded-full'
-                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5'
+                            ? 'bg-white dark:bg-[#1C232D] text-[#009688] dark:text-white border border-slate-300 dark:border-[#00c9a7]/40 shadow-xs font-bold before:absolute before:left-1 before:top-2 before:bottom-2 before:w-1 before:bg-[#00c9a7] before:rounded-full'
+                            : 'text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5'
                         }`}
                       >
-                        <div className="flex items-center gap-2 min-w-0 pl-1">
-                          <div className="shrink-0">{tool.icon}</div>
-                          <span className="truncate text-xs">{tool.name}</span>
+                        <div className="flex items-center gap-2.5 min-w-0 pl-1">
+                          <div className="shrink-0 group-hover/item:scale-105 transition-transform">{tool.icon}</div>
+                          <span className="truncate text-[13.5px] font-semibold">{tool.name}</span>
                         </div>
-                        <span className="text-[9.5px] font-semibold px-1.5 py-0.2 rounded bg-slate-200/70 dark:bg-[#12171F] border border-slate-300/80 dark:border-[#263241] text-slate-500 dark:text-slate-400">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-[#12171F] border border-slate-300/80 dark:border-[#263241] text-slate-600 dark:text-slate-400">
                           {tool.categoryName}
                         </span>
                       </button>
@@ -646,8 +646,8 @@ export function AppSidebar({
             /* DEFAULT CATEGORIZED ALL-TOOLS VIEW */
             <>
               {/* Standalone Quick Access (Downloader & Workspace) */}
-              <div className="space-y-0.5">
-                <p className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <div className="space-y-1">
+                <p className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   Media &amp; Workspace
                 </p>
                 {PRIMARY_TOOLS.map((tool) => {
@@ -657,20 +657,20 @@ export function AppSidebar({
                       key={tool.id}
                       type="button"
                       onClick={() => handleToolClick(tool.id, tool.category)}
-                      className={`w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-left transition-all cursor-pointer font-medium relative group/item ${
+                      className={`w-full px-3 py-2.5 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer relative group/item ${
                         active
-                          ? 'bg-white dark:bg-[#1C232D] text-[#009688] dark:text-white border border-slate-300 dark:border-[#00c9a7]/40 shadow-xs font-bold before:absolute before:left-1 before:top-1.5 before:bottom-1.5 before:w-1 before:bg-[#00c9a7] before:rounded-full'
-                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5'
+                          ? 'bg-white dark:bg-[#1C232D] text-[#009688] dark:text-white border border-slate-300 dark:border-[#00c9a7]/40 shadow-xs font-bold before:absolute before:left-1 before:top-2 before:bottom-2 before:w-1.5 before:bg-[#00c9a7] before:rounded-full'
+                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5 font-medium'
                       }`}
                     >
-                      <div className="flex items-center gap-2 min-w-0 pl-1">
-                        <div className="shrink-0 group-hover/item:scale-105 transition-transform">
+                      <div className="flex items-center gap-2.5 min-w-0 pl-1">
+                        <div className="shrink-0 group-hover/item:scale-110 transition-transform">
                           {tool.icon}
                         </div>
-                        <span className="truncate text-xs">{tool.name}</span>
+                        <span className="truncate text-[13.5px] font-semibold text-slate-900 dark:text-slate-100">{tool.name}</span>
                       </div>
                       {tool.badge && (
-                        <span className="text-[9.5px] font-bold px-1.5 py-0.2 rounded bg-slate-200/70 dark:bg-[#12171F] border border-slate-300/80 dark:border-[#263241] text-slate-600 dark:text-slate-400">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-[#12171F] border border-slate-300/80 dark:border-[#263241] text-slate-700 dark:text-slate-300">
                           {tool.badge}
                         </span>
                       )}
@@ -688,29 +688,29 @@ export function AppSidebar({
                     <button
                       type="button"
                       onClick={() => toggleSection(category.id)}
-                      className="w-full px-2 py-1 flex items-center justify-between text-left rounded-md hover:bg-slate-200/40 dark:hover:bg-[#161C24] transition cursor-pointer group"
+                      className="w-full px-2.5 py-1.5 flex items-center justify-between text-left rounded-lg hover:bg-slate-200/40 dark:hover:bg-[#161C24] transition cursor-pointer group"
                     >
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-2">
                         {category.icon}
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200">
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">
                           {category.name}
                         </span>
-                        <span className="text-[9px] font-extrabold px-1 rounded-sm bg-slate-200/60 dark:bg-[#161C24] text-slate-500 dark:text-slate-400">
+                        <span className="text-[10px] font-extrabold px-1.5 py-0.2 rounded-md bg-slate-200/70 dark:bg-[#161C24] text-slate-600 dark:text-slate-400">
                           {category.count}
                         </span>
                       </div>
-                      <div className="text-slate-400 dark:text-slate-600 group-hover:text-slate-700 dark:group-hover:text-slate-300">
+                      <div className="text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">
                         {isCollapsed ? (
-                          <ChevronRight className="w-3.5 h-3.5" />
+                          <ChevronRight className="w-4 h-4" />
                         ) : (
-                          <ChevronDown className="w-3.5 h-3.5" />
+                          <ChevronDown className="w-4 h-4" />
                         )}
                       </div>
                     </button>
 
                     {/* Tools in this category */}
                     {!isCollapsed && (
-                      <div className="space-y-0.5 pl-1 border-l border-slate-200/60 dark:border-[#1E252F] ml-2">
+                      <div className="space-y-1 pl-1 border-l-2 border-slate-200/70 dark:border-[#1E252F] ml-2.5">
                         {category.tools.map((tool) => {
                           const active = isToolActive(tool.id);
                           return (
@@ -718,23 +718,23 @@ export function AppSidebar({
                               key={tool.id}
                               type="button"
                               onClick={() => handleToolClick(tool.id, tool.category)}
-                              className={`w-full px-2 py-1.5 rounded-lg flex items-center justify-between text-left transition-all cursor-pointer font-medium relative group/item ${
+                              className={`w-full px-3 py-2 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer relative group/item ${
                                 active
-                                  ? 'bg-white dark:bg-[#1C232D] text-[#009688] dark:text-white border border-slate-300 dark:border-[#00c9a7]/40 shadow-xs font-bold before:absolute before:left-0.5 before:top-1.5 before:bottom-1.5 before:w-1 before:bg-[#00c9a7] before:rounded-full'
-                                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5'
+                                  ? 'bg-white dark:bg-[#1C232D] text-[#009688] dark:text-[#00c9a7] border border-slate-300 dark:border-[#00c9a7]/40 shadow-xs font-bold before:absolute before:left-0.5 before:top-2 before:bottom-2 before:w-1.5 before:bg-[#00c9a7] before:rounded-full'
+                                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5 font-medium'
                               }`}
                             >
-                              <div className="flex items-center gap-2 min-w-0 pl-1">
-                                <div className="shrink-0 group-hover/item:scale-105 transition-transform">
+                              <div className="flex items-center gap-2.5 min-w-0 pl-1">
+                                <div className="shrink-0 group-hover/item:scale-110 transition-transform">
                                   {tool.icon}
                                 </div>
-                                <span className="truncate text-[11.5px] leading-tight">
+                                <span className="truncate text-[13.5px] font-semibold leading-normal">
                                   {tool.name}
                                 </span>
                               </div>
 
                               {tool.badge && (
-                                <span className="text-[9px] font-bold px-1.2 py-0.2 rounded bg-slate-200/70 dark:bg-[#12171F] border border-slate-300/80 dark:border-[#263241] text-slate-500 dark:text-slate-400 shrink-0">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-[#12171F] border border-slate-300/80 dark:border-[#263241] text-slate-600 dark:text-slate-400 shrink-0">
                                   {tool.badge}
                                 </span>
                               )}
@@ -756,32 +756,32 @@ export function AppSidebar({
           <button
             type="button"
             onClick={toggleTheme}
-            className="w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-left transition-all cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-[#151B22]"
+            className="w-full px-3 py-2 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-[#151B22]"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               {theme === 'dark' ? (
-                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <Sun className="w-4 h-4 text-amber-400" />
               ) : (
-                <Moon className="w-3.5 h-3.5 text-indigo-600" />
+                <Moon className="w-4 h-4 text-indigo-600" />
               )}
-              <span className="text-xs font-medium">
+              <span className="text-[13px] font-semibold">
                 {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
               </span>
             </div>
-            <span className="text-[9.5px] uppercase font-bold text-slate-400">
+            <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded bg-slate-200/70 dark:bg-[#161C24]">
               {theme}
             </span>
           </button>
 
           {/* Access Status Card */}
-          <div className="p-2 rounded-lg bg-white dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] flex items-center justify-between shadow-2xs">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]" />
-              <span className="text-[11px] font-semibold text-slate-800 dark:text-slate-200">
+          <div className="p-2.5 rounded-xl bg-white dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] flex items-center justify-between shadow-2xs">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]" />
+              <span className="text-[12px] font-bold text-slate-900 dark:text-slate-100">
                 Free Pro Access
               </span>
             </div>
-            <span className="text-[9.5px] text-[#009688] dark:text-[#00c9a7] font-bold">
+            <span className="text-[10px] text-[#009688] dark:text-[#00c9a7] font-extrabold px-1.5 py-0.5 rounded bg-[#00c9a7]/10">
               28 TOOLS ACTIVE
             </span>
           </div>
@@ -825,36 +825,36 @@ export function AppSidebar({
                 <button
                   type="button"
                   onClick={() => handleToolClick('video-downloader', 'video-downloader')}
-                  className="p-3 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-sky-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
+                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-sky-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
                 >
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
                     Playzy Video Downloader
                   </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     YouTube, TikTok, 4K &amp; MP3
                   </p>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleToolClick('youtube-to-mp3', 'audio-tools')}
-                  className="p-3 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-sky-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
+                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-sky-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
                 >
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
                     YouTube to MP3
                   </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     320kbps high quality audio
                   </p>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleToolClick('tiktok-to-mp3', 'audio-tools')}
-                  className="p-3 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-sky-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
+                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-sky-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
                 >
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
                     TikTok to MP3
                   </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     Audio &amp; watermark-free video
                   </p>
                 </button>
@@ -871,32 +871,32 @@ export function AppSidebar({
                 <button
                   type="button"
                   onClick={() => handleToolClick('transcriber', 'audio-tools')}
-                  className="p-3 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-emerald-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
+                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-emerald-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
                 >
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">MP3 to Text</p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">MP3 to Text</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     Speech-to-text with timestamps
                   </p>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleToolClick('mp4-to-text', 'audio-tools')}
-                  className="p-3 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-emerald-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
+                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-emerald-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
                 >
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">MP4 to Text</p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">MP4 to Text</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     Extract dialogue from video
                   </p>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleToolClick('ai-voice-generator', 'ai-voice')}
-                  className="p-3 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-purple-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
+                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-purple-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
                 >
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
                     AI Voice Generator
                   </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     ElevenLabs-quality 36+ voices
                   </p>
                 </button>
@@ -913,34 +913,34 @@ export function AppSidebar({
                 <button
                   type="button"
                   onClick={() => handleToolClick('ai-detector', 'ai-section')}
-                  className="p-3 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
+                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
                 >
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
                     AI Content Detector
                   </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     0-100% Probability Score
                   </p>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleToolClick('ai-humanizer', 'ai-section')}
-                  className="p-3 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
+                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
                 >
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
                     AI Humanizer
                   </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     Bypass AI Detection
                   </p>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleToolClick('paraphrasing-tool', 'ai-section')}
-                  className="p-3 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
+                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
                 >
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">Paraphraser</p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">Paraphraser</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     Fluent, Creative, Academic
                   </p>
                 </button>
