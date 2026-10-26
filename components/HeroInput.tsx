@@ -42,13 +42,13 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-tight">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
           Download{' '}
           <ShinyText text="Any Video" speed={3.5} />{' '}
           with <span className="skywork-gradient-text">Playzy</span>
         </h1>
 
-        <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
+        <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
           The fastest free online tool to download videos from TikTok, Pinterest, Facebook, Instagram Reels, and YouTube without watermarks. 100% free, secure &amp; unlimited.
         </p>
       </motion.div>
@@ -93,10 +93,10 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
             className={`rounded-2xl sm:rounded-3xl p-[1.5px] transition-all duration-300 ${
               isDragOver
                 ? 'bg-[#00c9a7] ring-4 ring-[#00c9a7]/20 shadow-xl scale-[1.01]'
-                : 'bg-[#263241] hover:border-[#00c9a7]/40 shadow-xl'
+                : 'bg-slate-200 dark:bg-[#263241] hover:border-[#00c9a7]/40 shadow-xl'
             }`}
           >
-            <div className="flex items-center bg-[#181D24] rounded-[14px] sm:rounded-[22px] p-2 sm:p-2.5">
+            <div className="flex items-center bg-white dark:bg-[#181D24] rounded-[14px] sm:rounded-[22px] p-2 sm:p-2.5">
               <input
                 type="url"
                 value={url}
@@ -111,7 +111,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
                 }
                 required
                 disabled={isLoading}
-                className="w-full bg-transparent px-4 sm:px-5 py-2.5 sm:py-3 text-slate-100 placeholder-slate-500 focus:outline-none text-sm sm:text-base md:text-lg font-normal"
+                className="w-full bg-transparent px-4 sm:px-5 py-2.5 sm:py-3 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none text-sm sm:text-base md:text-lg font-normal"
               />
 
               {url && (
@@ -178,7 +178,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
         </AnimatePresence>
 
         {/* Supported Platforms icons row matching screenshot */}
-        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 mt-6 text-sm text-slate-400">
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 mt-6 text-sm text-slate-500 dark:text-slate-400">
           {/* YouTube */}
           <motion.div whileHover={{ scale: 1.15 }} className="w-8 h-8 rounded-lg bg-[#FF0000] flex items-center justify-center text-white shadow-sm cursor-pointer">
             <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -221,7 +221,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
             </svg>
           </motion.div>
 
-          <span className="font-semibold text-slate-700 tracking-tight pl-1">
+          <span className="font-semibold text-slate-500 dark:text-slate-400 tracking-tight pl-1">
             + 100 more supported
           </span>
         </div>

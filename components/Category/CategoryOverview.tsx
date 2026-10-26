@@ -101,20 +101,20 @@ export function CategoryOverview({
     <div className="w-full space-y-8 animate-apple-in">
       {/* Category Hero Banner */}
       <section className="text-center max-w-2xl mx-auto pt-2 pb-4">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-zinc-200/80 shadow-sm mb-4">
-          <span className="w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] shadow-sm mb-4">
+          <span className="w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
             <Sparkles className="w-3 h-3" />
           </span>
-          <span className="text-[12px] font-semibold tracking-tight text-zinc-700">
+          <span className="text-[12px] font-semibold tracking-tight text-slate-700 dark:text-slate-300">
             {category.heroBadge}
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-[-0.03em] text-zinc-950 leading-[1.1] mb-3.5">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-[-0.03em] text-slate-900 dark:text-white leading-[1.1] mb-3.5">
           {category.heroTitle}
         </h1>
 
-        <p className="text-[14px] sm:text-[15.5px] text-zinc-500 font-normal leading-relaxed">
+        <p className="text-[14px] sm:text-[15.5px] text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
           {category.heroDescription}
         </p>
       </section>
@@ -127,7 +127,7 @@ export function CategoryOverview({
               <article
                 key={tool.id}
                 onClick={() => onSelectTool(tool.id)}
-                className={`bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-[#499557]/40 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all`}
+                className={`bg-white dark:bg-[#181D24] rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-[#263241] shadow-2xs hover:shadow-xs hover:border-[#00c9a7]/40 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -137,40 +137,40 @@ export function CategoryOverview({
                       {renderIcon(tool.iconName, 'w-5 h-5')}
                     </div>
                     <span
-                      className={`text-[11px] font-bold ${tool.badgeColor} px-2.5 py-0.5 rounded-full shadow-2xs border border-slate-200/80`}
+                      className={`text-[11px] font-bold ${tool.badgeColor} px-2.5 py-0.5 rounded-full shadow-2xs border border-slate-200 dark:border-[#263241]`}
                     >
                       {tool.pillTag}
                     </span>
                   </div>
 
-                  <h3 className="text-base font-extrabold tracking-tight text-slate-900 mb-1 group-hover:text-[#499557] transition-colors">
+                  <h3 className="text-base font-extrabold tracking-tight text-slate-900 dark:text-white mb-1 group-hover:text-[#00c9a7] transition-colors">
                     {tool.name}
                   </h3>
-                  <p className="text-xs text-slate-500 leading-relaxed min-h-[36px]">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed min-h-[36px]">
                     {tool.shortDesc}
                   </p>
                 </div>
 
-                <div className="pt-3.5 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-600 group-hover:text-[#499557] transition">
+                <div className="pt-3.5 mt-4 border-t border-slate-100 dark:border-[#263241] flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-[#00c9a7] transition">
                   <span className="flex items-center gap-1.5">
                     <span>Open Tool</span>
                     <span className="text-[10px] font-medium text-slate-400">
                       • 100% Free
                     </span>
                   </span>
-                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-slate-400 group-hover:text-[#499557]" />
+                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-slate-400 group-hover:text-[#00c9a7]" />
                 </div>
               </article>
             ))}
           </div>
         </section>
       ) : (
-        <div className="p-12 text-center bg-white rounded-3xl border border-zinc-200/80 my-6">
-          <Search className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-zinc-800">
+        <div className="p-12 text-center bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] my-6">
+          <Search className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+          <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">
             No tools found matching &quot;{searchFilter}&quot;
           </h3>
-          <p className="text-xs text-zinc-500 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Try searching for another keyword or clear the search filter.
           </p>
         </div>

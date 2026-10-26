@@ -130,15 +130,15 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
       {/* Header text */}
       <div className="text-left px-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-bold text-white tracking-tight">
+          <p className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">
             Downloaded/Ready{' '}
-            <span className="font-normal text-slate-400">
+            <span className="font-normal text-slate-500 dark:text-slate-400">
               {isReal ? '— Media processed & ready to save' : '— Container to show how the UX works'}
             </span>
           </p>
 
           {isReal && isVertical && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#181D24] text-[#00c9a7] border border-[#00c9a7]/30">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-[#181D24] text-[#00c9a7] border border-[#00c9a7]/30">
               <Smartphone className="w-3 h-3" />
               <span>9:16 Vertical Reel</span>
             </span>
@@ -157,7 +157,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
       </div>
 
       {/* Main Container Card */}
-      <div className="bg-[#181D24] rounded-2xl sm:rounded-[22px] p-5 sm:p-6 md:p-7 shadow-xl border border-[#263241] flex flex-col md:flex-row items-center gap-6 md:gap-8 transition-all duration-300">
+      <div className="bg-white dark:bg-[#181D24] rounded-2xl sm:rounded-[22px] p-5 sm:p-6 md:p-7 shadow-xl border border-slate-200 dark:border-[#263241] flex flex-col md:flex-row items-center gap-6 md:gap-8 transition-all duration-300">
         
         {/* Left Column: Video Thumbnail Preview or Embedded Stream Player */}
         <div className={`shrink-0 ${isVertical ? 'w-full sm:w-auto flex justify-center' : 'w-full md:w-[45%]'}`}>
@@ -232,15 +232,15 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
             return (
               <div
                 key={f.format_id}
-                className="flex items-center justify-between py-2 border-b border-[#263241] last:border-none"
+                className="flex items-center justify-between py-2 border-b border-slate-200 dark:border-[#263241] last:border-none"
               >
                 {/* Format label & File size */}
                 <div className="flex items-center gap-2 text-sm sm:text-base">
-                  <span className="font-bold text-slate-100">
+                  <span className="font-bold text-slate-900 dark:text-slate-100">
                     {cleanLabel(f.label)}
                   </span>
-                  <span className="text-slate-500 font-bold">•</span>
-                  <span className="text-slate-400 font-medium text-xs sm:text-sm">
+                  <span className="text-slate-400 dark:text-slate-500 font-bold">•</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium text-xs sm:text-sm">
                     {formatSize(f.approx_size_bytes)}
                   </span>
                 </div>
@@ -295,7 +295,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
           {/* Active Job Progress indicator if currently working */}
           {activeJob && (activeJob.status === 'processing' || activeJob.status === 'queued') && (
             <div className="pt-2">
-              <div className="w-full h-2.5 bg-[#12171F] rounded-full overflow-hidden p-0.5">
+              <div className="w-full h-2.5 bg-slate-200 dark:bg-[#12171F] rounded-full overflow-hidden p-0.5">
                 <motion.div
                   className="h-full bg-gradient-to-r from-[#00A9C0] to-[#00c9a7] rounded-full"
                   initial={{ width: '5%' }}
@@ -303,7 +303,7 @@ export const ReadyContainer: React.FC<ReadyContainerProps> = ({
                   transition={{ duration: 0.3 }}
                 />
               </div>
-              <p className="text-[11px] text-slate-400 mt-1.5 flex justify-between">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 flex justify-between">
                 <span>Processing and preparing your download...</span>
                 <span className="font-semibold text-[#00c9a7]">{activeJob.progress_percent.toFixed(0)}%</span>
               </p>

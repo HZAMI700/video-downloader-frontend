@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 import './globals.css';
 import { faqs } from '../lib/faqs';
+import { ThemeProvider } from '../components/ThemeContext';
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://playzy.me').replace(/\/+$/, '');
 
@@ -183,8 +184,29 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
       <head>
+        {/* Anti-FOUC Theme Initialization Script */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('playzy_theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                  } else if (saved === 'light') {
+                    document.documentElement.classList.remove('dark');
+                  } else {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+
         {/* Google Fonts - Outfit & Plus Jakarta Sans for Skywork Design */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -232,8 +254,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }}
         />
       </head>
-      <body className="bg-[#0F131A] text-slate-100 antialiased min-h-screen flex flex-col font-sans selection:bg-[#00c9a7] selection:text-black">
-        {children}
+      <body className="bg-[#F8FAFC] dark:bg-[#0F131A] text-slate-900 dark:text-slate-100 antialiased min-h-screen flex flex-col font-sans selection:bg-[#00c9a7] selection:text-black transition-colors duration-200">
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

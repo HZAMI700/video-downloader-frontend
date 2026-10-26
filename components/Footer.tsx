@@ -5,7 +5,7 @@ import { Play, ShieldCheck, Heart } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="w-full border-t border-slate-200/80 bg-white/85 py-12 px-4 mt-20 text-slate-500 text-xs">
+    <footer className="w-full border-t border-slate-200/80 dark:border-[#212932] bg-white/85 dark:bg-[#0F131A]/85 py-12 px-4 mt-20 text-slate-500 dark:text-slate-400 text-xs">
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
@@ -15,12 +15,12 @@ export const Footer: React.FC = () => {
             <span className="text-xl font-black tracking-tight bg-gradient-to-r from-[#9333EA] via-[#6366F1] to-[#06B6D4] bg-clip-text text-transparent">
               Playzy
             </span>
-            <span className="text-slate-300">•</span>
-            <span className="font-semibold text-slate-600">The Free Online Video Downloader</span>
+            <span className="text-slate-300 dark:text-slate-600">•</span>
+            <span className="font-semibold text-slate-600 dark:text-slate-300">The Free Online Video Downloader</span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 text-slate-500 font-semibold text-xs">
-            <span className="flex items-center gap-1 text-slate-700">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-slate-500 dark:text-slate-400 font-semibold text-xs">
+            <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
               <span>SSL Encrypted</span>
             </span>
@@ -34,9 +34,9 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Quick SEO Links */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-100 text-slate-600">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-100 dark:border-[#212932] text-slate-600 dark:text-slate-400">
           <div>
-            <h4 className="font-bold text-slate-900 mb-2">Popular Tools</h4>
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Popular Tools</h4>
             <ul className="space-y-1.5 text-[11px]">
               <li><a href="#download-input" className="hover:text-purple-600 transition">TikTok Downloader</a></li>
               <li><a href="#download-input" className="hover:text-purple-600 transition">Pinterest Video Downloader</a></li>
