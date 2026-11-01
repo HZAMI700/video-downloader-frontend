@@ -42,6 +42,7 @@ export type ToolId =
   | 'mp3-to-text'
   | 'mp4-to-text'
   | 'youtube-to-mp3'
+  | 'youtube-to-mp4'
   | 'podcast-generator'
   | 'audio-translator'
   | 'recorder-transcriber'
@@ -291,6 +292,15 @@ export function AppSidebar({
             categoryName: 'Audio Tools',
             icon: <Youtube className="w-3.5 h-3.5 text-rose-500 shrink-0" />,
             badge: 'Link Only',
+            highlight: true,
+          },
+          {
+            id: 'youtube-to-mp4',
+            name: 'YouTube to MP4',
+            category: 'audio-tools',
+            categoryName: 'Audio Tools',
+            icon: <FileVideo className="w-3.5 h-3.5 text-blue-500 shrink-0" />,
+            badge: '1080p HD',
             highlight: true,
           },
           {

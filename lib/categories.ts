@@ -274,6 +274,21 @@ export const CATEGORIES: CategoryDefinition[] = [
         popular: true,
       },
       {
+        id: 'youtube-to-mp4',
+        name: 'YouTube to MP4 Converter',
+        category: 'audio-tools',
+        categoryName: 'Audio Tools',
+        shortDesc: 'Download YouTube videos in 1080p Full HD MP4 (Link only)',
+        fullDesc:
+          'High-speed progressive stream extraction up to 1080p Full HD with synchronized audio. Link input only.',
+        iconName: 'FileVideo',
+        pastelBg: 'bg-[#EEF4FF]',
+        iconBg: 'bg-white text-blue-600 shadow-sm',
+        badgeColor: 'text-blue-600',
+        pillTag: '1080p Full HD',
+        popular: true,
+      },
+      {
         id: 'podcast-generator',
         name: 'Free AI Podcast Generator',
         category: 'audio-tools',

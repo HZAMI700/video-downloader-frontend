@@ -90,6 +90,9 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
     if (toolId === 'youtube-to-wav') {
       setSelectedFormat('audio_wav');
       setFileTargetFormat('wav');
+    } else if (toolId === 'youtube-to-mp4') {
+      setSelectedFormat('video_1080p');
+      setFileTargetFormat('mp4');
     } else {
       setSelectedFormat('audio_mp3');
       setFileTargetFormat('mp3');
@@ -168,6 +171,17 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
           badgeBorder: 'border-red-200 bg-red-50 text-red-700',
           icon: <Youtube className="w-5 h-5 text-red-600" />,
         };
+      case 'youtube-to-mp4':
+        return {
+          title: 'Free YouTube to MP4 Converter Online',
+          subtitle: 'Download and convert YouTube videos to 1080p Full HD MP4 instantly. Fast, free, no limits.',
+          placeholder: 'Paste YouTube URL (e.g. https://www.youtube.com/watch?v=...)',
+          badgeText: 'YouTube MP4 1080p Full HD',
+          themeColor: 'from-blue-600 to-indigo-600',
+          accentText: 'text-blue-600',
+          badgeBorder: 'border-blue-200 bg-blue-50 text-blue-700',
+          icon: <FileVideo className="w-5 h-5 text-blue-600" />,
+        };
       case 'tiktok-to-mp3':
         return {
           title: 'Free TikTok to MP3 Converter — Download Audio Instantly',
@@ -234,10 +248,16 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
     try {
       const data = await fetchMetadata(url.trim());
       setMetadata(data);
-      // Auto select preferred audio format
+      // Auto select preferred format
+      const has1080p = data.formats.some((f) => f.format_id === 'video_1080p');
+      const has720p = data.formats.some((f) => f.format_id === 'video_720p');
       const hasMp3 = data.formats.some((f) => f.format_id === 'audio_mp3');
       const hasWav = data.formats.some((f) => f.format_id === 'audio_wav');
-      if (toolId === 'youtube-to-wav' && hasWav) {
+      if (toolId === 'youtube-to-mp4') {
+        if (has1080p) setSelectedFormat('video_1080p');
+        else if (has720p) setSelectedFormat('video_720p');
+        else if (data.formats.length > 0) setSelectedFormat(data.formats[0].format_id);
+      } else if (toolId === 'youtube-to-wav' && hasWav) {
         setSelectedFormat('audio_wav');
       } else if (hasMp3) {
         setSelectedFormat('audio_mp3');
@@ -456,7 +476,7 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                   ) : (
                     <>
                       <Download className="w-4 h-4" />
-                      <span>Extract MP3</span>
+                      <span>{toolId === 'youtube-to-mp4' ? 'Convert to MP4' : 'Extract MP3'}</span>
                     </>
                   )}
                 </button>

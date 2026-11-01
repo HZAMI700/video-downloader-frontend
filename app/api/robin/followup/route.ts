@@ -7,6 +7,18 @@ const OPENCODE_KEY = process.env.OPENCODE_API_KEY || 'oc_sk_96ef93c11e56_1G-5HQq
 const OPENCODE_BASE = (process.env.OPENCODE_BASE_URL || 'https://opencode.ai/inference/openai/v1').replace(/\/+$/, '');
 const OPENCODE_MODEL = process.env.OPENCODE_MODEL || 'kimi-k3';
 
+function cleanMarkdownText(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/^#+\s*/gm, '')
+    .replace(/\*{1,3}(.*?)\*{1,3}/g, '$1')
+    .replace(/\*/g, '')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/`/g, '')
+    .replace(/^[-\*_]{3,}\s*$/gm, '')
+    .trim();
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
@@ -52,7 +64,9 @@ export async function POST(request: NextRequest) {
       console.warn('OpenCode API followup fetch error:', e);
     }
 
-    if (!answer) {
+    if (answer) {
+      answer = cleanMarkdownText(answer);
+    } else {
       answer = `Based on the cataloged threat intelligence context, the primary recommendation regarding "${question}" is to verify all identified IOCs, immediately rotate exposed API keys and credentials, enforce multi-factor authentication, and isolate any suspicious darknet endpoints while coordinating with the incident response team.`;
     }
 

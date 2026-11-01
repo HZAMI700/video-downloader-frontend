@@ -887,16 +887,29 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
+function cleanSummaryForExport(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/^#+\s*/gm, '')
+    .replace(/\*{1,3}(.*?)\*{1,3}/g, '$1')
+    .replace(/\*/g, '')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/`/g, '')
+    .replace(/^[-\*_]{3,}\s*$/gm, '----------------------------------------')
+    .trim();
+}
+
   const handleCopyReport = () => {
     if (!result) return;
-    navigator.clipboard.writeText(result.summary);
+    navigator.clipboard.writeText(cleanSummaryForExport(result.summary));
     setCopiedReport(true);
     setTimeout(() => setCopiedReport(false), 2000);
   };
 
   const handleDownloadMarkdown = () => {
     if (!result) return;
-    const blob = new Blob([result.summary], { type: 'text/markdown;charset=utf-8;' });
+    const cleanText = cleanSummaryForExport(result.summary);
+    const blob = new Blob([cleanText], { type: 'text/markdown;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;

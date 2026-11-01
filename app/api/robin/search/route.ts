@@ -641,6 +641,18 @@ async function callOpenCodeChat(messages: Array<{ role: string; content: string 
   return '';
 }
 
+function cleanMarkdownText(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/^#+\s*/gm, '')
+    .replace(/\*{1,3}(.*?)\*{1,3}/g, '$1')
+    .replace(/\*/g, '')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/`/g, '')
+    .replace(/^[-\*_]{3,}\s*$/gm, '')
+    .trim();
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
@@ -701,13 +713,8 @@ export async function POST(request: NextRequest) {
     if (!summary || summary.length < 50) {
       summary = generateGroundedReport(query, preset, category, sources);
     } else {
-      // Strip any raw markdown symbols that the LLM might have outputted
-      summary = summary
-        .replace(/###+\s*/g, '')
-        .replace(/\*\*([^*]+)\*\*/g, '$1')
-        .replace(/\*([^*]+)\*/g, '$1')
-        .replace(/`([^`]+)`/g, '$1')
-        .replace(/---+/g, '');
+      // Completely eradicate all raw markdown asterisks, hashes, backticks
+      summary = cleanMarkdownText(summary);
     }
 
     const pivots = generatePivots(query, category);

@@ -558,6 +558,7 @@ export default function Home() {
                     <PodcastGenerator />
                   </div>
                 ) : activeTool === 'youtube-to-mp3' ||
+                  activeTool === 'youtube-to-mp4' ||
                   activeTool === 'tiktok-to-mp3' ||
                   activeTool === 'video-to-mp3' ||
                   activeTool === 'mp4-to-mp3' ||
