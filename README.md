@@ -13,6 +13,8 @@ A modern, high-performance web interface for downloading videos and audio from Y
 - **Genuine Progress Feedback:** Polling-based download state machine tracking true byte count, speed, ETA, and media muxing states.
 - **Format & Audio Extraction:** Supports multiple MP4 resolutions (1080p, 720p, 480p, 360p) and audio extraction (MP3 / M4A) according to verified backend availability.
 - **Direct File Delivery:** Direct client download link from backend with proper Content-Disposition and MIME types.
+- **Blackbird OSINT Email Checker:** Reverse-search registered online accounts, social platforms, and public profiles matching any target email.
+- **Robin OSINT Threat Studio:** Deep darknet search and executive threat intelligence reporting via Tor SOCKS5 and OpenCode API.
 
 ---
 
@@ -46,7 +48,19 @@ npm run build
 
 ---
 
-## Vercel Deployment Instructions
+## VPS Deployment with Docker Compose / النشر على خادم VPS
+
+يمكن تشغيل الواجهة الأمامية كحاوية Docker مستقلة أو ضمن `docker-compose`:
+```bash
+# بناء وتشغيل حاوية الـ Frontend
+docker build -t video-downloader-frontend .
+docker run -d -p 3000:3000 --name frontend video-downloader-frontend
+```
+
+أو استخدام `docker-compose.yml` الموحّد لتشغيل الـ Frontend و الـ Backend و شبكة Tor بضغطة زر واحدة:
+```bash
+docker compose up -d --build
+```
 
 Follow these step-by-step instructions to deploy to Vercel:
 

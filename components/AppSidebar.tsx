@@ -72,6 +72,7 @@ export type ToolId =
   | 'translator'
   | 'plagiarism-checker'
   | 'robin'
+  | 'email-checker'
   | 'workspace'
   | 'video-downloader';
 
@@ -167,7 +168,7 @@ export function AppSidebar({
       {
         id: 'ai-section',
         name: 'AI Writing & Agents',
-        count: 9,
+        count: 10,
         colorClass: 'text-emerald-500',
         icon: <Sparkles className="w-3.5 h-3.5 text-emerald-500 shrink-0" />,
         tools: [
@@ -187,6 +188,15 @@ export function AppSidebar({
             categoryName: 'AI Section',
             icon: <ShieldAlert className="w-3.5 h-3.5 text-emerald-500 shrink-0" />,
             badge: 'OSINT',
+            highlight: true,
+          },
+          {
+            id: 'email-checker',
+            name: 'Blackbird Email Lookup',
+            category: 'ai-section',
+            categoryName: 'AI Section',
+            icon: <UserCheck className="w-3.5 h-3.5 text-teal-500 shrink-0" />,
+            badge: 'Email OSINT',
             highlight: true,
           },
           {

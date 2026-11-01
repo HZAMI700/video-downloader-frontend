@@ -37,6 +37,7 @@ import { AiVoiceStudio } from '../components/Tools/AiVoiceStudio';
 import { AudioDspStudio } from '../components/Tools/AudioDspStudio';
 import { QuillBotAiStudio } from '../components/Tools/QuillBotAiStudio';
 import { RobinStudio } from '../components/Tools/RobinStudio';
+import { BlackbirdEmailStudio } from '../components/Tools/BlackbirdEmailStudio';
 import { PlayzyHomeScreen } from '../components/HomeScreen/PlayzyHomeScreen';
 
 // Existing Video Downloader Components
@@ -495,6 +496,11 @@ export default function Home() {
                 {activeTool === 'robin' ? (
                   <RobinStudio
                     initialQuery={toolInitialText}
+                    onBackToCategory={() => setActiveTool(null)}
+                  />
+                ) : activeTool === 'email-checker' ? (
+                  <BlackbirdEmailStudio
+                    initialEmail={toolInitialText}
                     onBackToCategory={() => setActiveTool(null)}
                   />
                 ) : activeCategory === 'ai-section' ||

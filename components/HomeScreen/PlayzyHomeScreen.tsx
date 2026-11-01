@@ -68,7 +68,7 @@ export function PlayzyHomeScreen({
   const [showToolsDropdown, setShowToolsDropdown] = useState(false);
   const [attachedFileName, setAttachedFileName] = useState<string | null>(null);
   const [deepResearchActive, setDeepResearchActive] = useState(true);
-  const [selectedAgentTab, setSelectedAgentTab] = useState<'all' | 'research' | 'doc' | 'voice' | 'downloader' | 'transcriber' | 'robin'>('all');
+  const [selectedAgentTab, setSelectedAgentTab] = useState<'all' | 'research' | 'doc' | 'voice' | 'downloader' | 'transcriber' | 'robin' | 'email-checker'>('all');
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const pristineFileInputRef = useRef<HTMLInputElement | null>(null);
@@ -131,6 +131,15 @@ export function PlayzyHomeScreen({
     const isRobinTarget = /(^robin\b|\.onion\b|darknet osint|dark web intel)/i.test(clean);
     if (isRobinTarget) {
       onSelectTool('robin', clean.replace(/^robin\s*/i, ''));
+      return;
+    }
+
+    // Check if query is targeting Blackbird Email Lookup
+    const isEmailAddress = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i.test(clean);
+    const isBlackbirdQuery = /(^email\b|email lookup|email checker|blackbird osint)/i.test(clean);
+    if (isEmailAddress || isBlackbirdQuery) {
+      const emailTarget = isEmailAddress ? clean : clean.replace(/^(email lookup|email checker|email|blackbird osint|blackbird)\s*/i, '');
+      onSelectTool('email-checker', emailTarget);
       return;
     }
 
@@ -763,6 +772,22 @@ export function PlayzyHomeScreen({
               <ShieldAlert className="w-4 h-4 text-[#00c9a7]" />
               <span>Robin OSINT</span>
             </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedAgentTab('email-checker');
+                onSelectTool('email-checker');
+              }}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-2 ${
+                selectedAgentTab === 'email-checker'
+                  ? 'bg-slate-100 dark:bg-[#242C37] text-teal-600 dark:text-teal-400 border border-teal-500/50 shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
+              }`}
+            >
+              <UserCheck className="w-4 h-4 text-teal-500" />
+              <span>Email Lookup</span>
+            </button>
           </div>
 
           {/* Central Input Textarea */}
@@ -967,6 +992,36 @@ export function PlayzyHomeScreen({
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#222B36] flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-[#009688] dark:group-hover:text-[#00c9a7] transition-colors">
                 <span>Launch Robin OSINT</span>
+                <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+              </div>
+            </button>
+
+            {/* Card: Blackbird Email Lookup OSINT */}
+            <button
+              type="button"
+              onClick={() => onSelectTool('email-checker')}
+              className="text-left bg-white hover:bg-slate-50/90 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-teal-500/60 rounded-3xl p-6 sm:p-7 xl:p-8 min-h-[250px] flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 cursor-pointer group shadow-xs hover:shadow-xl"
+            >
+              <div>
+                <div className="flex items-center justify-between w-full">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform duration-200 shadow-sm">
+                    <UserCheck className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.2]" />
+                  </div>
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-teal-50 dark:bg-[#12171F] border border-teal-200 dark:border-teal-500/30 text-teal-600 dark:text-teal-400">
+                    Blackbird CLI
+                  </span>
+                </div>
+                <div className="mt-5">
+                  <div className="text-lg sm:text-xl xl:text-2xl font-black text-slate-900 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                    Blackbird Email Lookup
+                  </div>
+                  <div className="text-sm sm:text-[14.5px] text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                    Reverse-search registered online accounts, social platforms, and public profiles matching any target email.
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#222B36] flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                <span>Search Email Accounts</span>
                 <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
               </div>
             </button>

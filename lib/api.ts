@@ -660,6 +660,165 @@ export async function fetchRobinHealth(): Promise<any> {
   return localRes.json();
 }
 
+// -------------------------------------------------------------------------------------
+// BLACKBIRD OSINT EMAIL CHECKER API
+// -------------------------------------------------------------------------------------
+export interface BlackbirdAccountMetadata {
+  schema?: string;
+  type?: string;
+  name?: string;
+  value?: string;
+  [key: string]: any;
+}
+
+export interface BlackbirdAccount {
+  platform: string;
+  url: string;
+  category: string;
+  status: string;
+  metadata?: BlackbirdAccountMetadata[] | null;
+}
+
+export interface BlackbirdEmailCheckRequest {
+  email: string;
+  legal_agreed?: boolean;
+  no_nsfw?: boolean;
+  client_token?: string;
+}
+
+export interface BlackbirdEmailCheckResponse {
+  email: string;
+  accounts: BlackbirdAccount[];
+  total_found: number;
+  execution_time_seconds?: number;
+  summary: string;
+  disclaimer: string;
+  status: string;
+}
+
+export interface BlackbirdAiRequest {
+  email: string;
+  accounts: BlackbirdAccount[];
+  client_token?: string;
+}
+
+export interface BlackbirdAiResponse {
+  email: string;
+  analysis: string;
+  platforms_analyzed: string[];
+  disclaimer: string;
+}
+
+export async function searchBlackbirdEmail(
+  req: BlackbirdEmailCheckRequest
+): Promise<BlackbirdEmailCheckResponse> {
+  const backendEndpoint = getApiEndpoint('email-check');
+  const payload = {
+    email: req.email.trim(),
+    legal_agreed: req.legal_agreed ?? true,
+    no_nsfw: req.no_nsfw ?? true,
+    client_token: req.client_token || '',
+  };
+
+  try {
+    const res = await fetch(backendEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      return await res.json();
+    }
+
+    if (res.status !== 404) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Blackbird email check failed (${res.status})`);
+    }
+  } catch (err: any) {
+    if (err?.message && !err.message.includes('404')) {
+      console.warn('Backend email-check endpoint error, falling back to Next.js route:', err);
+    }
+  }
+
+  // Resilient fallback to Next.js route
+  const localRes = await fetch('/api/email-check/search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!localRes.ok) {
+    const err = await localRes.json().catch(() => ({}));
+    throw new Error(err.detail || `Blackbird email check failed (${localRes.status})`);
+  }
+  return localRes.json();
+}
+
+export async function fetchBlackbirdHealth(): Promise<any> {
+  const backendEndpoint = getApiEndpoint('email-check/health');
+  try {
+    const res = await fetch(backendEndpoint, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+    });
+
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    // ignore
+  }
+
+  const localRes = await fetch('/api/email-check/health', {
+    method: 'GET',
+    headers: { Accept: 'application/json' },
+  });
+
+  if (!localRes.ok) {
+    const err = await localRes.json().catch(() => ({}));
+    throw new Error(err.detail || `Blackbird health check failed (${localRes.status})`);
+  }
+  return localRes.json();
+}
+
+export async function aiBlackbirdAnalysis(
+  req: BlackbirdAiRequest
+): Promise<BlackbirdAiResponse> {
+  const backendEndpoint = getApiEndpoint('email-check/ai');
+  const payload = {
+    email: req.email,
+    accounts: req.accounts,
+    client_token: req.client_token || '',
+  };
+
+  try {
+    const res = await fetch(backendEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    // ignore
+  }
+
+  const localRes = await fetch('/api/email-check/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!localRes.ok) {
+    const err = await localRes.json().catch(() => ({}));
+    throw new Error(err.detail || `AI footprint analysis failed (${localRes.status})`);
+  }
+  return localRes.json();
+}
+
 
 
 

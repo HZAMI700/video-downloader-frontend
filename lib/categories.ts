@@ -62,7 +62,7 @@ export const CATEGORIES: CategoryDefinition[] = [
   {
     id: 'ai-section',
     name: 'AI Section',
-    badge: '9 TOOLS',
+    badge: '10 TOOLS',
     heroBadge: 'Playzy AI Suite • 100% Free & No Sign-up',
     heroTitle: 'AI Writing & Creative Suite',
     heroDescription:
@@ -199,6 +199,21 @@ export const CATEGORIES: CategoryDefinition[] = [
         iconBg: 'bg-white text-emerald-600 shadow-sm',
         badgeColor: 'text-emerald-600',
         pillTag: 'Darknet OSINT',
+        popular: true,
+      },
+      {
+        id: 'email-checker',
+        name: 'Blackbird Email Lookup',
+        category: 'ai-section',
+        categoryName: 'AI Section',
+        shortDesc: 'Reverse account discovery across online platforms via Blackbird OSINT',
+        fullDesc:
+          'Reverse search email addresses across online platforms, social networks, and websites using the open-source Blackbird OSINT engine. Strictly intended for authorized security investigations and educational research.',
+        iconName: 'UserCheck',
+        pastelBg: 'bg-[#F0FDFA]',
+        iconBg: 'bg-white text-teal-600 shadow-sm',
+        badgeColor: 'text-teal-600',
+        pillTag: 'Blackbird OSINT',
         popular: true,
       },
     ],
