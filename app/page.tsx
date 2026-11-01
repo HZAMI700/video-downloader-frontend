@@ -219,14 +219,14 @@ export default function Home() {
   return (
     <div className="min-h-screen w-full bg-[#F8FAFC] dark:bg-[#0F131A] flex flex-col font-sans text-slate-900 dark:text-slate-100 transition-colors duration-200">
       {/* Top Global Navigation Bar - Skywork Design */}
-      <header className="w-full bg-white/95 dark:bg-[#0F131A]/95 backdrop-blur-md border-b border-slate-200 dark:border-[#212932] sticky top-0 z-40 px-3 sm:px-6 h-14 flex items-center justify-between shrink-0 transition-colors duration-200">
+      <header className="w-full bg-white/95 dark:bg-[#0F131A]/95 backdrop-blur-md border-b border-slate-200 dark:border-[#212932] sticky top-0 z-40 px-2.5 sm:px-6 h-14 flex items-center justify-between shrink-0 transition-colors duration-200">
         {/* Left: Mobile Toggle + Skywork Logo + Workspace & Model Selectors */}
-        <div className="flex items-center gap-3 sm:gap-6">
+        <div className="flex items-center gap-2 sm:gap-6 min-w-0">
           <button
             type="button"
             onClick={() => setIsMobileSidebarOpen(true)}
             aria-label="Open Mobile Menu"
-            className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#181D24] transition-colors"
+            className="lg:hidden p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#181D24] transition-colors shrink-0"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -239,9 +239,9 @@ export default function Home() {
               setActiveCategory('ai-section');
               setSearchQuery('');
             }}
-            className="flex items-center gap-2.5 group cursor-pointer focus:outline-none"
+            className="flex items-center gap-2 sm:gap-2.5 group cursor-pointer focus:outline-none shrink-0"
           >
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] p-[1.5px] shadow-[0_0_16px_rgba(0,201,167,0.35)] group-hover:shadow-[0_0_24px_rgba(0,201,167,0.6)] transition-all">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] p-[1.5px] shadow-[0_0_16px_rgba(0,201,167,0.35)] group-hover:shadow-[0_0_24px_rgba(0,201,167,0.6)] transition-all">
               <div className="w-full h-full bg-[#0A0E14] rounded-[10.5px] flex items-center justify-center p-1 overflow-hidden transition-colors">
                 <svg className="w-full h-full" viewBox="0 0 128 128" fill="none">
                   <path d="M28 20C28 15.39 33.02 12.55 37.01 14.89L96.01 49.89C99.98 52.24 99.98 57.76 96.01 60.11L62 80L28 58V20Z" fill="url(#topLogoGrad)"/>
@@ -266,7 +266,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[20px] font-black tracking-tight text-slate-900 dark:text-white font-display">
+              <span className="text-lg sm:text-[20px] font-black tracking-tight text-slate-900 dark:text-white font-display">
                 playzy
               </span>
               <span className="px-1.5 py-0.2 rounded-md text-[9px] font-black uppercase tracking-wider bg-[#00c9a7]/15 text-[#009688] dark:text-[#00c9a7] border border-[#00c9a7]/30">
@@ -276,13 +276,13 @@ export default function Home() {
           </button>
 
           {/* Workspace Pill */}
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] text-xs text-slate-700 dark:text-slate-300 transition-colors shadow-2xs">
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] text-xs text-slate-700 dark:text-slate-300 transition-colors shadow-2xs shrink-0">
             <span className="w-2 h-2 rounded-full bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]" />
             <span className="font-semibold">Personal Workspace</span>
           </div>
 
           {/* Model Pill (DeepSeek-R1 / Skywork 3.0) */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] text-xs text-slate-700 dark:text-slate-300 transition-colors shadow-2xs">
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] text-xs text-slate-700 dark:text-slate-300 transition-colors shadow-2xs shrink-0">
             <Sparkles className="w-3.5 h-3.5 text-[#00c9a7] animate-pulse" />
             <span className="text-slate-400">Model:</span>
             <span className="font-semibold text-slate-800 dark:text-slate-100">Playzy DeepSeek-R1</span>
@@ -291,7 +291,7 @@ export default function Home() {
         </div>
 
         {/* Right: Search + Quick Downloader + Theme Toggle + Upgrade to Pro + Avatar */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* Quick Search */}
           <div className="relative hidden md:block">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -333,7 +333,7 @@ export default function Home() {
             type="button"
             onClick={toggleTheme}
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#181D24] dark:hover:bg-[#202732] border border-slate-200 dark:border-[#263241] text-slate-700 dark:text-slate-300 transition active:scale-95 cursor-pointer shadow-2xs"
+            className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#181D24] dark:hover:bg-[#202732] border border-slate-200 dark:border-[#263241] text-slate-700 dark:text-slate-300 transition active:scale-95 cursor-pointer shadow-2xs"
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? (
@@ -346,17 +346,18 @@ export default function Home() {
           {/* Upgrade to Pro Button (Skywork Vibrant Cyan Gradient) */}
           <button
             type="button"
-            className="bg-gradient-to-r from-[#00A9C0] to-[#00c9a7] hover:from-[#00c9a7] hover:to-[#29CC5F] active:scale-[0.98] text-slate-950 text-[13px] font-bold px-4 py-1.5 rounded-full flex items-center gap-2 shadow-[0_0_18px_rgba(0,201,167,0.3)] transition-all cursor-pointer"
+            className="bg-gradient-to-r from-[#00A9C0] to-[#00c9a7] hover:from-[#00c9a7] hover:to-[#29CC5F] active:scale-[0.98] text-slate-950 text-xs sm:text-[13px] font-bold px-2.5 sm:px-4 py-1.5 rounded-full flex items-center gap-1.5 sm:gap-2 shadow-[0_0_18px_rgba(0,201,167,0.3)] transition-all cursor-pointer shrink-0"
           >
-            <Crown className="w-3.5 h-3.5 text-slate-950 fill-current" />
-            <span>Upgrade to Pro</span>
+            <Crown className="w-3.5 h-3.5 text-slate-950 fill-current shrink-0" />
+            <span className="hidden sm:inline">Upgrade to Pro</span>
+            <span className="sm:hidden">Pro</span>
           </button>
 
           {/* User Profile Avatar with Online Ring */}
           <button
             type="button"
             aria-label="User Account"
-            className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#181D24] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 flex items-center justify-center text-slate-700 dark:text-slate-200 transition-colors cursor-pointer relative"
+            className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#181D24] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 flex items-center justify-center text-slate-700 dark:text-slate-200 transition-colors cursor-pointer relative shrink-0"
           >
             <User className="w-4 h-4 stroke-[2.2]" />
             <span className="w-2 h-2 rounded-full bg-[#00c9a7] border-2 border-white dark:border-[#0F131A] absolute -bottom-0.5 -right-0.5" />
@@ -381,25 +382,26 @@ export default function Home() {
         />
 
         {/* Main Content Area: Skywork Dark/Light Canvas */}
-        <main className="flex-1 bg-[#F8FAFC] dark:bg-[#0F131A] p-3 sm:p-5 lg:p-7 overflow-y-auto min-h-[calc(100vh-3.5rem)] flex flex-col justify-between transition-colors duration-200">
-          <div>
+        <main className="flex-1 bg-[#F8FAFC] dark:bg-[#0F131A] p-2.5 sm:p-5 lg:p-7 overflow-y-auto min-h-[calc(100vh-3.5rem)] flex flex-col justify-between transition-colors duration-200 w-full min-w-0">
+          <div className="w-full min-w-0">
             {/* Breadcrumb Row when inside a tool */}
             {activeTool !== null && (
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-[#212932]">
-                <div className="flex items-center gap-2 text-xs">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-[#212932] gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-xs flex-wrap min-w-0">
                   <button
                     type="button"
                     onClick={() => {
                       setActiveTool(null);
                       setSearchQuery('');
                     }}
-                    className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-bold transition flex items-center gap-1"
+                    className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-bold transition flex items-center gap-1 shrink-0"
                   >
                     <ChevronLeft className="w-3.5 h-3.5" />
-                    <span>Workspace Home</span>
+                    <span className="hidden xs:inline">Workspace Home</span>
+                    <span className="xs:hidden">Home</span>
                   </button>
                   <span className="text-slate-300 dark:text-slate-600">/</span>
-                  <span className="font-semibold text-slate-600 dark:text-slate-400">
+                  <span className="font-semibold text-slate-600 dark:text-slate-400 truncate max-w-[120px] sm:max-w-none">
                     {activeCategory === 'video-downloader'
                       ? 'Playzy Video Downloader'
                       : activeCategory === 'workspace'
@@ -409,7 +411,7 @@ export default function Home() {
                   {currentToolDef && (
                     <>
                       <span className="text-slate-300 dark:text-slate-600">/</span>
-                      <span className="font-extrabold text-[#009688] dark:text-[#00c9a7]">
+                      <span className="font-extrabold text-[#009688] dark:text-[#00c9a7] truncate max-w-[140px] sm:max-w-none">
                         {currentToolDef.name}
                       </span>
                     </>
@@ -419,9 +421,9 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setActiveTool(null)}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white px-2.5 py-1 rounded-lg bg-white dark:bg-[#181D24] border border-slate-200 dark:border-[#263241] shadow-2xs"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white px-2.5 py-1 rounded-lg bg-white dark:bg-[#181D24] border border-slate-200 dark:border-[#263241] shadow-2xs shrink-0 cursor-pointer"
                 >
-                  <span>Close Tool</span>
+                  <span className="hidden xs:inline">Close Tool</span>
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>

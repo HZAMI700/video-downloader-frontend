@@ -418,7 +418,7 @@ export function BlackbirdEmailStudio({
                 ? 'أدخل البريد الإلكتروني (مثال: user@example.com)...'
                 : 'Enter email address (e.g. user@example.com)...'
             }
-            className="w-full pl-12 pr-36 rtl:pl-36 rtl:pr-12 py-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-sm sm:text-base text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#00c9a7] focus:ring-1 focus:ring-[#00c9a7] transition-all"
+            className="w-full pl-11 sm:pl-12 pr-28 sm:pr-36 rtl:pl-28 sm:rtl:pl-36 rtl:pr-11 sm:rtl:pr-12 py-3 sm:py-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-base text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#00c9a7] focus:ring-1 focus:ring-[#00c9a7] transition-all"
           />
           <button
             type="button"
@@ -757,8 +757,8 @@ export function BlackbirdEmailStudio({
                     </div>
 
                     {/* Verification / Registration URL */}
-                    <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#12171F] border border-slate-100 dark:border-[#212932] flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-mono">
-                      <span className="truncate max-w-[320px]">{acc.url}</span>
+                    <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#12171F] border border-slate-100 dark:border-[#212932] flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-mono gap-2">
+                      <span className="truncate min-w-0 flex-1 max-w-[170px] sm:max-w-[320px]">{acc.url}</span>
                       <div className="flex items-center gap-1 shrink-0">
                         <button
                           type="button"

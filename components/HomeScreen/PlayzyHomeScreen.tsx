@@ -481,7 +481,7 @@ export function PlayzyHomeScreen({
                 }
               }}
               placeholder="Ask anything, request revisions, or paste media links..."
-              className="w-full resize-none outline-none border-none text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm sm:text-base leading-relaxed bg-transparent focus:ring-0 select-text min-h-[44px] max-h-[160px]"
+              className="w-full resize-none outline-none border-none text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-base leading-relaxed bg-transparent focus:ring-0 select-text min-h-[44px] max-h-[160px]"
             />
 
             {/* Bottom Toolbar inside Chat Box */}
@@ -621,11 +621,11 @@ export function PlayzyHomeScreen({
       </div>
 
       {/* CENTER HERO & SKYWORK PROMPT COMMAND CENTER */}
-      <div className="w-full max-w-7xl 2xl:max-w-[1560px] flex flex-col items-center my-auto pt-2 pb-8 px-4 sm:px-6 lg:px-8 xl:px-10">
+      <div className="w-full max-w-7xl 2xl:max-w-[1560px] flex flex-col items-center my-auto pt-2 pb-8 px-3 sm:px-6 lg:px-8 xl:px-10">
         {/* Playzy Signature 3D Prism Avatar */}
-        <div className="relative mb-6 flex items-center justify-center">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-tr from-[#00A9C0] via-[#00c9a7] to-[#2495ff] p-0.5 shadow-[0_0_50px_rgba(0,201,167,0.45)] animate-pulse-glow">
-            <div className="w-full h-full bg-[#0A0E14] rounded-[22px] flex items-center justify-center p-3.5 transition-colors overflow-hidden">
+        <div className="relative mb-5 sm:mb-6 flex items-center justify-center">
+          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-tr from-[#00A9C0] via-[#00c9a7] to-[#2495ff] p-0.5 shadow-[0_0_50px_rgba(0,201,167,0.45)] animate-pulse-glow">
+            <div className="w-full h-full bg-[#0A0E14] rounded-[22px] flex items-center justify-center p-2.5 sm:p-3.5 transition-colors overflow-hidden">
               <svg className="w-full h-full" viewBox="0 0 128 128" fill="none">
                 <path d="M28 20C28 15.39 33.02 12.55 37.01 14.89L96.01 49.89C99.98 52.24 99.98 57.76 96.01 60.11L62 80L28 58V20Z" fill="url(#heroLogoGrad)"/>
                 <path d="M28 58L62 80L37.01 94.41C33.02 96.72 28 93.88 28 89.27V58Z" fill="url(#heroLogoFacet)"/>
@@ -652,18 +652,18 @@ export function PlayzyHomeScreen({
         </div>
 
         {/* Hero Headings */}
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white text-center leading-[1.15] tracking-tight max-w-4xl">
+        <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white text-center leading-[1.2] sm:leading-[1.15] tracking-tight max-w-4xl px-1">
           What would you like to{' '}
           <span className="skywork-gradient-text font-black">create or research</span> today?
         </h1>
-        <p className="text-sm sm:text-lg lg:text-xl text-slate-600 dark:text-slate-400 text-center mt-3 font-normal max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-lg lg:text-xl text-slate-600 dark:text-slate-400 text-center mt-2.5 sm:mt-3 font-normal max-w-3xl leading-relaxed px-1">
           Multi-agent deep web research, ElevenLabs-quality voice synthesis, 4K media extraction, and document writing.
         </p>
 
         {/* CENTRAL SKYWORK COMMAND CARD (`prompt-section`) */}
-        <div className="w-full mt-8 bg-white dark:bg-[#181D24] rounded-[28px] sm:rounded-[36px] border border-slate-200 dark:border-[#263241] shadow-[0_16px_50px_-10px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.65)] focus-within:border-[#00c9a7]/60 focus-within:shadow-[0_0_36px_rgba(0,201,167,0.22)] transition-all p-4 sm:p-6 lg:p-7">
+        <div className="w-full mt-6 sm:mt-8 bg-white dark:bg-[#181D24] rounded-[24px] sm:rounded-[36px] border border-slate-200 dark:border-[#263241] shadow-[0_16px_50px_-10px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.65)] focus-within:border-[#00c9a7]/60 focus-within:shadow-[0_0_36px_rgba(0,201,167,0.22)] transition-all p-3.5 sm:p-6 lg:p-7">
           {/* Top Agent Mode Filter Tabs (Skywork agent pill navigation) */}
-          <div className="flex items-center gap-2 pb-4 overflow-x-auto custom-scrollbar border-b border-slate-100 dark:border-[#212932]">
+          <div className="flex items-center gap-1.5 sm:gap-2 pb-3 sm:pb-4 overflow-x-auto no-scrollbar border-b border-slate-100 dark:border-[#212932]">
             <button
               type="button"
               onClick={() => setSelectedAgentTab('all')}

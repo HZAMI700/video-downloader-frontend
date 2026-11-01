@@ -136,3 +136,17 @@ html.dark .skywork-gradient-text {
 .animate-apple-in {
   animation: fadeInScale 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera while enabling smooth touch scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Touch target helpers */
+.touch-manipulation {
+  touch-action: manipulation;
+}

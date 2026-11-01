@@ -74,8 +74,9 @@ function renderInlineFormatted(text: string): React.ReactNode {
   return (
     <>
       {parts.map((part, index) => {
+        if (!part) return null;
         if (part.startsWith('**') && part.endsWith('**')) {
-          const inner = part.slice(2, -2).trim();
+          const inner = part.slice(2, -2).replace(/[*#`_]/g, '').trim();
           return (
             <strong key={index} className="font-extrabold text-slate-900 dark:text-white">
               {inner}
@@ -83,7 +84,7 @@ function renderInlineFormatted(text: string): React.ReactNode {
           );
         }
         if (part.startsWith('`') && part.endsWith('`')) {
-          const inner = part.slice(1, -1).trim();
+          const inner = part.slice(1, -1).replace(/[*#`_]/g, '').trim();
           return (
             <span
               key={index}
@@ -94,7 +95,7 @@ function renderInlineFormatted(text: string): React.ReactNode {
           );
         }
         if (part.startsWith('*') && part.endsWith('*')) {
-          const inner = part.slice(1, -1).trim();
+          const inner = part.slice(1, -1).replace(/[*#`_]/g, '').trim();
           return (
             <em key={index} className="italic text-slate-800 dark:text-slate-200">
               {inner}
@@ -102,11 +103,125 @@ function renderInlineFormatted(text: string): React.ReactNode {
           );
         }
         // Normal text - strip any leftover stray markdown symbols
-        const sanitized = part.replace(/[*#`]/g, '');
+        const sanitized = part.replace(/[*#`_~]/g, '');
         return <span key={index}>{sanitized}</span>;
       })}
     </>
   );
+}
+
+interface ParsedDossierItem {
+  type: 'kv' | 'numbered' | 'text';
+  label?: string;
+  value?: string;
+  num?: string;
+  title?: string;
+  text?: string;
+}
+
+interface ParsedDossierSection {
+  title: string;
+  type: 'summary' | 'findings' | 'severity' | 'recommendations' | 'general';
+  items: ParsedDossierItem[];
+}
+
+function parseDossierReport(text: string): ParsedDossierSection[] {
+  if (!text) return [];
+  const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+  const sections: ParsedDossierSection[] = [];
+  let currentSection: ParsedDossierSection | null = null;
+
+  for (const rawLine of lines) {
+    // 1. Skip redundant main title and metadata header lines (already displayed in top banner)
+    if (
+      (rawLine.startsWith('#') && (rawLine.includes('Robin OSINT') || rawLine.includes('Executive Threat Report'))) ||
+      rawLine.startsWith('Robin OSINT Executive Threat Report') ||
+      rawLine === '---' || rawLine === '***' || rawLine === '___'
+    ) {
+      continue;
+    }
+
+    if (
+      /^\*?\*?(Investigation Target|Classification|Security Clearance|Investigation Preset|Engine Route|Threat Category)/i.test(rawLine)
+    ) {
+      continue;
+    }
+
+    // 2. Identify Section Headers (### or #### or 1. Section Title)
+    const isHeaderLine =
+      rawLine.startsWith('#') ||
+      /^(\d+)\.\s+(Executive Summary|Key Threat|Threat Assessment|Actionable Security|Recommendations|Summary|Threat Findings|Security Recommendations)/i.test(rawLine);
+
+    if (isHeaderLine) {
+      const cleanTitle = rawLine
+        .replace(/^[#\s]+/, '')
+        .replace(/[*`_]/g, '')
+        .trim();
+
+      let sectionType: ParsedDossierSection['type'] = 'general';
+      const lower = cleanTitle.toLowerCase();
+      if (lower.includes('summary') || lower.includes('تنفيذي')) sectionType = 'summary';
+      else if (lower.includes('findings') || lower.includes('iocs') || lower.includes('مؤشرات')) sectionType = 'findings';
+      else if (lower.includes('assessment') || lower.includes('severity') || lower.includes('خطورة')) sectionType = 'severity';
+      else if (lower.includes('recommendations') || lower.includes('توصيات')) sectionType = 'recommendations';
+
+      currentSection = {
+        title: cleanTitle,
+        type: sectionType,
+        items: []
+      };
+      sections.push(currentSection);
+      continue;
+    }
+
+    if (!currentSection) {
+      currentSection = {
+        title: 'Executive Intelligence Analysis',
+        type: 'general',
+        items: []
+      };
+      sections.push(currentSection);
+    }
+
+    const cleanLine = rawLine.replace(/^[-*]\s*/, '').trim();
+    const boldColonMatch = cleanLine.match(/^\*\*([^*:]+)(?::\*\*|\*\*:\s*)\s*(.*)$/);
+
+    if (boldColonMatch) {
+      const label = boldColonMatch[1].replace(/[*`_]/g, '').trim();
+      const val = boldColonMatch[2].replace(/[*`_]/g, '').trim();
+      currentSection.items.push({
+        type: 'kv',
+        label,
+        value: val
+      });
+    } else {
+      const numMatch = cleanLine.match(/^(\d+)\.\s+(.*)$/);
+      if (numMatch) {
+        const full = numMatch[2].replace(/[*`_]/g, '').trim();
+        const firstColon = full.indexOf(':');
+        let stepTitle = '';
+        let stepDesc = full;
+        if (firstColon > 0 && firstColon < 40) {
+          stepTitle = full.slice(0, firstColon).trim();
+          stepDesc = full.slice(firstColon + 1).trim();
+        }
+        currentSection.items.push({
+          type: 'numbered',
+          num: numMatch[1],
+          title: stepTitle,
+          text: stepDesc
+        });
+      } else {
+        const sanitized = cleanLine.replace(/[*`_]/g, '').trim();
+        currentSection.items.push({
+          type: 'text',
+          text: sanitized
+        });
+      }
+    }
+  }
+
+  return sections;
 }
 
 // Universal Component to render clean, formatted text without raw markdown characters
@@ -200,6 +315,8 @@ function ExecutiveThreatDossier({
   preset: string;
   lang: 'ar' | 'en';
 }) {
+  const [showRawMarkdown, setShowRawMarkdown] = useState(false);
+
   // Extract threat level from text if available
   let threatLevel = 'HIGH';
   if (/critical/i.test(summary)) threatLevel = 'CRITICAL';
@@ -253,34 +370,36 @@ function ExecutiveThreatDossier({
     .map((c, i) => hashChars[(c.charCodeAt(0) + query.length + i) % hashChars.length])
     .join('');
 
+  const parsedSections = parseDossierReport(summary);
+
   return (
     <div className="space-y-6">
       {/* 1. Executive Banner & Threat Criticality Gauge */}
-      <div className="bg-gradient-to-br from-slate-900 via-[#12171F] to-[#0D1117] rounded-3xl border border-slate-700/50 p-6 sm:p-7 text-white shadow-xl space-y-5 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-slate-900 via-[#12171F] to-[#0D1117] rounded-3xl border border-slate-700/50 p-5 sm:p-7 text-white shadow-xl space-y-5 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#00c9a7]/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10 pb-4 border-b border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#00c9a7]/20 border border-[#00c9a7]/40 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(0,201,167,0.3)]">
-              <Shield className="w-6 h-6 text-[#00c9a7]" />
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#00c9a7]/20 border border-[#00c9a7]/40 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(0,201,167,0.3)]">
+              <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-[#00c9a7]" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs uppercase font-extrabold tracking-widest text-[#00c9a7]">
-                  {lang === 'ar' ? 'تقرير روبين الاستخباراتي المعتمد' : 'Classified Threat Intelligence Dossier'}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[11px] sm:text-xs uppercase font-extrabold tracking-widest text-[#00c9a7]">
+                  {lang === 'ar' ? 'تقرير استخبارات التهديدات المعتمد' : 'Classified Threat Intelligence Dossier'}
                 </span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
                   {caseId}
                 </span>
               </div>
-              <h3 className="text-lg sm:text-xl font-black text-white mt-1">
-                {lang === 'ar' ? `الهدف الاستخباراتي: ${query}` : `Investigation Target: ${query}`}
+              <h3 className="text-base sm:text-xl font-black text-white mt-1 break-words">
+                {lang === 'ar' ? `هدف التحقيق: ${query}` : `Investigation Target: ${query}`}
               </h3>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className={`px-4 py-2 rounded-2xl border text-xs font-black tracking-wider uppercase flex items-center gap-2 ${severityStyle.badge}`}>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl border text-[11px] sm:text-xs font-black tracking-wider uppercase flex items-center gap-1.5 ${severityStyle.badge}`}>
               <AlertOctagon className="w-4 h-4" />
               <span>{threatLevel} SEVERITY</span>
             </div>
@@ -292,9 +411,9 @@ function ExecutiveThreatDossier({
           <div className="flex items-center justify-between text-xs font-bold text-slate-300">
             <span className="flex items-center gap-1.5">
               <Activity className="w-3.5 h-3.5 text-[#00c9a7]" />
-              {lang === 'ar' ? 'مؤشر خطورة التعرض في الدارك نت (Darknet Threat Surface Score)' : 'Darknet Threat Surface Exposure Score'}
+              {lang === 'ar' ? 'مؤشر خطورة التعرض في الدارك نت (Darknet Surface Score)' : 'Darknet Threat Surface Exposure Score'}
             </span>
-            <span className="font-mono text-[#00c9a7]">{severityStyle.score} Risk Severity</span>
+            <span className="font-mono text-[#00c9a7]">{severityStyle.score} Risk</span>
           </div>
           <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden p-0.5">
             <div className={`h-full rounded-full transition-all duration-1000 ${severityStyle.meter}`} />
@@ -302,7 +421,7 @@ function ExecutiveThreatDossier({
         </div>
 
         {/* Investigation Parameters Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1 relative z-10">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-1 relative z-10">
           <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1">
             <span className="text-[10px] uppercase font-bold text-slate-400 block">
               {lang === 'ar' ? 'التصنيف القانوني' : 'Classification'}
@@ -327,8 +446,8 @@ function ExecutiveThreatDossier({
             <span className="text-[10px] uppercase font-bold text-slate-400 block">
               {lang === 'ar' ? 'مسار التوجيه' : 'Routing Circuit'}
             </span>
-            <span className="text-xs font-bold text-[#00c9a7] flex items-center gap-1">
-              <Globe className="w-3.5 h-3.5" />
+            <span className="text-xs font-bold text-[#00c9a7] flex items-center gap-1 truncate">
+              <Globe className="w-3.5 h-3.5 shrink-0" />
               Tor SOCKS5 Onion v3
             </span>
           </div>
@@ -338,44 +457,191 @@ function ExecutiveThreatDossier({
               {lang === 'ar' ? 'المصادر المفهرسة' : 'Indexed Sources'}
             </span>
             <span className="text-xs font-bold text-purple-400 flex items-center gap-1">
-              <Database className="w-3.5 h-3.5" />
-              {sourcesCount} Verified Hidden Services
+              <Database className="w-3.5 h-3.5 shrink-0" />
+              {sourcesCount} Hidden Services
             </span>
           </div>
         </div>
       </div>
 
+      {/* Toggle View Options (Structured Dossier vs Raw MD) */}
+      <div className="flex items-center justify-between px-1">
+        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+          <ShieldCheck className="w-4 h-4 text-[#00c9a7]" />
+          <span>{lang === 'ar' ? 'نتائج التحليل المهيكل الخالي من الرموز' : 'Zero-Markdown Sanitized Dossier Presentation'}</span>
+        </span>
+        <button
+          type="button"
+          onClick={() => setShowRawMarkdown(!showRawMarkdown)}
+          className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 underline font-semibold cursor-pointer"
+        >
+          {showRawMarkdown
+            ? (lang === 'ar' ? 'العودة للتقرير المنظم' : 'Switch to Structured Dossier')
+            : (lang === 'ar' ? 'عرض الكود المصدري Markdown' : 'View Markdown Source')}
+        </button>
+      </div>
+
       {/* 2. Structured Report Content - Rendered with Clean Formatting (Zero raw # or *) */}
-      <div className="bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] shadow-sm p-6 sm:p-8 space-y-6">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-[#212932]">
-          <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-[#00c9a7]" />
-            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
-              {lang === 'ar' ? 'التحليل الاستخباراتي المفصّل والأدلة الرقمية' : 'Executive Threat Analysis & Evidence Findings'}
-            </h3>
-          </div>
-          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-            Sanitized & Grounded
+      {showRawMarkdown ? (
+        <div className="bg-slate-900 rounded-3xl border border-slate-700 p-5 sm:p-7 text-xs font-mono text-slate-300 whitespace-pre-wrap leading-relaxed overflow-x-auto">
+          {summary}
+        </div>
+      ) : parsedSections.length > 0 ? (
+        <div className="space-y-5">
+          {parsedSections.map((sec, sIdx) => {
+            // Icon & badge by type
+            let icon = <FileText className="w-4 h-4 text-[#00c9a7]" />;
+            let badge = 'Verified OSINT';
+            let badgeClass = 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20';
+
+            if (sec.type === 'findings') {
+              icon = <AlertOctagon className="w-4 h-4 text-amber-500" />;
+              badge = lang === 'ar' ? 'مؤشرات الاختراق النشطة' : 'Active IOC Indicators';
+              badgeClass = 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20';
+            } else if (sec.type === 'severity') {
+              icon = <Activity className="w-4 h-4 text-rose-500" />;
+              badge = lang === 'ar' ? 'تقييم المخاطر' : 'Risk Evaluation';
+              badgeClass = 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20';
+            } else if (sec.type === 'recommendations') {
+              icon = <CheckCircle2 className="w-4 h-4 text-teal-500" />;
+              badge = lang === 'ar' ? 'إجراءات الحماية' : 'Remediation Protocols';
+              badgeClass = 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20';
+            }
+
+            return (
+              <div
+                key={sIdx}
+                className="bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] shadow-sm p-5 sm:p-7 space-y-4 transition-all"
+              >
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#212932] gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] flex items-center justify-center shrink-0">
+                      {icon}
+                    </div>
+                    <h4 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
+                      {sec.title}
+                    </h4>
+                  </div>
+                  <span className={`text-[10px] sm:text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${badgeClass} shrink-0`}>
+                    {badge}
+                  </span>
+                </div>
+
+                {/* Section Items */}
+                {sec.type === 'findings' ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-3.5">
+                    {sec.items.map((item, iIdx) => {
+                      if (item.type === 'kv') {
+                        return (
+                          <div
+                            key={iIdx}
+                            className="p-4 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] space-y-1.5 hover:border-[#00c9a7]/40 transition"
+                          >
+                            <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                              <Radio className="w-3.5 h-3.5 shrink-0" />
+                              <span>{item.label}</span>
+                            </div>
+                            <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
+                              {renderInlineFormatted(item.value || '')}
+                            </p>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div key={iIdx} className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-[#12171F]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0" />
+                          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                            {renderInlineFormatted(item.text || '')}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : sec.type === 'recommendations' ? (
+                  <div className="space-y-3">
+                    {sec.items.map((item, iIdx) => (
+                      <div
+                        key={iIdx}
+                        className="p-4 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] flex items-start gap-3.5 hover:border-[#00c9a7]/40 transition"
+                      >
+                        <span className="w-7 h-7 rounded-xl bg-[#00c9a7]/15 text-[#00c9a7] text-xs font-black flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                          {item.num || iIdx + 1}
+                        </span>
+                        <div className="space-y-1 flex-1">
+                          {item.title && (
+                            <h5 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                              {item.title}
+                            </h5>
+                          )}
+                          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                            {renderInlineFormatted(item.text || '')}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {sec.items.map((item, iIdx) => {
+                      if (item.type === 'kv') {
+                        const isThreatLevel =
+                          item.label?.toLowerCase().includes('threat level') ||
+                          item.label?.toLowerCase().includes('مستوى الخطورة');
+                        return (
+                          <div
+                            key={iIdx}
+                            className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                          >
+                            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                              {item.label}:
+                            </span>
+                            {isThreatLevel ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black uppercase bg-amber-500/15 text-amber-500 border border-amber-500/30">
+                                <AlertOctagon className="w-3.5 h-3.5" />
+                                {item.value}
+                              </span>
+                            ) : (
+                              <span className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
+                                {renderInlineFormatted(item.value || '')}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      }
+                      return (
+                        <div key={iIdx} className="flex items-start gap-3">
+                          <span className="w-2 h-2 rounded-full bg-[#00c9a7] mt-2 shrink-0 shadow-[0_0_8px_#00c9a7]" />
+                          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed flex-1">
+                            {renderInlineFormatted(item.text || '')}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] shadow-sm p-6 sm:p-8 space-y-6">
+          <CleanFormattedText text={summary} />
+        </div>
+      )}
+
+      {/* 3. Cryptographic Chain-of-Custody Verification Footer */}
+      <div className="bg-white dark:bg-[#181D24] rounded-2xl border border-slate-200 dark:border-[#263241] p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex items-center gap-2 font-mono min-w-0">
+          <Key className="w-3.5 h-3.5 text-[#00c9a7] shrink-0" />
+          <span className="shrink-0">SHA-256 Ledger:</span>
+          <span className="text-slate-700 dark:text-slate-300 truncate max-w-[200px] sm:max-w-[320px]">
+            {sha256Fingerprint}
           </span>
         </div>
 
-        {/* Clean Formatted Text Body */}
-        <CleanFormattedText text={summary} />
-
-        {/* 3. Cryptographic Chain-of-Custody Verification Footer */}
-        <div className="pt-6 border-t border-slate-100 dark:border-[#212932] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
-          <div className="flex items-center gap-2 font-mono">
-            <Key className="w-3.5 h-3.5 text-[#00c9a7]" />
-            <span>SHA-256 Ledger:</span>
-            <span className="text-slate-700 dark:text-slate-300 truncate max-w-[280px]">
-              {sha256Fingerprint}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Adheres to NIST SP 800-86 & Lawful CTI Chain of Custody</span>
-          </div>
+        <div className="flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold shrink-0">
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          <span>NIST SP 800-86 Compliant Chain of Custody</span>
         </div>
       </div>
     </div>
@@ -791,13 +1057,13 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                   ? 'أدخل اسم الهدف، أو رقم CVE، أو عنوان الدومين، أو اسم مجموعة الفدية (مثل: paypal accounts, LockBit, CVE-2024-3094)...'
                   : 'Enter investigation query (e.g. paypal accounts, LockBit victim, CVE-2024-3094, corporate domain)...'
               }
-              className="w-full pl-12 pr-32 rtl:pl-32 rtl:pr-12 py-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-sm sm:text-base text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#00c9a7] focus:ring-1 focus:ring-[#00c9a7] transition-all"
+              className="w-full pl-11 sm:pl-12 pr-28 sm:pr-32 rtl:pl-28 sm:rtl:pl-32 rtl:pr-11 sm:rtl:pr-12 py-3 sm:py-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-base text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#00c9a7] focus:ring-1 focus:ring-[#00c9a7] transition-all"
             />
             <button
               type="button"
               onClick={() => handleExecuteSearch()}
               disabled={isSearching || !query.trim()}
-              className={`absolute right-2 rtl:right-auto rtl:left-2 px-5 py-2 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-2 transition cursor-pointer ${
+              className={`absolute right-2 rtl:right-auto rtl:left-2 px-3 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-1.5 sm:gap-2 transition cursor-pointer ${
                 query.trim() && !isSearching
                   ? 'bg-gradient-to-tr from-emerald-600 to-[#00c9a7] text-slate-950 shadow-md hover:scale-[1.02] active:scale-95'
                   : 'bg-slate-200 dark:bg-[#202732] text-slate-400 dark:text-slate-500 cursor-not-allowed'
@@ -996,12 +1262,12 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
             </div>
 
             {/* Navigation Tabs (Report / Sources / Pivots) */}
-            <div className="flex items-center justify-between flex-wrap gap-3">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1">
                 <button
                   type="button"
                   onClick={() => setActiveTab('report')}
-                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition cursor-pointer ${
+                  className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2 shrink-0 transition cursor-pointer ${
                     activeTab === 'report'
                       ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
@@ -1014,7 +1280,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                 <button
                   type="button"
                   onClick={() => setActiveTab('sources')}
-                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition cursor-pointer ${
+                  className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2 shrink-0 transition cursor-pointer ${
                     activeTab === 'sources'
                       ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
@@ -1031,7 +1297,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                 <button
                   type="button"
                   onClick={() => setActiveTab('pivots')}
-                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition cursor-pointer ${
+                  className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2 shrink-0 transition cursor-pointer ${
                     activeTab === 'pivots'
                       ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
@@ -1043,7 +1309,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
               </div>
 
               {/* Action Buttons: Copy / Download */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   type="button"
                   onClick={handleCopyReport}
@@ -1121,8 +1387,8 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                       {s.snippet}
                     </p>
 
-                    <div className="pt-2 border-t border-slate-100 dark:border-[#212932] flex items-center justify-between text-[11px] text-slate-400">
-                      <span className="font-mono truncate max-w-[240px] text-slate-500 dark:text-slate-400">
+                    <div className="pt-2 border-t border-slate-100 dark:border-[#212932] flex items-center justify-between text-[11px] text-slate-400 gap-2">
+                      <span className="font-mono truncate min-w-0 flex-1 max-w-[170px] sm:max-w-[240px] text-slate-500 dark:text-slate-400">
                         {s.link}
                       </span>
                       <span className="text-emerald-500 font-bold flex items-center gap-1">

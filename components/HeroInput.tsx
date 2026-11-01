@@ -111,7 +111,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
                 }
                 required
                 disabled={isLoading}
-                className="w-full bg-transparent px-4 sm:px-5 py-2.5 sm:py-3 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none text-sm sm:text-base md:text-lg font-normal"
+                className="w-full bg-transparent px-3 sm:px-5 py-2.5 sm:py-3 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none text-base md:text-lg font-normal"
               />
 
               {url && (
@@ -121,7 +121,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
                     setUrl('');
                     setClientValidationNotice(null);
                   }}
-                  className="p-2 text-slate-400 hover:text-slate-200 transition"
+                  className="p-1.5 sm:p-2 text-slate-400 hover:text-slate-200 transition shrink-0"
                   title="Clear input"
                 >
                   <X className="w-4 h-4" />
@@ -133,7 +133,7 @@ export const HeroInput: React.FC<HeroInputProps> = ({ onAnalyze, isLoading, erro
                 disabled={!url.trim() || isLoading}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="shrink-0 flex items-center justify-center gap-1.5 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base text-slate-950 bg-gradient-to-r from-[#00A9C0] to-[#00c9a7] hover:from-[#00c9a7] hover:to-[#29CC5F] shadow-[0_0_18px_rgba(0,201,167,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="shrink-0 flex items-center justify-center gap-1 sm:gap-1.5 px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-base text-slate-950 bg-gradient-to-r from-[#00A9C0] to-[#00c9a7] hover:from-[#00c9a7] hover:to-[#29CC5F] shadow-[0_0_18px_rgba(0,201,167,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isLoading ? (
                   <>
