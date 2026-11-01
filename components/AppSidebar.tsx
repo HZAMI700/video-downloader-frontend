@@ -71,6 +71,7 @@ export type ToolId =
   | 'ai-humanizer'
   | 'translator'
   | 'plagiarism-checker'
+  | 'robin'
   | 'workspace'
   | 'video-downloader';
 
@@ -166,7 +167,7 @@ export function AppSidebar({
       {
         id: 'ai-section',
         name: 'AI Writing & Agents',
-        count: 8,
+        count: 9,
         colorClass: 'text-emerald-500',
         icon: <Sparkles className="w-3.5 h-3.5 text-emerald-500 shrink-0" />,
         tools: [
@@ -177,6 +178,15 @@ export function AppSidebar({
             categoryName: 'AI Section',
             icon: <MessageSquare className="w-3.5 h-3.5 text-blue-500 shrink-0" />,
             badge: 'Agent',
+            highlight: true,
+          },
+          {
+            id: 'robin',
+            name: 'Robin Threat Intel',
+            category: 'ai-section',
+            categoryName: 'AI Section',
+            icon: <ShieldAlert className="w-3.5 h-3.5 text-emerald-500 shrink-0" />,
+            badge: 'OSINT',
             highlight: true,
           },
           {

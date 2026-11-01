@@ -36,6 +36,7 @@ import { AudioTranslator } from '../components/Tools/AudioTranslator';
 import { AiVoiceStudio } from '../components/Tools/AiVoiceStudio';
 import { AudioDspStudio } from '../components/Tools/AudioDspStudio';
 import { QuillBotAiStudio } from '../components/Tools/QuillBotAiStudio';
+import { RobinStudio } from '../components/Tools/RobinStudio';
 import { PlayzyHomeScreen } from '../components/HomeScreen/PlayzyHomeScreen';
 
 // Existing Video Downloader Components
@@ -490,8 +491,13 @@ export default function Home() {
             ) : (
               /* 4. DEDICATED TOOL WORKSPACE (When a specific tool is open) */
               <div className="animate-apple-in pt-1">
-                {/* AI SECTION TOOLS */}
-                {activeCategory === 'ai-section' ||
+                {/* ROBIN DARKNET OSINT THREAT INTELLIGENCE STUDIO */}
+                {activeTool === 'robin' ? (
+                  <RobinStudio
+                    initialQuery={toolInitialText}
+                    onBackToCategory={() => setActiveTool(null)}
+                  />
+                ) : activeCategory === 'ai-section' ||
                 activeTool === 'ai-chat' ||
                 activeTool === 'paraphrasing-tool' ||
                 activeTool === 'grammar-checker' ||

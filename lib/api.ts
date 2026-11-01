@@ -495,6 +495,113 @@ export async function generateTtsAudio(
   return res.blob();
 }
 
+// -------------------------------------------------------------------------------------
+// ROBIN DARKNET OSINT THREAT INTELLIGENCE APIS
+// -------------------------------------------------------------------------------------
+export interface RobinSearchRequest {
+  query: string;
+  preset?: string;
+  max_results?: number;
+  max_scrape?: number;
+  custom_instructions?: string;
+  legal_agreed?: boolean;
+}
+
+export interface RobinSource {
+  title: string;
+  link: string;
+  engine: string;
+  snippet: string;
+  status?: string;
+}
+
+export interface RobinSearchResponse {
+  investigation_id: string;
+  query: string;
+  refined_query: string;
+  summary: string;
+  pivots: string[];
+  sources: RobinSource[];
+  preset: string;
+  status: string;
+  tor_status: string;
+  model_used: string;
+  started_at: string;
+  disclaimer: string;
+}
+
+export interface RobinFollowupRequest {
+  question: string;
+  investigation_id?: string;
+  context?: string;
+  history?: Array<{ role: string; content: string }>;
+}
+
+export interface RobinFollowupResponse {
+  answer: string;
+  question: string;
+  investigation_id?: string;
+  model_used: string;
+  timestamp: string;
+}
+
+export async function searchRobin(req: RobinSearchRequest): Promise<RobinSearchResponse> {
+  const endpoint = getApiEndpoint('robin/search');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      query: req.query,
+      preset: req.preset || 'threat_intel',
+      max_results: req.max_results || 15,
+      max_scrape: req.max_scrape || 5,
+      custom_instructions: req.custom_instructions || '',
+      legal_agreed: req.legal_agreed ?? true,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Robin OSINT search failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function followupRobin(req: RobinFollowupRequest): Promise<RobinFollowupResponse> {
+  const endpoint = getApiEndpoint('robin/followup');
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      question: req.question,
+      investigation_id: req.investigation_id,
+      context: req.context,
+      history: req.history || [],
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Robin follow-up query failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function fetchRobinHealth(): Promise<any> {
+  const endpoint = getApiEndpoint('robin/health');
+  const res = await fetch(endpoint, {
+    method: 'GET',
+    headers: { Accept: 'application/json' },
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Robin health check failed (${res.status})`);
+  }
+  return res.json();
+}
+
+
 
 
 

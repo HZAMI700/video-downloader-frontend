@@ -68,7 +68,7 @@ export function PlayzyHomeScreen({
   const [showToolsDropdown, setShowToolsDropdown] = useState(false);
   const [attachedFileName, setAttachedFileName] = useState<string | null>(null);
   const [deepResearchActive, setDeepResearchActive] = useState(true);
-  const [selectedAgentTab, setSelectedAgentTab] = useState<'all' | 'research' | 'doc' | 'voice' | 'downloader' | 'transcriber'>('all');
+  const [selectedAgentTab, setSelectedAgentTab] = useState<'all' | 'research' | 'doc' | 'voice' | 'downloader' | 'transcriber' | 'robin'>('all');
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const pristineFileInputRef = useRef<HTMLInputElement | null>(null);
@@ -739,6 +739,22 @@ export function PlayzyHomeScreen({
             >
               <FileAudio className="w-4 h-4 text-emerald-500" />
               <span>Transcriber</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedAgentTab('robin');
+                onSelectTool('robin');
+              }}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-2 ${
+                selectedAgentTab === 'robin'
+                  ? 'bg-slate-100 dark:bg-[#242C37] text-[#009688] dark:text-[#00c9a7] border border-[#00c9a7]/50 shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F]'
+              }`}
+            >
+              <ShieldAlert className="w-4 h-4 text-[#00c9a7]" />
+              <span>Robin OSINT</span>
             </button>
           </div>
 

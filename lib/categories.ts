@@ -62,7 +62,7 @@ export const CATEGORIES: CategoryDefinition[] = [
   {
     id: 'ai-section',
     name: 'AI Section',
-    badge: '8 TOOLS',
+    badge: '9 TOOLS',
     heroBadge: 'Playzy AI Suite • 100% Free & No Sign-up',
     heroTitle: 'AI Writing & Creative Suite',
     heroDescription:
@@ -185,6 +185,21 @@ export const CATEGORIES: CategoryDefinition[] = [
         iconBg: 'bg-white text-orange-600 shadow-sm',
         badgeColor: 'text-orange-600',
         pillTag: '99.9% Original',
+      },
+      {
+        id: 'robin',
+        name: 'Robin Threat Intel',
+        category: 'ai-section',
+        categoryName: 'AI Section',
+        shortDesc: 'AI Darknet OSINT investigator with Tor routing & OpenCode synthesis',
+        fullDesc:
+          'Autonomous threat intelligence and legal OSINT investigator wrapping Robin. Searches onion hidden services via Tor, scrapes darknet links, and synthesizes executive threat intelligence reports using OpenCode AI.',
+        iconName: 'ShieldAlert',
+        pastelBg: 'bg-[#F0FDF4]',
+        iconBg: 'bg-white text-emerald-600 shadow-sm',
+        badgeColor: 'text-emerald-600',
+        pillTag: 'Darknet OSINT',
+        popular: true,
       },
     ],
   },
