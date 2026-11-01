@@ -546,59 +546,118 @@ export interface RobinFollowupResponse {
 }
 
 export async function searchRobin(req: RobinSearchRequest): Promise<RobinSearchResponse> {
-  const endpoint = getApiEndpoint('robin/search');
-  const res = await fetch(endpoint, {
+  const backendEndpoint = getApiEndpoint('robin/search');
+  const payload = {
+    query: req.query,
+    preset: req.preset || 'threat_intel',
+    max_results: req.max_results || 15,
+    max_scrape: req.max_scrape || 5,
+    custom_instructions: req.custom_instructions || '',
+    legal_agreed: req.legal_agreed ?? true,
+  };
+
+  try {
+    const res = await fetch(backendEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      return await res.json();
+    }
+
+    // If remote backend returned 404 (needs restart to pull latest git code), seamlessly use local Next.js route
+    if (res.status !== 404) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Robin OSINT search failed (${res.status})`);
+    }
+  } catch (err: any) {
+    if (err?.message && !err.message.includes('404')) {
+      console.warn('Backend robin endpoint error, falling back to Next.js route:', err);
+    }
+  }
+
+  // Resilient fallback to Next.js edge route
+  const localRes = await fetch('/api/robin/search', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({
-      query: req.query,
-      preset: req.preset || 'threat_intel',
-      max_results: req.max_results || 15,
-      max_scrape: req.max_scrape || 5,
-      custom_instructions: req.custom_instructions || '',
-      legal_agreed: req.legal_agreed ?? true,
-    }),
+    body: JSON.stringify(payload),
   });
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `Robin OSINT search failed (${res.status})`);
+  if (!localRes.ok) {
+    const err = await localRes.json().catch(() => ({}));
+    throw new Error(err.detail || `Robin OSINT search failed (${localRes.status})`);
   }
-  return res.json();
+  return localRes.json();
 }
 
 export async function followupRobin(req: RobinFollowupRequest): Promise<RobinFollowupResponse> {
-  const endpoint = getApiEndpoint('robin/followup');
-  const res = await fetch(endpoint, {
+  const backendEndpoint = getApiEndpoint('robin/followup');
+  const payload = {
+    question: req.question,
+    investigation_id: req.investigation_id,
+    context: req.context,
+    history: req.history || [],
+  };
+
+  try {
+    const res = await fetch(backendEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      return await res.json();
+    }
+
+    if (res.status !== 404) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Robin follow-up query failed (${res.status})`);
+    }
+  } catch (err) {
+    console.warn('Backend robin followup unavailable, falling back to Next.js route');
+  }
+
+  const localRes = await fetch('/api/robin/followup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({
-      question: req.question,
-      investigation_id: req.investigation_id,
-      context: req.context,
-      history: req.history || [],
-    }),
+    body: JSON.stringify(payload),
   });
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `Robin follow-up query failed (${res.status})`);
+  if (!localRes.ok) {
+    const err = await localRes.json().catch(() => ({}));
+    throw new Error(err.detail || `Robin follow-up query failed (${localRes.status})`);
   }
-  return res.json();
+  return localRes.json();
 }
 
 export async function fetchRobinHealth(): Promise<any> {
-  const endpoint = getApiEndpoint('robin/health');
-  const res = await fetch(endpoint, {
+  const backendEndpoint = getApiEndpoint('robin/health');
+  try {
+    const res = await fetch(backendEndpoint, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+    });
+
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    // ignore
+  }
+
+  const localRes = await fetch('/api/robin/health', {
     method: 'GET',
     headers: { Accept: 'application/json' },
   });
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `Robin health check failed (${res.status})`);
+  if (!localRes.ok) {
+    const err = await localRes.json().catch(() => ({}));
+    throw new Error(err.detail || `Robin health check failed (${localRes.status})`);
   }
-  return res.json();
+  return localRes.json();
 }
 
 
