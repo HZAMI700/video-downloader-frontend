@@ -67,9 +67,15 @@ const EXAMPLE_QUERIES = [
 function renderInlineFormatted(text: string): React.ReactNode {
   if (!text) return null;
 
+  // Pre-normalize triple asterisks, headers, and markdown rules
+  const normalized = text
+    .replace(/\*{3,}(.*?)\*{3,}/g, '$1')
+    .replace(/^#+\s*/gm, '')
+    .replace(/^[-\*_]{3,}\s*$/gm, '');
+
   // Split tokens by bold **...** and code `...`
   const regex = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g;
-  const parts = text.split(regex);
+  const parts = normalized.split(regex);
 
   return (
     <>
@@ -102,7 +108,7 @@ function renderInlineFormatted(text: string): React.ReactNode {
             </em>
           );
         }
-        // Normal text - strip any leftover stray markdown symbols
+        // Normal text - strip any leftover stray markdown symbols (*, #, `, _, ~)
         const sanitized = part.replace(/[*#`_~]/g, '');
         return <span key={index}>{sanitized}</span>;
       })}
@@ -315,8 +321,6 @@ function ExecutiveThreatDossier({
   preset: string;
   lang: 'ar' | 'en';
 }) {
-  const [showRawMarkdown, setShowRawMarkdown] = useState(false);
-
   // Extract threat level from text if available
   let threatLevel = 'HIGH';
   if (/critical/i.test(summary)) threatLevel = 'CRITICAL';
@@ -464,29 +468,8 @@ function ExecutiveThreatDossier({
         </div>
       </div>
 
-      {/* Toggle View Options (Structured Dossier vs Raw MD) */}
-      <div className="flex items-center justify-between px-1">
-        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-          <ShieldCheck className="w-4 h-4 text-[#00c9a7]" />
-          <span>{lang === 'ar' ? 'نتائج التحليل المهيكل الخالي من الرموز' : 'Zero-Markdown Sanitized Dossier Presentation'}</span>
-        </span>
-        <button
-          type="button"
-          onClick={() => setShowRawMarkdown(!showRawMarkdown)}
-          className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 underline font-semibold cursor-pointer"
-        >
-          {showRawMarkdown
-            ? (lang === 'ar' ? 'العودة للتقرير المنظم' : 'Switch to Structured Dossier')
-            : (lang === 'ar' ? 'عرض الكود المصدري Markdown' : 'View Markdown Source')}
-        </button>
-      </div>
-
-      {/* 2. Structured Report Content - Rendered with Clean Formatting (Zero raw # or *) */}
-      {showRawMarkdown ? (
-        <div className="bg-slate-900 rounded-3xl border border-slate-700 p-5 sm:p-7 text-xs font-mono text-slate-300 whitespace-pre-wrap leading-relaxed overflow-x-auto">
-          {summary}
-        </div>
-      ) : parsedSections.length > 0 ? (
+      {/* Structured Report Content - Rendered with Clean Formatting (Zero raw # or *) */}
+      {parsedSections.length > 0 ? (
         <div className="space-y-5">
           {parsedSections.map((sec, sIdx) => {
             // Icon & badge by type
