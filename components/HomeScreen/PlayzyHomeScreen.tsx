@@ -127,6 +127,13 @@ export function PlayzyHomeScreen({
       return;
     }
 
+    // Check if query is targeting Robin Darknet OSINT
+    const isRobinTarget = /(^robin\b|\.onion\b|darknet osint|dark web intel)/i.test(clean);
+    if (isRobinTarget) {
+      onSelectTool('robin', clean.replace(/^robin\s*/i, ''));
+      return;
+    }
+
     const userMsg: ChatMessage = {
       id: `usr_${Date.now()}`,
       role: 'user',
@@ -930,6 +937,36 @@ export function PlayzyHomeScreen({
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#222B36] flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                 <span>Open Voice Studio</span>
+                <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+              </div>
+            </button>
+
+            {/* Card: Robin Threat Intelligence OSINT */}
+            <button
+              type="button"
+              onClick={() => onSelectTool('robin')}
+              className="text-left bg-white hover:bg-slate-50/90 dark:bg-[#181D24] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-emerald-500/60 rounded-3xl p-6 sm:p-7 xl:p-8 min-h-[250px] flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 cursor-pointer group shadow-xs hover:shadow-xl"
+            >
+              <div>
+                <div className="flex items-center justify-between w-full">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-[#00c9a7] group-hover:scale-110 transition-transform duration-200 shadow-sm">
+                    <ShieldAlert className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.2]" />
+                  </div>
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 dark:bg-[#12171F] border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-[#00c9a7]">
+                    Tor + OpenCode
+                  </span>
+                </div>
+                <div className="mt-5">
+                  <div className="text-lg sm:text-xl xl:text-2xl font-black text-slate-900 dark:text-slate-100 group-hover:text-[#009688] dark:group-hover:text-[#00c9a7] transition-colors">
+                    Robin Threat Intel OSINT
+                  </div>
+                  <div className="text-sm sm:text-[14.5px] text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                    AI dark web investigator wrapping Robin with Tor routing, onion scraping, and OpenCode threat synthesis.
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#222B36] flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-[#009688] dark:group-hover:text-[#00c9a7] transition-colors">
+                <span>Launch Robin OSINT</span>
                 <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
