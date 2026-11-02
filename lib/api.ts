@@ -505,6 +505,7 @@ export interface RobinSearchRequest {
   max_scrape?: number;
   custom_instructions?: string;
   legal_agreed?: boolean;
+  lang?: 'en' | 'ar' | 'es' | 'ru';
 }
 
 export interface RobinSource {
@@ -523,6 +524,8 @@ export interface RobinSearchResponse {
   pivots: string[];
   sources: RobinSource[];
   preset: string;
+  category?: string;
+  lang?: string;
   status: string;
   tor_status: string;
   model_used: string;
@@ -535,12 +538,14 @@ export interface RobinFollowupRequest {
   investigation_id?: string;
   context?: string;
   history?: Array<{ role: string; content: string }>;
+  lang?: 'en' | 'ar' | 'es' | 'ru';
 }
 
 export interface RobinFollowupResponse {
   answer: string;
   question: string;
   investigation_id?: string;
+  lang?: string;
   model_used: string;
   timestamp: string;
 }
@@ -550,10 +555,11 @@ export async function searchRobin(req: RobinSearchRequest): Promise<RobinSearchR
   const payload = {
     query: req.query,
     preset: req.preset || 'threat_intel',
-    max_results: req.max_results || 15,
+    max_results: req.max_results || 25,
     max_scrape: req.max_scrape || 5,
     custom_instructions: req.custom_instructions || '',
     legal_agreed: req.legal_agreed ?? true,
+    lang: req.lang || 'en',
   };
 
   try {
@@ -599,6 +605,7 @@ export async function followupRobin(req: RobinFollowupRequest): Promise<RobinFol
     investigation_id: req.investigation_id,
     context: req.context,
     history: req.history || [],
+    lang: req.lang || 'en',
   };
 
   try {

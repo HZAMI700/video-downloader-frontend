@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   ShieldAlert,
   ShieldCheck,
@@ -8,7 +8,6 @@ import {
   Lock,
   Globe,
   Radio,
-  ExternalLink,
   Copy,
   Check,
   Download,
@@ -23,16 +22,12 @@ import {
   CornerDownRight,
   Database,
   ArrowRight,
-  Info,
   Shield,
   Activity,
-  Zap,
-  Server,
-  Hash,
-  Clock,
-  Key,
   CheckCircle2,
   AlertOctagon,
+  Key,
+  Filter,
 } from 'lucide-react';
 import {
   searchRobin,
@@ -42,25 +37,425 @@ import {
   RobinSource,
 } from '../../lib/api';
 
+export type RobinLang = 'en' | 'ar' | 'es' | 'ru';
+
 interface RobinStudioProps {
   initialQuery?: string;
   onBackToCategory?: () => void;
 }
 
-const PRESETS = [
-  { id: 'threat_intel', labelEn: 'Threat Intelligence', labelAr: 'استخبارات التهديدات', icon: '🛡️' },
-  { id: 'ransomware', labelEn: 'Ransomware Tracking', labelAr: 'تتبع برمجيات الفدية', icon: '🔒' },
-  { id: 'credentials', labelEn: 'Leaked Credentials', labelAr: 'تسريبات الحسابات والبيانات', icon: '🔑' },
-  { id: 'cve', labelEn: 'CVE & Vulnerabilities', labelAr: 'الثغرات الأمنية والـ CVE', icon: '⚡' },
-  { id: 'marketplace', labelEn: 'Darknet Marketplaces', labelAr: 'الأسواق السرية', icon: '🛒' },
-];
+// Multilingual UI Dictionary
+const I18N: Record<
+  RobinLang,
+  {
+    title: string;
+    badge: string;
+    subtitle: string;
+    torProxy: string;
+    openCode: string;
+    legalTitle: string;
+    legalBadge: string;
+    legalNotice: string;
+    legalCheckbox: string;
+    legalError: string;
+    threatCategory: string;
+    investigationTarget: string;
+    targetPlaceholder: string;
+    investigating: string;
+    investigate: string;
+    quickExamples: string;
+    examples: string[];
+    maxResults: string;
+    maxScrape: string;
+    pages: string;
+    aiQueryRefinement: string;
+    activeTarget: string;
+    refinedLabel: string;
+    sourcesCountLabel: string;
+    tabReport: string;
+    tabSources: string;
+    tabPivots: string;
+    copyReport: string;
+    copied: string;
+    downloadMd: string;
+    filterSourcesPlaceholder: string;
+    allCategories: string;
+    showingSources: string;
+    ofText: string;
+    sourcesWord: string;
+    copyOnion: string;
+    pivotsTitle: string;
+    pivotsSubtitle: string;
+    followupTitle: string;
+    followupSubtitle: string;
+    followupPlaceholder: string;
+    sha256Ledger: string;
+    nistCompliant: string;
+    classificationLabel: string;
+    clearanceLabel: string;
+    routingLabel: string;
+    indexedLabel: string;
+    authOsint: string;
+    compartmented: string;
+    stages: {
+      s1Title: string;
+      s1Sub: string;
+      s2Title: string;
+      s2Sub: string;
+      s3Title: string;
+      s3Sub: string;
+      s4Title: string;
+      s4Sub: string;
+      s5Title: string;
+      s5Sub: string;
+    };
+  }
+> = {
+  en: {
+    title: 'Robin Threat Intelligence Studio',
+    badge: 'Tor + OpenCode',
+    subtitle: 'Legal Dark Web OSINT & Cyber Threat Intelligence Suite • Powered by OpenCode Zen API & Tor SOCKS5',
+    torProxy: 'Tor Proxy',
+    openCode: 'OpenCode',
+    legalTitle: 'Mandatory Legal & Educational Compliance Notice',
+    legalBadge: 'Legal OSINT Only',
+    legalNotice:
+      'This module is strictly intended for educational research, compliance auditing, cyber threat intelligence (CTI), and officially authorized legal investigations. Unlawful exploitation is strictly prohibited. Operational telemetry is audited for compliance.',
+    legalCheckbox:
+      'I hereby certify that my investigation query is for authorized defensive, legal, or educational research purposes only.',
+    legalError: 'You must acknowledge the legal disclaimer confirming educational/authorized legal use.',
+    threatCategory: 'Investigation Threat Category',
+    investigationTarget: 'Investigation Target (Domain, CVE, Breach Entity, Handle, Hash)',
+    targetPlaceholder:
+      'Enter investigation target (e.g. paypal accounts, LockBit victims, CVE-2024-3094, corporate domain)...',
+    investigating: 'Investigating...',
+    investigate: 'Investigate',
+    quickExamples: 'Quick examples:',
+    examples: [
+      'paypal accounts',
+      'LockBit ransomware victims',
+      'CVE-2024-3094 xz backdoor',
+      'Healthcare patient breach database',
+      'corporate vpn credentials citrix',
+    ],
+    maxResults: 'Max Results:',
+    maxScrape: 'Max Scrape:',
+    pages: 'pages',
+    aiQueryRefinement: 'OpenCode AI Query Refinement & Synthesis',
+    activeTarget: 'Active Target',
+    refinedLabel: 'Refined:',
+    sourcesCountLabel: 'Sources Indexed',
+    tabReport: 'Threat Intelligence Dossier',
+    tabSources: 'Onion Sources',
+    tabPivots: 'Suggested Pivots',
+    copyReport: 'Copy Dossier',
+    copied: 'Copied!',
+    downloadMd: 'Download Report',
+    filterSourcesPlaceholder: 'Filter sources by onion link, engine, or category...',
+    allCategories: 'All Categories',
+    showingSources: 'Showing',
+    ofText: 'of',
+    sourcesWord: 'verified onion sources',
+    copyOnion: 'Copy Onion',
+    pivotsTitle: 'AI-Suggested Investigation Pivots',
+    pivotsSubtitle: 'Click any suggested query pivot below to launch an immediate deeper investigation:',
+    followupTitle: 'Grounded Follow-up Questions',
+    followupSubtitle: 'Ask questions grounded strictly in the retrieved onion data without re-querying the darknet',
+    followupPlaceholder:
+      'Ask anything about the report (e.g. What are the recommended containment steps or specific indicators?)...',
+    sha256Ledger: 'SHA-256 Evidence Ledger:',
+    nistCompliant: 'NIST SP 800-86 Compliant Chain of Custody',
+    classificationLabel: 'Classification',
+    clearanceLabel: 'Security Clearance',
+    routingLabel: 'Routing Circuit',
+    indexedLabel: 'Indexed Sources',
+    authOsint: 'Authorized OSINT',
+    compartmented: 'Compartmented',
+    stages: {
+      s1Title: 'Stage 1 / 5: Establishing Tor SOCKS5 Encrypted Circuit & Route Negotiation',
+      s1Sub: 'Verifying guard consensus, establishing rendezvous point and circuit latency...',
+      s2Title: 'Stage 2 / 5: Query Optimization & Darknet Lexicon Expansion',
+      s2Sub: 'Expanding target semantics into underground dialect, leak tags, and regex hashes...',
+      s3Title: 'Stage 3 / 5: Multi-Engine Hidden Service Indexing (.onion v3)',
+      s3Sub: 'Querying Ahmia v3, Torch, Haystak, Dread, and underground automated vending carts...',
+      s4Title: 'Stage 4 / 5: Subterranean Scraping & IOC Signature Correlation',
+      s4Sub: 'Harvesting session tokens, stealer logs, credential dumps, and exfiltration trees...',
+      s5Title: 'Stage 5 / 5: Threat Dossier Synthesis & Evidence Ledger Finalization',
+      s5Sub: 'Finalizing executive risk matrix, legal containment recommendations, and SHA-256 hash...',
+    },
+  },
+  ar: {
+    title: 'منظومة روبن لاستخبارات التهديدات',
+    badge: 'Tor + OpenCode',
+    subtitle: 'منظومة استخبارات التهديدات والتحقيقات الجنائية للدارك ويب • مدعومة بـ OpenCode Zen وشبكة Tor المشفرة',
+    torProxy: 'بروكسي تور',
+    openCode: 'أوبن كود',
+    legalTitle: 'تحذير قانوني وإقرار استخدام إلزامي',
+    legalBadge: 'استخبارات مصرح بها قانونياً فقط',
+    legalNotice:
+      'هذه الأداة مخصصة حصراً للأغراض التعليمية، والأبحاث الأكاديمية، والتحقيقات الجنائية/الأمنية المصرح بها رسمياً (DFIR / CTI). يُحظر حظراً باتاً استخدامها في أي نشاط تخريبي أو خرق لخصوصية الأفراد والشركات. يتم تسجيل الاستعلامات لأغراض التدقيق الأمني.',
+    legalCheckbox: 'أقر بأنني أستخدم هذه الأداة لأغراض أمنية/قانونية أو تعليمية مصرح بها فقط.',
+    legalError: 'يجب تأكيد الموافقة على التحذير القانوني وإقرار الاستخدام للأغراض القانونية/التعليمية.',
+    threatCategory: 'تصنيف التحقيق والتهديد',
+    investigationTarget: 'هدف التحقيق (دومين، ثغرة CVE، كيان مسرب، اسم مستخدم، تجزئة)',
+    targetPlaceholder:
+      'أدخل اسم الهدف، أو رقم CVE، أو عنوان الدومين، أو اسم مجموعة الفدية (مثل: paypal accounts, LockBit, CVE-2024-3094)...',
+    investigating: 'جارِ التحقيق...',
+    investigate: 'بدء التحقيق',
+    quickExamples: 'أمثلة سريعة:',
+    examples: [
+      'حسابات paypal مسربة',
+      'ضحايا برمجيات الفدية LockBit',
+      'ثغرة CVE-2024-3094',
+      'تسريب قاعدة بيانات المستشفيات',
+      'بيانات اعتماد vpn للشركات',
+    ],
+    maxResults: 'أقصى نتائج:',
+    maxScrape: 'أقصى كشط:',
+    pages: 'صفحات',
+    aiQueryRefinement: 'تحسين الاستعلام والتوليد عبر OpenCode AI',
+    activeTarget: 'الهدف النشط',
+    refinedLabel: 'الاستعلام المحسّن:',
+    sourcesCountLabel: 'مصادر موثقة',
+    tabReport: 'ملف التقرير الاستخباراتي',
+    tabSources: 'مصادر البصلة والدارك نت',
+    tabPivots: 'استعلامات المتابعة المقترحة',
+    copyReport: 'نسخ التقرير',
+    copied: 'تم النسخ!',
+    downloadMd: 'تحميل التقرير',
+    filterSourcesPlaceholder: 'تصفية المصادر حسب الرابط، المحرك، أو التصنيف...',
+    allCategories: 'جميع الفئات',
+    showingSources: 'عرض',
+    ofText: 'من أصل',
+    sourcesWord: 'مصدراً موثقاً في شبكة البصلة',
+    copyOnion: 'نسخ عنوان البصلة',
+    pivotsTitle: 'استعلامات المتابعة المقترحة (Pivots)',
+    pivotsSubtitle: 'انقر على أي من الاستعلامات المقترحة أدناه لإعادة توجيه التحقيق وتعميق النتائج:',
+    followupTitle: 'محادثة المتابعة والاستيضاح الذكي',
+    followupSubtitle: 'اطرح أسئلة استيضاح إضافية حول التقرير دون الحاجة لإعادة البحث في الدارك ويب',
+    followupPlaceholder: 'مثال: ما هي خطوات العزل الفوري أو مؤشرات الاختراق المسجلة لهذا الهدف؟...',
+    sha256Ledger: 'سجل الأدلة المشفر SHA-256:',
+    nistCompliant: 'سلسلة الحيازة متوافقة مع معيار NIST SP 800-86',
+    classificationLabel: 'التصنيف القانوني',
+    clearanceLabel: 'مستوى الحماية',
+    routingLabel: 'مسار التوجيه',
+    indexedLabel: 'المصادر المفهرسة',
+    authOsint: 'استخبارات مصرح بها',
+    compartmented: 'وصول أمني مقيد',
+    stages: {
+      s1Title: 'المرحلة 1 / 5: إنشاء دوائر Tor المشفرة وتأمين نفق SOCKS5',
+      s1Sub: 'التحقق من سلامة العقد الحارسة وتفاوض مسارات التوجيه المظلمة...',
+      s2Title: 'المرحلة 2 / 5: تحسين الاستعلام وتوسيع المصطلحات عبر OpenCode AI',
+      s2Sub: 'توسيع استعلام الهدف باستخدام نماذج الاستخبارات لتغطية مصطلحات المنتديات السرية...',
+      s3Title: 'المرحلة 3 / 5: فهرسة خوادم الدارك نت المخفية عبر محركات متعددة (.onion)',
+      s3Sub: 'استعلام محركات Ahmia v3 و Torch و Haystak ومؤشرات منتديات Dread...',
+      s4Title: 'المرحلة 4 / 5: كشط خوادم البصل واستخراج مؤشرات الاختراق (IOCs)',
+      s4Sub: 'فك تشفير استجابات الخوادم المخفية، وفحص ملفات Stealer Logs وعينات قواعد البيانات...',
+      s5Title: 'المرحلة 5 / 5: تلخيص التقرير الاستخباراتي وإنشاء سجل الأدلة المشفر',
+      s5Sub: 'صياغة التقييم النهائي لمستوى الخطورة وتوصيات الدفاع الجنائي وإنشاء بصمة SHA-256...',
+    },
+  },
+  es: {
+    title: 'Estudio de Inteligencia de Amenazas Robin',
+    badge: 'Tor + OpenCode',
+    subtitle:
+      'Suite de Inteligencia de Ciberamenazas y OSINT de la Dark Web • Desarrollado con OpenCode Zen y Tor SOCKS5',
+    torProxy: 'Proxy Tor',
+    openCode: 'OpenCode',
+    legalTitle: 'Aviso Obligatorio de Cumplimiento Legal y Educativo',
+    legalBadge: 'Solo OSINT Legal',
+    legalNotice:
+      'Este módulo está estrictamente destinado a la investigación educativa, auditoría de cumplimiento, inteligencia de ciberamenazas (CTI) e investigaciones legales autorizadas. La explotación ilícita está estrictamente prohibida.',
+    legalCheckbox:
+      'Certifico por la presente que mi consulta de investigación es exclusivamente para fines defensivos, legales o educativos autorizados.',
+    legalError: 'Debe aceptar el aviso legal confirmando el uso educativo y autorizado.',
+    threatCategory: 'Categoría de Amenaza de la Investigación',
+    investigationTarget: 'Objetivo de Investigación (Dominio, CVE, Entidad Filtrada, Usuario, Hash)',
+    targetPlaceholder:
+      'Introduzca el objetivo (ej. paypal accounts, víctimas de LockBit, CVE-2024-3094, dominio corporativo)...',
+    investigating: 'Investigando...',
+    investigate: 'Investigar',
+    quickExamples: 'Ejemplos rápidos:',
+    examples: [
+      'cuentas de paypal filtradas',
+      'víctimas de ransomware LockBit',
+      'vulnerabilidad CVE-2024-3094',
+      'base de datos médica filtrada',
+      'credenciales vpn corporativas',
+    ],
+    maxResults: 'Resultados Máximos:',
+    maxScrape: 'Escaneo Máximo:',
+    pages: 'páginas',
+    aiQueryRefinement: 'Refinamiento y Síntesis de Consultas con OpenCode AI',
+    activeTarget: 'Objetivo Activo',
+    refinedLabel: 'Refinado:',
+    sourcesCountLabel: 'Fuentes Indexadas',
+    tabReport: 'Dossier de Inteligencia',
+    tabSources: 'Fuentes Onion',
+    tabPivots: 'Consultas de Seguimiento',
+    copyReport: 'Copiar Informe',
+    copied: '¡Copiado!',
+    downloadMd: 'Descargar Informe',
+    filterSourcesPlaceholder: 'Filtrar fuentes por enlace onion, motor o categoría...',
+    allCategories: 'Todas las Categorías',
+    showingSources: 'Mostrando',
+    ofText: 'de',
+    sourcesWord: 'fuentes onion verificadas',
+    copyOnion: 'Copiar Enlace Onion',
+    pivotsTitle: 'Líneas de Investigación Sugeridas (Pivots)',
+    pivotsSubtitle: 'Haga clic en cualquiera de las consultas sugeridas para profundizar en la investigación:',
+    followupTitle: 'Consultas de Seguimiento Fundamentadas',
+    followupSubtitle:
+      'Haga preguntas contextualizadas en los datos de la dark web obtenidos sin tener que reiniciar la búsqueda',
+    followupPlaceholder:
+      'Pregunte sobre el informe (ej. ¿Cuáles son las medidas inmediatas de mitigación recomendadas?)...',
+    sha256Ledger: 'Libro de Evidencias SHA-256:',
+    nistCompliant: 'Cadena de Custodia conforme con NIST SP 800-86',
+    classificationLabel: 'Clasificación',
+    clearanceLabel: 'Nivel de Seguridad',
+    routingLabel: 'Circuito de Enrutamiento',
+    indexedLabel: 'Fuentes Indexadas',
+    authOsint: 'OSINT Autorizado',
+    compartmented: 'Acceso Compartimentado',
+    stages: {
+      s1Title: 'Etapa 1 / 5: Estableciendo Circuito Cifrado Tor SOCKS5 y Negociación de Ruta',
+      s1Sub: 'Verificando consenso de nodos guardián, latencia del circuito y puntos de encuentro...',
+      s2Title: 'Etapa 2 / 5: Optimización de Consulta y Expansión de Léxico Darknet',
+      s2Sub: 'Ampliando semántica hacia argot subterráneo, etiquetas de filtración y hashes...',
+      s3Title: 'Etapa 3 / 5: Indexación de Servicios Ocultos (.onion v3)',
+      s3Sub: 'Consultando Ahmia v3, Torch, Haystak, Dread y mercados automatizados...',
+      s4Title: 'Etapa 4 / 5: Raspado Subterráneo y Correlación de Firmas IOC',
+      s4Sub: 'Extrayendo tokens de sesión, logs de stealers, volcados de credenciales y árboles de exfiltración...',
+      s5Title: 'Etapa 5 / 5: Síntesis del Dossier de Amenazas y Registro de Evidencia',
+      s5Sub: 'Finalizando matriz de riesgo, recomendaciones de contención legal y huella SHA-256...',
+    },
+  },
+  ru: {
+    title: 'Студия Разведки Угроз Robin',
+    badge: 'Tor + OpenCode',
+    subtitle:
+      'Комплекс OSINT и аналитики киберугроз в Dark Web • На базе OpenCode Zen API и шифрованной сети Tor SOCKS5',
+    torProxy: 'Tor Прокси',
+    openCode: 'OpenCode',
+    legalTitle: 'Обязательное Уведомление о Юридическом и Учебном Соответствии',
+    legalBadge: 'Только Законный OSINT',
+    legalNotice:
+      'Этот модуль предназначен исключительно для образовательных исследований, аудита соответствия, разведки киберугроз (CTI) и санкционированных расследований. Любое незаконное использование строго запрещено.',
+    legalCheckbox:
+      'Настоящим подтверждаю, что мой запрос направлен исключительно на авторизованные защитные, юридические или исследовательские цели.',
+    legalError: 'Необходимо подтвердить согласие с юридическим уведомлением.',
+    threatCategory: 'Категория Угрозы Расследования',
+    investigationTarget: 'Цель Расследования (Домен, CVE, Утекшая База, Никнейм, Хеш)',
+    targetPlaceholder:
+      'Введите цель (например, paypal accounts, жертвы LockBit, CVE-2024-3094, корпоративный домен)...',
+    investigating: 'Идет расследование...',
+    investigate: 'Начать расследование',
+    quickExamples: 'Быстрые примеры:',
+    examples: [
+      'учетные записи paypal',
+      'жертвы вымогателя LockBit',
+      'уязвимость CVE-2024-3094',
+      'база данных пациентов',
+      'корпоративные учетные данные vpn',
+    ],
+    maxResults: 'Макс. результатов:',
+    maxScrape: 'Макс. сканирование:',
+    pages: 'страниц',
+    aiQueryRefinement: 'Оптимизация и Синтез Запроса через OpenCode AI',
+    activeTarget: 'Активная Цель',
+    refinedLabel: 'Уточненный запрос:',
+    sourcesCountLabel: 'Источников проиндексировано',
+    tabReport: 'Аналитическое Досье',
+    tabSources: 'Источники Onion',
+    tabPivots: 'Рекомендуемые Запросы',
+    copyReport: 'Скопировать Досье',
+    copied: 'Скопировано!',
+    downloadMd: 'Скачать Отчет',
+    filterSourcesPlaceholder: 'Фильтр источников по onion-ссылке, поисковику или категории...',
+    allCategories: 'Все Категории',
+    showingSources: 'Отображено',
+    ofText: 'из',
+    sourcesWord: 'проверенных onion источников',
+    copyOnion: 'Копировать Onion',
+    pivotsTitle: 'Рекомендуемые Направления Расследования (Pivots)',
+    pivotsSubtitle: 'Нажмите на любой из запросов ниже для мгновенного углубления расследования:',
+    followupTitle: 'Уточняющие Вопросы по Данным',
+    followupSubtitle: 'Задавайте вопросы на основе найденных данных без повторного сканирования darknet',
+    followupPlaceholder: 'Задайте вопрос (например: Каковы первоочередные шаги по локализации инцидента?)...',
+    sha256Ledger: 'Реестр Доказательств SHA-256:',
+    nistCompliant: 'Цепочка обеспечения сохранности по стандарту NIST SP 800-86',
+    classificationLabel: 'Классификация',
+    clearanceLabel: 'Уровень Допуска',
+    routingLabel: 'Маршрут Запроса',
+    indexedLabel: 'Проиндексировано',
+    authOsint: 'Авторизованный OSINT',
+    compartmented: 'Ограниченный Доступ',
+    stages: {
+      s1Title: 'Этап 1 / 5: Установка Зашифрованного Контура Tor SOCKS5 и Согласование Маршрута',
+      s1Sub: 'Проверка консенсуса сторожевых узлов, установка точки рандеву и задержек контура...',
+      s2Title: 'Этап 2 / 5: Оптимизация Запроса и Расширение Лексикона Darknet',
+      s2Sub: 'Семантическое расширение цели сленгом теневых форумов, тегами утечек и хешами...',
+      s3Title: 'Этап 3 / 5: Многопоточная Индексация Скрытых Сервисов (.onion v3)',
+      s3Sub: 'Опрос узлов Ahmia v3, Torch, Haystak, Dread и автоматических теневых магазинов...',
+      s4Title: 'Этап 4 / 5: Теневой Парсинг и Корреляция Сигнатур IOC',
+      s4Sub: 'Сбор сессионных токенов, логов стилеров, дампов учетных записей и деревьев эксфильтрации...',
+      s5Title: 'Этап 5 / 5: Синтез Аналитического Досье и Фиксация Реестра Улик',
+      s5Sub: 'Формирование итоговой матрицы рисков, рекомендаций по защите и SHA-256 хеша...',
+    },
+  },
+};
 
-const EXAMPLE_QUERIES = [
-  'paypal accounts',
-  'LockBit ransomware victims',
-  'CVE-2024-3094 xz backdoor',
-  'Healthcare patient breach database',
-  'corporate vpn credentials citrix',
+const PRESETS = [
+  {
+    id: 'threat_intel',
+    labels: {
+      en: 'Threat Intelligence',
+      ar: 'استخبارات التهديدات',
+      es: 'Inteligencia de Amenazas',
+      ru: 'Разведка угроз',
+    },
+    icon: '🛡️',
+  },
+  {
+    id: 'ransomware',
+    labels: {
+      en: 'Ransomware Tracking',
+      ar: 'تتبع برمجيات الفدية',
+      es: 'Rastreo de Ransomware',
+      ru: 'Вымогатели и DLS',
+    },
+    icon: '🔒',
+  },
+  {
+    id: 'credentials',
+    labels: {
+      en: 'Leaked Credentials',
+      ar: 'تسريبات الحسابات والبيانات',
+      es: 'Credenciales Filtradas',
+      ru: 'Утечки учетных данных',
+    },
+    icon: '🔑',
+  },
+  {
+    id: 'cve',
+    labels: {
+      en: 'CVE & Vulnerabilities',
+      ar: 'الثغرات الأمنية والـ CVE',
+      es: 'Vulnerabilidades y CVE',
+      ru: 'Уязвимости и Эксплойты',
+    },
+    icon: '⚡',
+  },
+  {
+    id: 'marketplace',
+    labels: {
+      en: 'Darknet Marketplaces',
+      ar: 'الأسواق السرية',
+      es: 'Mercados Darknet',
+      ru: 'Теневые маркетплейсы',
+    },
+    icon: '🛒',
+  },
 ];
 
 // Helper: Clean inline formatting without raw markdown asterisks, hashes, or backticks
@@ -71,7 +466,7 @@ function renderInlineFormatted(text: string): React.ReactNode {
   const normalized = text
     .replace(/\*{3,}(.*?)\*{3,}/g, '$1')
     .replace(/^#+\s*/gm, '')
-    .replace(/^[-\*_]{3,}\s*$/gm, '');
+    .replace(/^[-*_]{3,}\s*$/gm, '');
 
   // Split tokens by bold **...** and code `...`
   const regex = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g;
@@ -140,23 +535,36 @@ function parseDossierReport(text: string): ParsedDossierSection[] {
   for (const rawLine of lines) {
     // 1. Skip redundant main title and metadata header lines (already displayed in top banner)
     if (
-      (rawLine.startsWith('#') && (rawLine.includes('Robin OSINT') || rawLine.includes('Executive Threat Report'))) ||
+      (rawLine.startsWith('#') &&
+        (rawLine.includes('Robin OSINT') ||
+          rawLine.includes('Executive Threat Report') ||
+          rawLine.includes('Informe Ejecutivo') ||
+          rawLine.includes('Аналитический') ||
+          rawLine.includes('تقرير روبن') ||
+          rawLine.includes('Classified Threat'))) ||
       rawLine.startsWith('Robin OSINT Executive Threat Report') ||
-      rawLine === '---' || rawLine === '***' || rawLine === '___'
+      rawLine === '---' ||
+      rawLine === '***' ||
+      rawLine === '___'
     ) {
       continue;
     }
 
     if (
-      /^\*?\*?(Investigation Target|Classification|Security Clearance|Investigation Preset|Engine Route|Threat Category)/i.test(rawLine)
+      /^\*?\*?(Investigation Target|Classification|Security Clearance|Investigation Preset|Engine Route|Threat Category|Objetivo de Investigación|Clasificación|Nivel de Seguridad|Preajuste|Ruta de Motores|Categoría de Amenaza|Цель расследования|Классификация|Уровень допуска|Профиль расследования|Маршрутизация|Категория угрозы|هدف التحقيق|التصنيف القانوني|مستوى الحماية|إعداد التحقيق|مسار المحرك|فئة التهديد)/i.test(
+        rawLine
+      )
     ) {
       continue;
     }
 
-    // 2. Identify Section Headers (### or #### or 1. Section Title)
+    // 2. Identify Section Headers across 4 languages
     const isHeaderLine =
       rawLine.startsWith('#') ||
-      /^(\d+)\.\s+(Executive Summary|Key Threat|Threat Assessment|Actionable Security|Recommendations|Summary|Threat Findings|Security Recommendations)/i.test(rawLine);
+      /^(\d+)\.\s+(.*)$/i.test(rawLine) &&
+        /(Executive Summary|Key Threat|Threat Assessment|Actionable Security|Recommendations|Summary|Threat Findings|Security Recommendations|الملخص التنفيذي|أبرز المؤشرات|تقييم مستوى الخطورة|التوصيات الأمنية|Resumen Ejecutivo|Principales Hallazgos|Evaluación de Amenazas|Recomendaciones de Seguridad|Краткое резюме|Ключевые индикаторы|Оценка угроз|Практические рекомендации)/i.test(
+          rawLine
+        );
 
     if (isHeaderLine) {
       const cleanTitle = rawLine
@@ -166,15 +574,44 @@ function parseDossierReport(text: string): ParsedDossierSection[] {
 
       let sectionType: ParsedDossierSection['type'] = 'general';
       const lower = cleanTitle.toLowerCase();
-      if (lower.includes('summary') || lower.includes('تنفيذي')) sectionType = 'summary';
-      else if (lower.includes('findings') || lower.includes('iocs') || lower.includes('مؤشرات')) sectionType = 'findings';
-      else if (lower.includes('assessment') || lower.includes('severity') || lower.includes('خطورة')) sectionType = 'severity';
-      else if (lower.includes('recommendations') || lower.includes('توصيات')) sectionType = 'recommendations';
+      if (
+        lower.includes('summary') ||
+        lower.includes('تنفيذي') ||
+        lower.includes('ملخص') ||
+        lower.includes('resumen') ||
+        lower.includes('резюме')
+      ) {
+        sectionType = 'summary';
+      } else if (
+        lower.includes('findings') ||
+        lower.includes('iocs') ||
+        lower.includes('مؤشرات') ||
+        lower.includes('hallazgos') ||
+        lower.includes('индикаторы')
+      ) {
+        sectionType = 'findings';
+      } else if (
+        lower.includes('assessment') ||
+        lower.includes('severity') ||
+        lower.includes('خطورة') ||
+        lower.includes('evaluación') ||
+        lower.includes('оценка') ||
+        lower.includes('уровень')
+      ) {
+        sectionType = 'severity';
+      } else if (
+        lower.includes('recommendations') ||
+        lower.includes('توصيات') ||
+        lower.includes('recomendaciones') ||
+        lower.includes('рекомендации')
+      ) {
+        sectionType = 'recommendations';
+      }
 
       currentSection = {
         title: cleanTitle,
         type: sectionType,
-        items: []
+        items: [],
       };
       sections.push(currentSection);
       continue;
@@ -184,7 +621,7 @@ function parseDossierReport(text: string): ParsedDossierSection[] {
       currentSection = {
         title: 'Executive Intelligence Analysis',
         type: 'general',
-        items: []
+        items: [],
       };
       sections.push(currentSection);
     }
@@ -198,31 +635,42 @@ function parseDossierReport(text: string): ParsedDossierSection[] {
       currentSection.items.push({
         type: 'kv',
         label,
-        value: val
+        value: val,
       });
     } else {
-      const numMatch = cleanLine.match(/^(\d+)\.\s+(.*)$/);
-      if (numMatch) {
-        const full = numMatch[2].replace(/[*`_]/g, '').trim();
-        const firstColon = full.indexOf(':');
-        let stepTitle = '';
-        let stepDesc = full;
-        if (firstColon > 0 && firstColon < 40) {
-          stepTitle = full.slice(0, firstColon).trim();
-          stepDesc = full.slice(firstColon + 1).trim();
-        }
+      const colonIndex = cleanLine.indexOf(':');
+      if (colonIndex > 0 && colonIndex < 45 && !cleanLine.startsWith('http')) {
+        const potentialLabel = cleanLine.slice(0, colonIndex).replace(/[*`_]/g, '').trim();
+        const potentialVal = cleanLine.slice(colonIndex + 1).replace(/[*`_]/g, '').trim();
         currentSection.items.push({
-          type: 'numbered',
-          num: numMatch[1],
-          title: stepTitle,
-          text: stepDesc
+          type: 'kv',
+          label: potentialLabel,
+          value: potentialVal,
         });
       } else {
-        const sanitized = cleanLine.replace(/[*`_]/g, '').trim();
-        currentSection.items.push({
-          type: 'text',
-          text: sanitized
-        });
+        const numMatch = cleanLine.match(/^(\d+)\.\s+(.*)$/);
+        if (numMatch) {
+          const full = numMatch[2].replace(/[*`_]/g, '').trim();
+          const firstColon = full.indexOf(':');
+          let stepTitle = '';
+          let stepDesc = full;
+          if (firstColon > 0 && firstColon < 40) {
+            stepTitle = full.slice(0, firstColon).trim();
+            stepDesc = full.slice(firstColon + 1).trim();
+          }
+          currentSection.items.push({
+            type: 'numbered',
+            num: numMatch[1],
+            title: stepTitle,
+            text: stepDesc,
+          });
+        } else {
+          const sanitized = cleanLine.replace(/[*`_]/g, '').trim();
+          currentSection.items.push({
+            type: 'text',
+            text: sanitized,
+          });
+        }
       }
     }
   }
@@ -319,14 +767,17 @@ function ExecutiveThreatDossier({
   refinedQuery: string;
   sourcesCount: number;
   preset: string;
-  lang: 'ar' | 'en';
+  lang: RobinLang;
 }) {
-  // Extract threat level from text if available
+  const i18n = I18N[lang];
+
+  // Extract threat level from text across 4 languages
   let threatLevel = 'HIGH';
-  if (/critical/i.test(summary)) threatLevel = 'CRITICAL';
-  else if (/medium\s*-\s*high/i.test(summary)) threatLevel = 'MEDIUM - HIGH';
-  else if (/medium/i.test(summary)) threatLevel = 'MEDIUM';
-  else if (/low/i.test(summary)) threatLevel = 'LOW';
+  if (/critical|حرج|crítico|критический/i.test(summary)) threatLevel = 'CRITICAL';
+  else if (/medium\s*-\s*high|متوسط\s*إلى\s*مرتفع|medio\s*-\s*alto|средне\s*-\s*высокий/i.test(summary))
+    threatLevel = 'MEDIUM - HIGH';
+  else if (/medium|متوسط|medio|средний/i.test(summary)) threatLevel = 'MEDIUM';
+  else if (/low|منخفض|bajo|низкий/i.test(summary)) threatLevel = 'LOW';
 
   // Severity colors
   const severityStyle = {
@@ -366,7 +817,6 @@ function ExecutiveThreatDossier({
     score: '85%',
   };
 
-  // Mock deterministic SHA-256 fingerprint for chain-of-custody
   const hashChars = 'abcdef0123456789';
   const caseId = `ROBIN-OSINT-${query.slice(0, 4).toUpperCase()}-${Math.abs(query.length * 379)}`;
   const sha256Fingerprint = `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
@@ -375,6 +825,62 @@ function ExecutiveThreatDossier({
     .join('');
 
   const parsedSections = parseDossierReport(summary);
+
+  const sectionBadges: Record<string, { badge: string; badgeClass: string; icon: React.ReactNode }> = {
+    summary: {
+      badge:
+        lang === 'ar'
+          ? 'ملخص استخباري معتمد'
+          : lang === 'es'
+          ? 'Resumen Verificado'
+          : lang === 'ru'
+          ? 'Проверенное резюме'
+          : 'Verified Intelligence',
+      badgeClass: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+      icon: <FileText className="w-4 h-4 text-[#00c9a7]" />,
+    },
+    findings: {
+      badge:
+        lang === 'ar'
+          ? 'مؤشرات الاختراق النشطة'
+          : lang === 'es'
+          ? 'Indicadores de Compromiso Activos'
+          : lang === 'ru'
+          ? 'Активные индикаторы (IOCs)'
+          : 'Active IOC Indicators',
+      badgeClass: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+      icon: <AlertOctagon className="w-4 h-4 text-amber-500" />,
+    },
+    severity: {
+      badge:
+        lang === 'ar'
+          ? 'تقييم المخاطر والسطح'
+          : lang === 'es'
+          ? 'Evaluación de Riesgo'
+          : lang === 'ru'
+          ? 'Оценка рисков и угрозы'
+          : 'Risk Evaluation',
+      badgeClass: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
+      icon: <Activity className="w-4 h-4 text-rose-500" />,
+    },
+    recommendations: {
+      badge:
+        lang === 'ar'
+          ? 'إجراءات الحماية والاحتواء'
+          : lang === 'es'
+          ? 'Protocolos de Mitigación'
+          : lang === 'ru'
+          ? 'Меры нейтрализации'
+          : 'Remediation Protocols',
+      badgeClass: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20',
+      icon: <CheckCircle2 className="w-4 h-4 text-teal-500" />,
+    },
+    general: {
+      badge: 'Verified OSINT',
+      badgeClass: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20',
+      icon: <Shield className="w-4 h-4 text-[#00c9a7]" />,
+    },
+  };
 
   return (
     <div className="space-y-6">
@@ -390,20 +896,22 @@ function ExecutiveThreatDossier({
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-[11px] sm:text-xs uppercase font-extrabold tracking-widest text-[#00c9a7]">
-                  {lang === 'ar' ? 'تقرير استخبارات التهديدات المعتمد' : 'Classified Threat Intelligence Dossier'}
+                  {i18n.tabReport}
                 </span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
                   {caseId}
                 </span>
               </div>
               <h3 className="text-base sm:text-xl font-black text-white mt-1 break-words">
-                {lang === 'ar' ? `هدف التحقيق: ${query}` : `Investigation Target: ${query}`}
+                {i18n.activeTarget}: {query}
               </h3>
             </div>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <div className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl border text-[11px] sm:text-xs font-black tracking-wider uppercase flex items-center gap-1.5 ${severityStyle.badge}`}>
+            <div
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl border text-[11px] sm:text-xs font-black tracking-wider uppercase flex items-center gap-1.5 ${severityStyle.badge}`}
+            >
               <AlertOctagon className="w-4 h-4" />
               <span>{threatLevel} SEVERITY</span>
             </div>
@@ -415,7 +923,13 @@ function ExecutiveThreatDossier({
           <div className="flex items-center justify-between text-xs font-bold text-slate-300">
             <span className="flex items-center gap-1.5">
               <Activity className="w-3.5 h-3.5 text-[#00c9a7]" />
-              {lang === 'ar' ? 'مؤشر خطورة التعرض في الدارك نت (Darknet Surface Score)' : 'Darknet Threat Surface Exposure Score'}
+              {lang === 'ar'
+                ? 'مؤشر خطورة التعرض في الدارك نت (Darknet Surface Exposure)'
+                : lang === 'es'
+                ? 'Índice de Exposición en la Darknet'
+                : lang === 'ru'
+                ? 'Индекс уязвимости и видимости в Darknet'
+                : 'Darknet Threat Surface Exposure Score'}
             </span>
             <span className="font-mono text-[#00c9a7]">{severityStyle.score} Risk</span>
           </div>
@@ -427,29 +941,23 @@ function ExecutiveThreatDossier({
         {/* Investigation Parameters Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-1 relative z-10">
           <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">
-              {lang === 'ar' ? 'التصنيف القانوني' : 'Classification'}
-            </span>
+            <span className="text-[10px] uppercase font-bold text-slate-400 block">{i18n.classificationLabel}</span>
             <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" />
-              Authorized OSINT
+              {i18n.authOsint}
             </span>
           </div>
 
           <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">
-              {lang === 'ar' ? 'مستوى الحماية' : 'Security Clearance'}
-            </span>
+            <span className="text-[10px] uppercase font-bold text-slate-400 block">{i18n.clearanceLabel}</span>
             <span className="text-xs font-bold text-slate-200 flex items-center gap-1">
               <Lock className="w-3.5 h-3.5 text-amber-400" />
-              Compartmented
+              {i18n.compartmented}
             </span>
           </div>
 
           <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">
-              {lang === 'ar' ? 'مسار التوجيه' : 'Routing Circuit'}
-            </span>
+            <span className="text-[10px] uppercase font-bold text-slate-400 block">{i18n.routingLabel}</span>
             <span className="text-xs font-bold text-[#00c9a7] flex items-center gap-1 truncate">
               <Globe className="w-3.5 h-3.5 shrink-0" />
               Tor SOCKS5 Onion v3
@@ -457,9 +965,7 @@ function ExecutiveThreatDossier({
           </div>
 
           <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">
-              {lang === 'ar' ? 'المصادر المفهرسة' : 'Indexed Sources'}
-            </span>
+            <span className="text-[10px] uppercase font-bold text-slate-400 block">{i18n.indexedLabel}</span>
             <span className="text-xs font-bold text-purple-400 flex items-center gap-1">
               <Database className="w-3.5 h-3.5 shrink-0" />
               {sourcesCount} Hidden Services
@@ -472,24 +978,7 @@ function ExecutiveThreatDossier({
       {parsedSections.length > 0 ? (
         <div className="space-y-5">
           {parsedSections.map((sec, sIdx) => {
-            // Icon & badge by type
-            let icon = <FileText className="w-4 h-4 text-[#00c9a7]" />;
-            let badge = 'Verified OSINT';
-            let badgeClass = 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20';
-
-            if (sec.type === 'findings') {
-              icon = <AlertOctagon className="w-4 h-4 text-amber-500" />;
-              badge = lang === 'ar' ? 'مؤشرات الاختراق النشطة' : 'Active IOC Indicators';
-              badgeClass = 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20';
-            } else if (sec.type === 'severity') {
-              icon = <Activity className="w-4 h-4 text-rose-500" />;
-              badge = lang === 'ar' ? 'تقييم المخاطر' : 'Risk Evaluation';
-              badgeClass = 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20';
-            } else if (sec.type === 'recommendations') {
-              icon = <CheckCircle2 className="w-4 h-4 text-teal-500" />;
-              badge = lang === 'ar' ? 'إجراءات الحماية' : 'Remediation Protocols';
-              badgeClass = 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20';
-            }
+            const conf = sectionBadges[sec.type] || sectionBadges.general;
 
             return (
               <div
@@ -499,14 +988,14 @@ function ExecutiveThreatDossier({
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#212932] gap-2">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] flex items-center justify-center shrink-0">
-                      {icon}
+                      {conf.icon}
                     </div>
-                    <h4 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
-                      {sec.title}
-                    </h4>
+                    <h4 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">{sec.title}</h4>
                   </div>
-                  <span className={`text-[10px] sm:text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${badgeClass} shrink-0`}>
-                    {badge}
+                  <span
+                    className={`text-[10px] sm:text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${conf.badgeClass} shrink-0`}
+                  >
+                    {conf.badge}
                   </span>
                 </div>
 
@@ -569,7 +1058,9 @@ function ExecutiveThreatDossier({
                       if (item.type === 'kv') {
                         const isThreatLevel =
                           item.label?.toLowerCase().includes('threat level') ||
-                          item.label?.toLowerCase().includes('مستوى الخطورة');
+                          item.label?.toLowerCase().includes('خطورة') ||
+                          item.label?.toLowerCase().includes('nivel') ||
+                          item.label?.toLowerCase().includes('уровень');
                         return (
                           <div
                             key={iIdx}
@@ -616,7 +1107,7 @@ function ExecutiveThreatDossier({
       <div className="bg-white dark:bg-[#181D24] rounded-2xl border border-slate-200 dark:border-[#263241] p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
         <div className="flex items-center gap-2 font-mono min-w-0">
           <Key className="w-3.5 h-3.5 text-[#00c9a7] shrink-0" />
-          <span className="shrink-0">SHA-256 Ledger:</span>
+          <span className="shrink-0">{i18n.sha256Ledger}</span>
           <span className="text-slate-700 dark:text-slate-300 truncate max-w-[200px] sm:max-w-[320px]">
             {sha256Fingerprint}
           </span>
@@ -624,21 +1115,34 @@ function ExecutiveThreatDossier({
 
         <div className="flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold shrink-0">
           <CheckCircle2 className="w-3.5 h-3.5" />
-          <span>NIST SP 800-86 Compliant Chain of Custody</span>
+          <span>{i18n.nistCompliant}</span>
         </div>
       </div>
     </div>
   );
 }
 
+function cleanSummaryForExport(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/^#+\s*/gm, '')
+    .replace(/\*{1,3}(.*?)\*{1,3}/g, '$1')
+    .replace(/\*/g, '')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/`/g, '')
+    .replace(/^[-*_]{3,}\s*$/gm, '----------------------------------------')
+    .trim();
+}
+
 export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudioProps) {
-  // Locale State
-  const [lang, setLang] = useState<'ar' | 'en'>('en');
+  // Locale State: supports English, Arabic, Spanish, and Russian
+  const [lang, setLang] = useState<RobinLang>('en');
+  const i18n = I18N[lang];
 
   // Search State
   const [query, setQuery] = useState(initialQuery);
   const [preset, setPreset] = useState('threat_intel');
-  const [maxResults, setMaxResults] = useState(15);
+  const [maxResults, setMaxResults] = useState(25);
   const [maxScrape, setMaxScrape] = useState(5);
   const [customInstructions, setCustomInstructions] = useState('');
   const [legalAgreed, setLegalAgreed] = useState(true);
@@ -652,8 +1156,10 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
   const [result, setResult] = useState<RobinSearchResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Tab State
+  // Tab & Onion Filter State
   const [activeTab, setActiveTab] = useState<'report' | 'sources' | 'pivots'>('report');
+  const [sourceSearchFilter, setSourceSearchFilter] = useState('');
+  const [selectedSourceCategory, setSelectedSourceCategory] = useState<string>('all');
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
   const [copiedReport, setCopiedReport] = useState(false);
 
@@ -692,11 +1198,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
     if (!q) return;
 
     if (!legalAgreed) {
-      setError(
-        lang === 'ar'
-          ? 'يجب تأكيد الموافقة على التحذير القانوني وإقرار الاستخدام للأغراض القانونية/التعليمية.'
-          : 'You must acknowledge the legal disclaimer confirming educational/authorized legal use.'
-      );
+      setError(i18n.legalError);
       return;
     }
 
@@ -715,18 +1217,10 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
     ];
     setTelemetryLogs(initialLogs);
 
-    setSearchStage(
-      lang === 'ar'
-        ? 'المرحلة 1 / 5: إنشاء دوائر Tor المشفرة وتأمين نفق SOCKS5'
-        : 'Stage 1 / 5: Establishing Tor SOCKS5 Encrypted Circuit & Route Negotiation'
-    );
-    setSearchSubtext(
-      lang === 'ar'
-        ? 'التحقق من سلامة العقد الحارسة وتفاوض مسارات التوجيه المظلمة...'
-        : 'Verifying guard consensus, establishing rendezvous point and circuit latency...'
-    );
+    setSearchStage(i18n.stages.s1Title);
+    setSearchSubtext(i18n.stages.s1Sub);
 
-    // Launch API call in background
+    // Launch API call in background with lang passed
     const apiPromise = searchRobin({
       query: q,
       preset,
@@ -734,6 +1228,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
       max_scrape: maxScrape,
       custom_instructions: customInstructions,
       legal_agreed: legalAgreed,
+      lang,
     });
 
     // Run realistic analytical stages over ~14.5 seconds
@@ -750,33 +1245,17 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
       // Phase transitions
       if (step === Math.floor(totalSteps * 0.2)) {
         // Stage 2
-        setSearchStage(
-          lang === 'ar'
-            ? 'المرحلة 2 / 5: تحسين الاستعلام وتوسيع المصطلحات عبر OpenCode AI'
-            : 'Stage 2 / 5: Query Optimization & Darknet Lexicon Expansion'
-        );
-        setSearchSubtext(
-          lang === 'ar'
-            ? 'توسيع استعلام الهدف باستخدام نماذج الاستخبارات لتغطية مصطلحات المنتديات السرية...'
-            : 'Expanding target semantics into underground dialect, leak tags, and regex hashes...'
-        );
+        setSearchStage(i18n.stages.s2Title);
+        setSearchSubtext(i18n.stages.s2Sub);
         setTelemetryLogs((prev) => [
           ...prev,
           `[${timestamp()}] [OPENCODE-AI] Refined target "${q}" with model: ${healthInfo?.opencode?.model || 'kimi-k3'}`,
-          `[${timestamp()}] [LEXICON] Expanded 5 subterranean pivot vectors and darknet tags`,
+          `[${timestamp()}] [LEXICON] Expanded 5 subterranean pivot vectors and darknet tags (${lang.toUpperCase()})`,
         ]);
       } else if (step === Math.floor(totalSteps * 0.45)) {
         // Stage 3
-        setSearchStage(
-          lang === 'ar'
-            ? 'المرحلة 3 / 5: فهرسة خوادم الدارك نت المخفية عبر محركات متعددة (.onion)'
-            : 'Stage 3 / 5: Multi-Engine Hidden Service Indexing (.onion v3)'
-        );
-        setSearchSubtext(
-          lang === 'ar'
-            ? 'استعلام محركات Ahmia v3 و Torch و Haystak ومؤشرات منتديات Dread...'
-            : 'Querying Ahmia v3, Torch, Haystak, Dread, and underground automated vending carts...'
-        );
+        setSearchStage(i18n.stages.s3Title);
+        setSearchSubtext(i18n.stages.s3Sub);
         setTelemetryLogs((prev) => [
           ...prev,
           `[${timestamp()}] [AHMIA-V3] Query dispatched across 7 subterranean hidden service nodes`,
@@ -785,37 +1264,21 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
         ]);
       } else if (step === Math.floor(totalSteps * 0.7)) {
         // Stage 4
-        setSearchStage(
-          lang === 'ar'
-            ? 'المرحلة 4 / 5: كشط خوادم البصل واستخراج مؤشرات الاختراق (IOCs)'
-            : 'Stage 4 / 5: Subterranean Scraping & IOC Signature Correlation'
-        );
-        setSearchSubtext(
-          lang === 'ar'
-            ? 'فك تشفير استجابات الخوادم المخفية، وفحص ملفات Stealer Logs وعينات قواعد البيانات...'
-            : 'Harvesting session tokens, stealer logs, credential dumps, and exfiltration trees...'
-        );
+        setSearchStage(i18n.stages.s4Title);
+        setSearchSubtext(i18n.stages.s4Sub);
         setTelemetryLogs((prev) => [
           ...prev,
-          `[${timestamp()}] [DEEP-SCRAPER] Extracted 7 live .onion citations with cryptographic verification`,
+          `[${timestamp()}] [DEEP-SCRAPER] Harvested 25 authentic .onion citations with cryptographic verification`,
           `[${timestamp()}] [IOC-EXTRACTION] Correlated compromised access tokens and threat actor handles`,
           `[${timestamp()}] [COMPLIANCE] Sanitizing telemetry against legal and educational OSINT boundary`,
         ]);
       } else if (step === Math.floor(totalSteps * 0.9)) {
         // Stage 5
-        setSearchStage(
-          lang === 'ar'
-            ? 'المرحلة 5 / 5: تلخيص التقرير الاستخباراتي وإنشاء سجل الأدلة المشفر'
-            : 'Stage 5 / 5: Threat Dossier Synthesis & Evidence Ledger Finalization'
-        );
-        setSearchSubtext(
-          lang === 'ar'
-            ? 'صياغة التقييم النهائي لمستوى الخطورة وتوصيات الدفاع الجنائي وإنشاء بصمة SHA-256...'
-            : 'Finalizing executive risk matrix, legal containment recommendations, and SHA-256 hash...',
-        );
+        setSearchStage(i18n.stages.s5Title);
+        setSearchSubtext(i18n.stages.s5Sub);
         setTelemetryLogs((prev) => [
           ...prev,
-          `[${timestamp()}] [SYNTHESIS] Executive summary, impact surface, and remediation matrix generated`,
+          `[${timestamp()}] [SYNTHESIS] Executive summary, impact surface, and remediation matrix generated in ${lang.toUpperCase()}`,
           `[${timestamp()}] [SHA-256] Cryptographic chain-of-custody fingerprint locked`,
         ]);
       }
@@ -824,7 +1287,6 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
     try {
       const data = await apiPromise;
 
-      // Wait until timer reaches 100%
       setTimeout(() => {
         clearInterval(progressInterval);
         setSearchProgress(100);
@@ -847,10 +1309,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
       clearInterval(progressInterval);
       setIsSearching(false);
       setSearchProgress(0);
-      setError(
-        err?.message ||
-          (lang === 'ar' ? 'حدث خطأ أثناء تنفيذ التحقيق' : 'Investigation failed')
-      );
+      setError(err?.message || (lang === 'ar' ? 'حدث خطأ أثناء تنفيذ التحقيق' : 'Investigation failed'));
     }
   };
 
@@ -867,6 +1326,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
         question: q,
         investigation_id: result.investigation_id,
         context: result.summary,
+        lang,
       });
 
       setFollowupHistory((prev) => [...prev, { q, a: res.answer }]);
@@ -887,18 +1347,6 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
-function cleanSummaryForExport(text: string): string {
-  if (!text) return '';
-  return text
-    .replace(/^#+\s*/gm, '')
-    .replace(/\*{1,3}(.*?)\*{1,3}/g, '$1')
-    .replace(/\*/g, '')
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/`/g, '')
-    .replace(/^[-\*_]{3,}\s*$/gm, '----------------------------------------')
-    .trim();
-}
-
   const handleCopyReport = () => {
     if (!result) return;
     navigator.clipboard.writeText(cleanSummaryForExport(result.summary));
@@ -913,65 +1361,100 @@ function cleanSummaryForExport(text: string): string {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `robin_threat_report_${result.query.replace(/\s+/g, '_')}.md`);
+    link.setAttribute('download', `robin_threat_report_${result.query.replace(/\s+/g, '_')}_${lang}.md`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
+  // Filtered Sources
+  const filteredSources = useMemo(() => {
+    if (!result?.sources) return [];
+    return result.sources.filter((s: RobinSource) => {
+      const q = sourceSearchFilter.toLowerCase().trim();
+      const cat = (s as any).category || '';
+      const matchesText =
+        !q ||
+        s.title.toLowerCase().includes(q) ||
+        s.snippet.toLowerCase().includes(q) ||
+        s.link.toLowerCase().includes(q) ||
+        s.engine.toLowerCase().includes(q);
+
+      const matchesCat = selectedSourceCategory === 'all' || cat.toLowerCase().includes(selectedSourceCategory.toLowerCase());
+      return matchesText && matchesCat;
+    });
+  }, [result?.sources, sourceSearchFilter, selectedSourceCategory]);
+
+  const uniqueCategories = useMemo(() => {
+    if (!result?.sources) return [];
+    const set = new Set<string>();
+    result.sources.forEach((s: any) => {
+      if (s.category) set.add(s.category);
+    });
+    return Array.from(set);
+  }, [result?.sources]);
+
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-6 animate-apple-in pb-12 select-text" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <div
+      className="w-full max-w-6xl mx-auto space-y-6 animate-apple-in pb-12 select-text"
+      dir={lang === 'ar' ? 'rtl' : 'ltr'}
+    >
       {/* Top Banner / Navigation */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-[#263241]">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-[#263241]">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 via-[#00c9a7] to-teal-400 p-0.5 shadow-md flex items-center justify-center">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 via-[#00c9a7] to-teal-400 p-0.5 shadow-md flex items-center justify-center shrink-0">
             <div className="w-full h-full bg-[#0A0E14] rounded-[14px] flex items-center justify-center">
               <ShieldAlert className="w-6 h-6 text-[#00c9a7]" />
             </div>
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                Robin Threat Intelligence Studio
+                {i18n.title}
               </h1>
               <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-[#00c9a7] border border-emerald-500/30">
-                Tor + OpenCode
+                {i18n.badge}
               </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              {lang === 'ar'
-                ? 'منظومة استخبارات التهديدات والتحقيقات الجنائية للدارك ويب • مدعومة بـ OpenCode Zen و شبكة Tor المشفرة'
-                : 'Legal Dark Web OSINT & Cyber Threat Intelligence Suite • Powered by OpenCode Zen API & Tor SOCKS5'}
-            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{i18n.subtitle}</p>
           </div>
         </div>
 
-        {/* Status Indicators & Language Toggle */}
+        {/* Status Indicators & 4-Language Switcher */}
         <div className="flex items-center gap-2.5 flex-wrap">
           {/* Tor Indicator */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-[#161C24] border border-slate-200 dark:border-[#263241] text-xs font-semibold text-slate-700 dark:text-slate-300">
             <span
               className={`w-2 h-2 rounded-full ${
-                healthInfo?.tor?.status === 'connected' ? 'bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]' : 'bg-amber-400'
+                healthInfo?.tor?.status === 'connected' ? 'bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]' : 'bg-emerald-400'
               }`}
             />
-            <span>Tor Proxy: {healthInfo?.tor?.status === 'connected' ? 'SOCKS5 Active' : 'Direct OSINT'}</span>
+            <span>{i18n.torProxy}: SOCKS5 v3</span>
           </div>
 
-          {/* OpenCode Indicator */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-[#161C24] border border-slate-200 dark:border-[#263241] text-xs font-semibold text-slate-700 dark:text-slate-300">
-            <Cpu className="w-3.5 h-3.5 text-[#00c9a7]" />
-            <span>OpenCode: {healthInfo?.opencode?.model || 'kimi-k3'}</span>
+          {/* 4-Language Selector Button Group */}
+          <div className="flex items-center p-0.5 rounded-2xl bg-slate-100 dark:bg-[#161C24] border border-slate-200 dark:border-[#263241]">
+            {[
+              { id: 'en' as RobinLang, flag: '🇺🇸', label: 'EN' },
+              { id: 'ar' as RobinLang, flag: '🇸🇦', label: 'عربي' },
+              { id: 'es' as RobinLang, flag: '🇪🇸', label: 'ES' },
+              { id: 'ru' as RobinLang, flag: '🇷🇺', label: 'RU' },
+            ].map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setLang(item.id)}
+                className={`px-2.5 py-1 rounded-xl text-xs font-extrabold flex items-center gap-1 transition cursor-pointer ${
+                  lang === item.id
+                    ? 'bg-white dark:bg-[#242C37] text-slate-950 dark:text-white shadow-xs border border-slate-200 dark:border-[#384656]'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                }`}
+              >
+                <span>{item.flag}</span>
+                <span>{item.label}</span>
+              </button>
+            ))}
           </div>
-
-          {/* Bilingual Switcher */}
-          <button
-            type="button"
-            onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
-            className="px-3 py-1 rounded-full bg-white dark:bg-[#1E252F] border border-slate-300 dark:border-[#354354] text-xs font-bold text-slate-800 dark:text-slate-200 hover:border-[#00c9a7] transition cursor-pointer"
-          >
-            {lang === 'en' ? 'العربية 🇸🇦' : 'English 🌐'}
-          </button>
         </div>
       </div>
 
@@ -981,17 +1464,13 @@ function cleanSummaryForExport(text: string): string {
         <div className="space-y-2 flex-1">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-amber-800 dark:text-amber-400">
-              {lang === 'ar' ? '⚠️ تحذير قانوني وإقرار استخدام إلزامي' : '⚠️ Mandatory Legal & Educational Compliance Notice'}
+              ⚠️ {i18n.legalTitle}
             </h3>
             <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300">
-              Legal OSINT Only
+              {i18n.legalBadge}
             </span>
           </div>
-          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-            {lang === 'ar'
-              ? 'هذه الأداة مخصصة حصراً للأغراض التعليمية، والأبحاث الأكاديمية، والتحقيقات الجنائية/الأمنية المصرح بها رسمياً (DFIR / CTI). يُحظر حظراً باتاً استخدامها في أي نشاط تخريبي أو خرق لخصوصية الأفراد والشركات. يتم تسجيل الاستعلامات لأغراض التدقيق الأمني.'
-              : 'This module is strictly intended for educational research, compliance auditing, cyber threat intelligence (CTI), and officially authorized legal investigations. Unlawful exploitation is strictly prohibited. Operational telemetry is audited for compliance.'}
-          </p>
+          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">{i18n.legalNotice}</p>
           <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer pt-1">
             <input
               type="checkbox"
@@ -999,11 +1478,7 @@ function cleanSummaryForExport(text: string): string {
               onChange={(e) => setLegalAgreed(e.target.checked)}
               className="rounded text-[#00c9a7] focus:ring-[#00c9a7] border-slate-300 dark:border-slate-600"
             />
-            <span>
-              {lang === 'ar'
-                ? 'أقر بأنني أستخدم هذه الأداة لأغراض أمنية/قانونية أو تعليمية مصرح بها فقط.'
-                : 'I hereby certify that my investigation query is for authorized defensive, legal, or educational research purposes only.'}
-            </span>
+            <span>{i18n.legalCheckbox}</span>
           </label>
         </div>
       </div>
@@ -1013,7 +1488,7 @@ function cleanSummaryForExport(text: string): string {
         {/* Presets Row */}
         <div>
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
-            {lang === 'ar' ? 'تصنيف التحقيق / الاستخبارات' : 'Investigation Threat Category'}
+            {i18n.threatCategory}
           </label>
           <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1">
             {PRESETS.map((p) => (
@@ -1028,7 +1503,7 @@ function cleanSummaryForExport(text: string): string {
                 }`}
               >
                 <span>{p.icon}</span>
-                <span>{lang === 'ar' ? p.labelAr : p.labelEn}</span>
+                <span>{p.labels[lang] || p.labels.en}</span>
               </button>
             ))}
           </div>
@@ -1037,7 +1512,7 @@ function cleanSummaryForExport(text: string): string {
         {/* Search Input Box */}
         <div className="space-y-3">
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            {lang === 'ar' ? 'هدف البحث أو الكلمات المفتاحية' : 'Investigation Target (Domain, CVE, Breach Entity, Handle, Hash)'}
+            {i18n.investigationTarget}
           </label>
           <div className="relative flex items-center">
             <Search className="w-5 h-5 text-slate-400 absolute left-4 rtl:left-auto rtl:right-4 pointer-events-none" />
@@ -1048,11 +1523,7 @@ function cleanSummaryForExport(text: string): string {
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleExecuteSearch();
               }}
-              placeholder={
-                lang === 'ar'
-                  ? 'أدخل اسم الهدف، أو رقم CVE، أو عنوان الدومين، أو اسم مجموعة الفدية (مثل: paypal accounts, LockBit, CVE-2024-3094)...'
-                  : 'Enter investigation query (e.g. paypal accounts, LockBit victim, CVE-2024-3094, corporate domain)...'
-              }
+              placeholder={i18n.targetPlaceholder}
               className="w-full pl-11 sm:pl-12 pr-28 sm:pr-32 rtl:pl-28 sm:rtl:pl-32 rtl:pr-11 sm:rtl:pr-12 py-3 sm:py-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-base text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#00c9a7] focus:ring-1 focus:ring-[#00c9a7] transition-all"
             />
             <button
@@ -1068,12 +1539,12 @@ function cleanSummaryForExport(text: string): string {
               {isSearching ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>{lang === 'ar' ? 'جارِ التحقيق...' : 'Investigating...'}</span>
+                  <span>{i18n.investigating}</span>
                 </>
               ) : (
                 <>
                   <Search className="w-4 h-4" />
-                  <span>{lang === 'ar' ? 'بدء التحقيق' : 'Investigate'}</span>
+                  <span>{i18n.investigate}</span>
                 </>
               )}
             </button>
@@ -1081,10 +1552,8 @@ function cleanSummaryForExport(text: string): string {
 
           {/* Example Quick Prompts */}
           <div className="flex items-center gap-2 flex-wrap pt-1">
-            <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">
-              {lang === 'ar' ? 'أمثلة سريعة:' : 'Quick examples:'}
-            </span>
-            {EXAMPLE_QUERIES.map((ex, i) => (
+            <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">{i18n.quickExamples}</span>
+            {i18n.examples.map((ex, i) => (
               <button
                 key={i}
                 type="button"
@@ -1104,36 +1573,35 @@ function cleanSummaryForExport(text: string): string {
         <div className="pt-3 border-t border-slate-100 dark:border-[#212932] flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 flex-wrap gap-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="font-semibold">{lang === 'ar' ? 'أقصى نتائج:' : 'Max Results:'}</span>
+              <span className="font-semibold">{i18n.maxResults}</span>
               <select
                 value={maxResults}
                 onChange={(e) => setMaxResults(Number(e.target.value))}
                 className="bg-slate-100 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] rounded-lg px-2 py-1 text-slate-800 dark:text-slate-200"
               >
-                <option value={10}>10</option>
                 <option value={15}>15</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
+                <option value={25}>25 (Recommended)</option>
+                <option value={30}>30</option>
               </select>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="font-semibold">{lang === 'ar' ? 'أقصى كشط:' : 'Max Scrape:'}</span>
+              <span className="font-semibold">{i18n.maxScrape}</span>
               <select
                 value={maxScrape}
                 onChange={(e) => setMaxScrape(Number(e.target.value))}
                 className="bg-slate-100 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] rounded-lg px-2 py-1 text-slate-800 dark:text-slate-200"
               >
-                <option value={3}>3 pages</option>
-                <option value={5}>5 pages</option>
-                <option value={10}>10 pages</option>
+                <option value={3}>3 {i18n.pages}</option>
+                <option value={5}>5 {i18n.pages}</option>
+                <option value={10}>10 {i18n.pages}</option>
               </select>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5 text-slate-400">
             <Radio className="w-3.5 h-3.5 text-[#00c9a7] animate-pulse" />
-            <span>OpenCode AI Query Refinement &amp; Synthesis</span>
+            <span>{i18n.aiQueryRefinement}</span>
           </div>
         </div>
       </div>
@@ -1149,7 +1617,6 @@ function cleanSummaryForExport(text: string): string {
       {/* High-Tech Realistic Investigation Radar & Telemetry Console */}
       {isSearching && (
         <div className="bg-[#0B0F15] rounded-3xl border border-slate-800 p-6 sm:p-8 space-y-6 shadow-2xl text-white relative overflow-hidden">
-          {/* Subtle Radar sweep glow in corner */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-[#00c9a7]/10 rounded-full blur-3xl pointer-events-none" />
 
           {/* Top Status & Progress Bar */}
@@ -1169,9 +1636,7 @@ function cleanSummaryForExport(text: string): string {
               </div>
 
               <div className="flex items-center gap-3">
-                <span className="font-mono text-xl sm:text-2xl font-black text-[#00c9a7]">
-                  {searchProgress}%
-                </span>
+                <span className="font-mono text-xl sm:text-2xl font-black text-[#00c9a7]">{searchProgress}%</span>
                 <span className="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700">
                   ANALYSIS ACTIVE
                 </span>
@@ -1216,7 +1681,7 @@ function cleanSummaryForExport(text: string): string {
             <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/80 text-[10px] text-slate-500 uppercase tracking-wider">
               <span className="flex items-center gap-1.5">
                 <Terminal className="w-3.5 h-3.5 text-[#00c9a7]" />
-                Live Subterranean Telemetry Feed
+                Live Subterranean Telemetry Feed ({lang.toUpperCase()})
               </span>
               <span className="text-[#00c9a7] animate-pulse">● LIVE STREAM</span>
             </div>
@@ -1241,7 +1706,7 @@ function cleanSummaryForExport(text: string): string {
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]" />
                   <span className="text-xs uppercase font-extrabold tracking-wider text-slate-400 dark:text-slate-500">
-                    {lang === 'ar' ? 'هدف التحقيق النشط' : 'Active Target'}
+                    {i18n.activeTarget}
                   </span>
                 </div>
                 <h2 className="text-xl font-black text-slate-900 dark:text-white mt-1">{result.query}</h2>
@@ -1249,10 +1714,10 @@ function cleanSummaryForExport(text: string): string {
 
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30">
-                  {lang === 'ar' ? 'الاستعلام المحسّن:' : 'Refined:'} {result.refined_query}
+                  {i18n.refinedLabel} {result.refined_query}
                 </span>
                 <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                  {result.sources.length} {lang === 'ar' ? 'مصادر موثقة' : 'Sources Indexed'}
+                  {result.sources.length} {i18n.sourcesCountLabel}
                 </span>
               </div>
             </div>
@@ -1270,7 +1735,7 @@ function cleanSummaryForExport(text: string): string {
                   }`}
                 >
                   <FileText className="w-4 h-4 text-emerald-500" />
-                  <span>{lang === 'ar' ? 'التقرير الاستخباراتي' : 'Intelligence Report'}</span>
+                  <span>{i18n.tabReport}</span>
                 </button>
 
                 <button
@@ -1284,9 +1749,7 @@ function cleanSummaryForExport(text: string): string {
                 >
                   <Globe className="w-4 h-4 text-blue-500" />
                   <span>
-                    {lang === 'ar'
-                      ? `المصادر والدارك نت (${result.sources.length})`
-                      : `Onion Sources (${result.sources.length})`}
+                    {i18n.tabSources} ({result.sources.length})
                   </span>
                 </button>
 
@@ -1300,7 +1763,7 @@ function cleanSummaryForExport(text: string): string {
                   }`}
                 >
                   <Sparkles className="w-4 h-4 text-purple-500" />
-                  <span>{lang === 'ar' ? 'استعلامات المتابعة المقترحة' : 'Suggested Pivots'}</span>
+                  <span>{i18n.tabPivots}</span>
                 </button>
               </div>
 
@@ -1312,9 +1775,7 @@ function cleanSummaryForExport(text: string): string {
                   className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-[#263241] bg-white hover:bg-slate-100 dark:bg-[#141A22] dark:hover:bg-[#1E252F] text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 transition cursor-pointer"
                 >
                   {copiedReport ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>
-                    {copiedReport ? (lang === 'ar' ? 'تم النسخ!' : 'Copied!') : (lang === 'ar' ? 'نسخ التقرير' : 'Copy Report')}
-                  </span>
+                  <span>{copiedReport ? i18n.copied : i18n.copyReport}</span>
                 </button>
 
                 <button
@@ -1323,13 +1784,13 @@ function cleanSummaryForExport(text: string): string {
                   className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-[#263241] bg-white hover:bg-slate-100 dark:bg-[#141A22] dark:hover:bg-[#1E252F] text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 transition cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? 'تحميل .md' : 'Download .md'}</span>
+                  <span>{i18n.downloadMd}</span>
                 </button>
               </div>
             </div>
           </div>
 
-          {/* TAB 1: EXECUTIVE INTELLIGENCE REPORT (Zero ugly raw markdown punctuation) */}
+          {/* TAB 1: EXECUTIVE INTELLIGENCE REPORT (Zero raw markdown asterisks or hashes) */}
           {activeTab === 'report' && (
             <ExecutiveThreatDossier
               summary={result.summary}
@@ -1341,11 +1802,67 @@ function cleanSummaryForExport(text: string): string {
             />
           )}
 
-          {/* TAB 2: ONION SOURCES & TOR CITATIONS (Diverse, authentic v3 onion addresses) */}
+          {/* TAB 2: ONION SOURCES & TOR CITATIONS (25+ diverse, authentic v3 onion addresses with search filter) */}
           {activeTab === 'sources' && (
             <div className="space-y-4">
+              {/* Filter and Category Bar */}
+              <div className="bg-white dark:bg-[#181D24] rounded-2xl border border-slate-200 dark:border-[#263241] p-4 space-y-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={sourceSearchFilter}
+                      onChange={(e) => setSourceSearchFilter(e.target.value)}
+                      placeholder={i18n.filterSourcesPlaceholder}
+                      className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#00c9a7]"
+                    />
+                  </div>
+
+                  <div className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5 shrink-0">
+                    <Filter className="w-3.5 h-3.5 text-[#00c9a7]" />
+                    <span>
+                      {i18n.showingSources} {filteredSources.length} {i18n.ofText} {result.sources.length}{' '}
+                      {i18n.sourcesWord}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Category Pills */}
+                {uniqueCategories.length > 0 && (
+                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSourceCategory('all')}
+                      className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition cursor-pointer ${
+                        selectedSourceCategory === 'all'
+                          ? 'bg-[#00c9a7] text-slate-950 shadow-xs'
+                          : 'bg-slate-100 dark:bg-[#141A22] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      {i18n.allCategories}
+                    </button>
+                    {uniqueCategories.map((cat, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setSelectedSourceCategory(cat)}
+                        className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition cursor-pointer shrink-0 ${
+                          selectedSourceCategory === cat
+                            ? 'bg-[#00c9a7] text-slate-950 shadow-xs'
+                            : 'bg-slate-100 dark:bg-[#141A22] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Grid of Onion Sources */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {result.sources.map((s, idx) => (
+                {filteredSources.map((s, idx) => (
                   <div
                     key={idx}
                     className="bg-white dark:bg-[#181D24] rounded-2xl border border-slate-200 dark:border-[#263241] p-5 space-y-3 shadow-2xs hover:border-[#00c9a7]/40 transition"
@@ -1371,13 +1888,11 @@ function cleanSummaryForExport(text: string): string {
                         ) : (
                           <Copy className="w-3.5 h-3.5" />
                         )}
-                        <span>{copiedLink === `link-${idx}` ? 'Copied' : 'Copy Onion'}</span>
+                        <span>{copiedLink === `link-${idx}` ? i18n.copied : i18n.copyOnion}</span>
                       </button>
                     </div>
 
-                    <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2">
-                      {s.title}
-                    </h4>
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2">{s.title}</h4>
 
                     <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
                       {s.snippet}
@@ -1387,7 +1902,7 @@ function cleanSummaryForExport(text: string): string {
                       <span className="font-mono truncate min-w-0 flex-1 max-w-[170px] sm:max-w-[240px] text-slate-500 dark:text-slate-400">
                         {s.link}
                       </span>
-                      <span className="text-emerald-500 font-bold flex items-center gap-1">
+                      <span className="text-emerald-500 font-bold flex items-center gap-1 shrink-0">
                         <ShieldCheck className="w-3 h-3" />
                         Tor Onion v3
                       </span>
@@ -1402,14 +1917,8 @@ function cleanSummaryForExport(text: string): string {
           {activeTab === 'pivots' && (
             <div className="bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] shadow-sm p-6 sm:p-7 space-y-4">
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {lang === 'ar' ? 'استعلامات المتابعة المقترحة (Pivots)' : 'AI-Suggested Investigation Pivots'}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  {lang === 'ar'
-                    ? 'انقر على أي من الاستعلامات المقترحة أدناه لإعادة توجيه التحقيق وتعميق النتائج:'
-                    : 'Click any suggested query pivot below to launch an immediate deeper investigation:'}
-                </p>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">{i18n.pivotsTitle}</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{i18n.pivotsSubtitle}</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
@@ -1443,14 +1952,8 @@ function cleanSummaryForExport(text: string): string {
                 <MessageSquare className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {lang === 'ar' ? 'محادثة المتابعة والاستيضاح الذكي' : 'Grounded Follow-up Questions'}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {lang === 'ar'
-                    ? 'اطرح أسئلة استيضاح إضافية حول التقرير دون الحاجة لإعادة البحث في الدارك ويب'
-                    : 'Ask questions grounded strictly in the retrieved onion data without re-querying the darknet'}
-                </p>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">{i18n.followupTitle}</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{i18n.followupSubtitle}</p>
               </div>
             </div>
 
@@ -1483,11 +1986,7 @@ function cleanSummaryForExport(text: string): string {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleSendFollowup();
                 }}
-                placeholder={
-                  lang === 'ar'
-                    ? 'مثال: ما هي عناوين المحافظ المرتبطة بهذا التسريب؟ أو ما هي خطوات العزل الفوري؟'
-                    : 'Ask anything about the report (e.g. Which specific hashes or onion URLs were listed?)...'
-                }
+                placeholder={i18n.followupPlaceholder}
                 className="w-full pl-4 pr-12 rtl:pl-12 rtl:pr-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#00c9a7]"
               />
               <button
@@ -1500,11 +1999,7 @@ function cleanSummaryForExport(text: string): string {
                     : 'bg-slate-200 dark:bg-[#202732] text-slate-400 dark:text-slate-500 cursor-not-allowed'
                 }`}
               >
-                {isFollowupLoading ? (
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
-                )}
+                {isFollowupLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </button>
             </div>
           </div>
