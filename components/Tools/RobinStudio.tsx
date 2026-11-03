@@ -29,6 +29,10 @@ import {
   Key,
   Filter,
   Zap,
+  Store,
+  ChevronLeft,
+  ChevronDown,
+  X,
 } from 'lucide-react';
 import {
   searchRobin,
@@ -450,7 +454,7 @@ const PRESETS = [
       es: 'Inteligencia de Amenazas',
       ru: 'Разведка угроз',
     },
-    icon: '🛡️',
+    iconType: 'shield',
   },
   {
     id: 'ransomware',
@@ -460,7 +464,7 @@ const PRESETS = [
       es: 'Rastreo de Ransomware',
       ru: 'Вымогатели и DLS',
     },
-    icon: '🔒',
+    iconType: 'lock',
   },
   {
     id: 'credentials',
@@ -470,7 +474,7 @@ const PRESETS = [
       es: 'Credenciales Filtradas',
       ru: 'Утечки учетных данных',
     },
-    icon: '🔑',
+    iconType: 'key',
   },
   {
     id: 'cve',
@@ -480,7 +484,7 @@ const PRESETS = [
       es: 'Vulnerabilidades y CVE',
       ru: 'Уязвимости и Эксплойты',
     },
-    icon: '⚡',
+    iconType: 'zap',
   },
   {
     id: 'marketplace',
@@ -490,7 +494,7 @@ const PRESETS = [
       es: 'Mercados Darknet',
       ru: 'Теневые маркетплейсы',
     },
-    icon: '🛒',
+    iconType: 'store',
   },
 ];
 
@@ -1445,61 +1449,93 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
 
   return (
     <div
-      className="w-full max-w-6xl mx-auto space-y-6 animate-apple-in pb-12 select-text"
+      className="w-full max-w-6xl mx-auto space-y-5 animate-apple-in pb-12 select-text"
       dir={lang === 'ar' ? 'rtl' : 'ltr'}
     >
-      {/* Top Banner / Navigation */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-[#263241]">
+      {/* Breadcrumbs Navigation */}
+      <div className="flex items-center justify-between text-xs py-1">
+        <div className="flex items-center gap-1.5 font-medium">
+          <span className="text-slate-400">&lt;</span>
+          <button
+            type="button"
+            onClick={() => onBackToCategory?.()}
+            className="text-slate-500 hover:text-slate-800 transition cursor-pointer"
+          >
+            Home
+          </button>
+          <span className="text-slate-300">/</span>
+          <button
+            type="button"
+            onClick={() => onBackToCategory?.()}
+            className="text-slate-500 hover:text-slate-800 transition cursor-pointer"
+          >
+            AI Section
+          </button>
+          <span className="text-slate-300">/</span>
+          <span className="text-[#009688] font-bold">Robin Threat Intel</span>
+        </div>
+        <button
+          type="button"
+          onClick={() => onBackToCategory?.()}
+          className="w-6 h-6 rounded-md flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+          title="Close"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Top Banner / Studio Header */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-1">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 via-[#00c9a7] to-teal-400 p-0.5 shadow-md flex items-center justify-center shrink-0">
-            <div className="w-full h-full bg-[#0A0E14] rounded-[14px] flex items-center justify-center">
-              <ShieldAlert className="w-6 h-6 text-[#00c9a7]" />
-            </div>
+          <div className="w-12 h-12 rounded-2xl bg-[#0B1118] border border-slate-800 p-2 shadow-sm flex items-center justify-center shrink-0">
+            <ShieldAlert className="w-6 h-6 text-[#00c9a7]" />
           </div>
           <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                {i18n.title}
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                Robin Threat Intelligence Studio
               </h1>
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-[#00c9a7] border border-emerald-500/30">
-                {i18n.badge}
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#E6FCF5] text-[#009688] border border-[#B2F5EA]">
+                TOR + OPENCODE
               </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{i18n.subtitle}</p>
+            <p className="text-xs text-slate-500 mt-0.5 font-normal">
+              Legal Dark Web OSINT &amp; Cyber Threat Intelligence Suite • Powered by OpenCode Zen API &amp; Tor SOCKS5
+            </p>
           </div>
         </div>
 
-        {/* Status Indicators & 4-Language Switcher */}
-        <div className="flex items-center gap-2.5 flex-wrap">
+        {/* Right Status Indicator & 4-Language Selector */}
+        <div className="flex items-center gap-3 flex-wrap">
           {/* Tor Indicator */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-[#161C24] border border-slate-200 dark:border-[#263241] text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 text-xs font-semibold text-slate-700 shadow-2xs">
             <span
               className={`w-2 h-2 rounded-full ${
                 healthInfo?.tor?.status === 'connected' ? 'bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]' : 'bg-emerald-400'
               }`}
             />
-            <span>{i18n.torProxy}: SOCKS5 v3</span>
+            <span>Tor Proxy: SOCKS5 v3</span>
           </div>
 
-          {/* 4-Language Selector Button Group */}
-          <div className="flex items-center p-0.5 rounded-2xl bg-slate-100 dark:bg-[#161C24] border border-slate-200 dark:border-[#263241]">
+          {/* 4-Language Selector Pill */}
+          <div className="flex items-center p-1 rounded-full bg-[#F1F5F9]/80 border border-slate-200/80 gap-1">
             {[
-              { id: 'en' as RobinLang, flag: '🇺🇸', label: 'EN' },
-              { id: 'ar' as RobinLang, flag: '🇸🇦', label: 'عربي' },
-              { id: 'es' as RobinLang, flag: '🇪🇸', label: 'ES' },
-              { id: 'ru' as RobinLang, flag: '🇷🇺', label: 'RU' },
+              { id: 'en' as RobinLang, code: 'us', label: 'EN' },
+              { id: 'ar' as RobinLang, code: 'sa', label: 'عربي' },
+              { id: 'es' as RobinLang, code: 'es', label: 'ES' },
+              { id: 'ru' as RobinLang, code: 'ru', label: 'RU' },
             ].map((item) => (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => setLang(item.id)}
-                className={`px-2.5 py-1 rounded-xl text-xs font-extrabold flex items-center gap-1 transition cursor-pointer ${
+                className={`px-2.5 py-1 rounded-full text-xs transition cursor-pointer flex items-center gap-1 ${
                   lang === item.id
-                    ? 'bg-white dark:bg-[#242C37] text-slate-950 dark:text-white shadow-xs border border-slate-200 dark:border-[#384656]'
-                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                    ? 'bg-white text-slate-900 font-extrabold shadow-2xs'
+                    : 'text-slate-500 hover:text-slate-900 font-medium'
                 }`}
               >
-                <span>{item.flag}</span>
+                <span className="text-[10px] lowercase text-slate-400 font-bold">{item.code}</span>
                 <span>{item.label}</span>
               </button>
             ))}
@@ -1508,63 +1544,82 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
       </div>
 
       {/* Mandatory Legal Warning & Consent */}
-      <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start gap-3.5">
+      <div className="bg-[#FEF9EE] border border-[#FDE8BB] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start gap-3.5 shadow-2xs">
         <AlertTriangle className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
-        <div className="space-y-2 flex-1">
+        <div className="space-y-1.5 flex-1">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-amber-800 dark:text-amber-400">
-              ⚠️ {i18n.legalTitle}
+            <h3 className="text-xs sm:text-sm font-bold text-[#8A4B08] flex items-center gap-1.5">
+              <span>⚠️</span> Mandatory Legal &amp; Educational Compliance Notice
             </h3>
-            <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300">
-              {i18n.legalBadge}
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#FAE8C8] text-[#935207] border border-[#F6D8A2]">
+              LEGAL OSINT ONLY
             </span>
           </div>
-          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">{i18n.legalNotice}</p>
-          <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer pt-1">
+          <p className="text-[11px] sm:text-xs text-[#78430B] leading-relaxed">
+            This module is strictly intended for educational research, compliance auditing, cyber threat intelligence (CTI), and officially authorized legal investigations. Unlawful exploitation is strictly prohibited. Operational telemetry is audited for compliance.
+          </p>
+          <label className="inline-flex items-center gap-2 text-xs font-semibold text-[#6E3C04] cursor-pointer pt-1">
             <input
               type="checkbox"
               checked={legalAgreed}
               onChange={(e) => setLegalAgreed(e.target.checked)}
-              className="rounded text-[#00c9a7] focus:ring-[#00c9a7] border-slate-300 dark:border-slate-600"
+              className="rounded text-[#00c9a7] focus:ring-[#00c9a7] border-amber-300 w-3.5 h-3.5"
             />
-            <span>{i18n.legalCheckbox}</span>
+            <span>I hereby certify that my investigation query is for authorized defensive, legal, or educational research purposes only.</span>
           </label>
         </div>
       </div>
 
       {/* Investigation Command Center */}
-      <div className="bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] shadow-sm p-5 sm:p-7 space-y-5">
+      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-5 sm:p-7 space-y-6">
         {/* Presets Row */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
-            {i18n.threatCategory}
+          <label className="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-2.5">
+            INVESTIGATION THREAT CATEGORY
           </label>
           <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1">
-            {PRESETS.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => setPreset(p.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shrink-0 transition cursor-pointer ${
-                  preset === p.id
-                    ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-[#00c9a7]/50 shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1E252F] border border-transparent'
-                }`}
-              >
-                <span>{p.icon}</span>
-                <span>{p.labels[lang] || p.labels.en}</span>
-              </button>
-            ))}
+            {PRESETS.map((p) => {
+              const active = preset === p.id;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setPreset(p.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 shrink-0 transition cursor-pointer ${
+                    active
+                      ? 'bg-[#EEF2F6] border border-[#CBD5E1] text-[#0F172A] shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent font-medium'
+                  }`}
+                >
+                  {p.iconType === 'shield' && (
+                    <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0 inline-block mr-0.5" />
+                  )}
+                  {p.iconType === 'lock' && (
+                    <span className="text-amber-500 text-xs">🔒</span>
+                  )}
+                  {p.iconType === 'key' && (
+                    <span className="text-amber-500 text-xs">🔑</span>
+                  )}
+                  {p.iconType === 'zap' && (
+                    <span className="text-amber-500 text-xs">⚡</span>
+                  )}
+                  {p.iconType === 'store' && (
+                    <span className="text-slate-400 text-xs">🏪</span>
+                  )}
+                  <span>{p.labels[lang] || p.labels.en}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Search Input Box */}
-        <div className="space-y-3">
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            {i18n.investigationTarget}
+        <div className="space-y-2.5">
+          <label className="block text-[11px] font-black uppercase tracking-wider text-slate-500">
+            INVESTIGATION TARGET (DOMAIN, CVE, BREACH ENTITY, HANDLE, HASH)
           </label>
-          <div className="relative flex items-center">
-            <Search className="w-5 h-5 text-slate-400 absolute left-4 rtl:left-auto rtl:right-4 pointer-events-none" />
+          <div className="relative flex items-center bg-[#F8FAFC] border border-slate-200/90 rounded-full pl-4 pr-1.5 py-1.5 focus-within:border-[#00c9a7] focus-within:bg-white transition-all shadow-inner">
+            <Search className="w-4 h-4 text-slate-400 shrink-0 mr-2.5 pointer-events-none" />
             <input
               type="text"
               value={query}
@@ -1572,37 +1627,43 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleExecuteSearch();
               }}
-              placeholder={i18n.targetPlaceholder}
-              className="w-full pl-11 sm:pl-12 pr-28 sm:pr-32 rtl:pl-28 sm:rtl:pl-32 rtl:pr-11 sm:rtl:pr-12 py-3 sm:py-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-base text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#00c9a7] focus:ring-1 focus:ring-[#00c9a7] transition-all"
+              placeholder="Enter investigation target (e.g. paypal accounts, LockBit victims, CVE-2024-3094, corporate domain)..."
+              className="w-full bg-transparent py-1 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none"
             />
             <button
               type="button"
               onClick={() => handleExecuteSearch()}
               disabled={isSearching || !query.trim()}
-              className={`absolute right-2 rtl:right-auto rtl:left-2 px-3 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-1.5 sm:gap-2 transition cursor-pointer ${
+              className={`px-4 sm:px-5 py-2 rounded-full text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shrink-0 ${
                 query.trim() && !isSearching
-                  ? 'bg-gradient-to-tr from-emerald-600 to-[#00c9a7] text-slate-950 shadow-md hover:scale-[1.02] active:scale-95'
-                  : 'bg-slate-200 dark:bg-[#202732] text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                  ? 'bg-[#00c9a7] text-slate-950 shadow-sm hover:scale-[1.02] active:scale-95'
+                  : 'bg-[#E2E8F0]/80 hover:bg-[#CBD5E1] text-slate-500'
               }`}
             >
               {isSearching ? (
                 <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>{i18n.investigating}</span>
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span>Investigating...</span>
                 </>
               ) : (
                 <>
-                  <Search className="w-4 h-4" />
-                  <span>{i18n.investigate}</span>
+                  <Search className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Investigate</span>
                 </>
               )}
             </button>
           </div>
 
           {/* Example Quick Prompts */}
-          <div className="flex items-center gap-2 flex-wrap pt-1">
-            <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">{i18n.quickExamples}</span>
-            {i18n.examples.map((ex, i) => (
+          <div className="flex items-center gap-1.5 flex-wrap pt-1">
+            <span className="text-[11px] font-medium text-slate-400">Quick examples:</span>
+            {[
+              'paypal accounts',
+              'LockBit ransomware victims',
+              'CVE-2024-3094 xz backdoor',
+              'Healthcare patient breach database',
+              'corporate vpn credentials citrix',
+            ].map((ex, i) => (
               <button
                 key={i}
                 type="button"
@@ -1610,7 +1671,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                   setQuery(ex);
                   handleExecuteSearch(ex);
                 }}
-                className="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#141A22] hover:bg-slate-200 dark:hover:bg-[#202732] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-[#263241] transition cursor-pointer"
+                className="text-[11px] font-medium px-3 py-1 rounded-full bg-[#F1F5F9] hover:bg-slate-200 text-slate-600 border border-slate-200/60 transition cursor-pointer"
               >
                 {ex}
               </button>
@@ -1619,41 +1680,48 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
         </div>
 
         {/* Collapsible Advanced Controls */}
-        <div className="pt-3 border-t border-slate-100 dark:border-[#212932] flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 flex-wrap gap-4">
+        <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600 flex-wrap gap-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="font-semibold">{i18n.maxResults}</span>
-              <select
-                value={maxResults}
-                onChange={(e) => setMaxResults(Number(e.target.value))}
-                className="bg-slate-100 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] rounded-lg px-2 py-1 text-slate-800 dark:text-slate-200"
-              >
-                <option value={15}>15</option>
-                <option value={25}>25 (Recommended)</option>
-                <option value={30}>30</option>
-              </select>
+              <span className="font-semibold text-slate-700">Max Results:</span>
+              <div className="relative">
+                <select
+                  value={maxResults}
+                  onChange={(e) => setMaxResults(Number(e.target.value))}
+                  className="appearance-none bg-[#F8FAFC] border border-slate-200 rounded-full pl-3 pr-7 py-1 text-xs text-slate-700 font-semibold focus:outline-none cursor-pointer"
+                >
+                  <option value={15}>15</option>
+                  <option value={25}>25 (Recommended)</option>
+                  <option value={30}>30</option>
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="font-semibold">{i18n.maxScrape}</span>
-              <select
-                value={maxScrape}
-                onChange={(e) => setMaxScrape(Number(e.target.value))}
-                className="bg-slate-100 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] rounded-lg px-2 py-1 text-slate-800 dark:text-slate-200"
-              >
-                <option value={3}>3 {i18n.pages}</option>
-                <option value={5}>5 {i18n.pages}</option>
-                <option value={10}>10 {i18n.pages}</option>
-              </select>
+              <span className="font-semibold text-slate-700">Max Scrape:</span>
+              <div className="relative">
+                <select
+                  value={maxScrape}
+                  onChange={(e) => setMaxScrape(Number(e.target.value))}
+                  className="appearance-none bg-[#F8FAFC] border border-slate-200 rounded-full pl-3 pr-7 py-1 text-xs text-slate-700 font-semibold focus:outline-none cursor-pointer"
+                >
+                  <option value={3}>3 pages</option>
+                  <option value={5}>5 pages</option>
+                  <option value={10}>10 pages</option>
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 text-slate-400">
-            <Radio className="w-3.5 h-3.5 text-[#00c9a7] animate-pulse" />
-            <span>{i18n.aiQueryRefinement}</span>
+          <div className="flex items-center gap-1.5 text-[#00c9a7]">
+            <Radio className="w-3.5 h-3.5 text-[#00c9a7]" />
+            <span className="text-xs font-semibold text-[#00c9a7]">OpenCode AI Query Refinement &amp; Synthesis</span>
           </div>
         </div>
       </div>
+
 
       {/* Error Message */}
       {error && (

@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   Sparkles,
+  Play,
   RefreshCw,
   CheckCheck,
   ShieldAlert,
@@ -498,78 +499,20 @@ export function AppSidebar({
               type="button"
               onClick={() => {
                 onSelectCategory('ai-section');
-                handleToolClick('ai-chat', 'ai-section');
+                handleToolClick('robin', 'ai-section');
               }}
-              className="flex items-center gap-2.5 group cursor-pointer"
+              className="flex items-center gap-2 group cursor-pointer"
             >
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] p-[1.5px] shadow-[0_0_12px_rgba(0,201,167,0.35)] group-hover:shadow-[0_0_18px_rgba(0,201,167,0.55)] transition-all">
-                <div className="w-full h-full bg-[#0A0E14] rounded-[6.5px] flex items-center justify-center p-0.5 overflow-hidden">
-                  <svg className="w-full h-full" viewBox="0 0 128 128" fill="none">
-                    <path
-                      d="M28 20C28 15.39 33.02 12.55 37.01 14.89L96.01 49.89C99.98 52.24 99.98 57.76 96.01 60.11L62 80L28 58V20Z"
-                      fill="url(#sidebarLogoGrad)"
-                    />
-                    <path
-                      d="M28 58L62 80L37.01 94.41C33.02 96.72 28 93.88 28 89.27V58Z"
-                      fill="url(#sidebarLogoFacet)"
-                    />
-                    <path
-                      d="M28 58L62 80L96.01 60.11"
-                      stroke="#FFFFFF"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeOpacity="0.75"
-                    />
-                    <path
-                      d="M104 46C109 52 112 59 112 66C112 73 109 80 104 86"
-                      stroke="url(#sidebarLogoGrad)"
-                      strokeWidth="4.5"
-                      strokeLinecap="round"
-                      strokeOpacity="0.9"
-                    />
-                    <g transform="translate(62, 58)">
-                      <path
-                        d="M0 -14C0.8 -5 5 -0.8 14 0C5 0.8 0.8 5 0 14C-0.8 5 -5 0.8 -14 0C-5 -0.8 -0.8 -5 0 -14Z"
-                        fill="#FFFFFF"
-                      />
-                    </g>
-                    <defs>
-                      <linearGradient
-                        id="sidebarLogoGrad"
-                        x1="16"
-                        y1="16"
-                        x2="112"
-                        y2="112"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop offset="0%" stopColor="#00F5D4" />
-                        <stop offset="50%" stopColor="#00C9A7" />
-                        <stop offset="100%" stopColor="#0284C7" />
-                      </linearGradient>
-                      <linearGradient
-                        id="sidebarLogoFacet"
-                        x1="20"
-                        y1="50"
-                        x2="70"
-                        y2="110"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop offset="0%" stopColor="#7000FF" stopOpacity="0.9" />
-                        <stop offset="100%" stopColor="#00C9A7" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </div>
+              <div className="w-7 h-7 rounded-lg bg-black flex items-center justify-center p-1 shadow-sm">
+                <Play className="w-3.5 h-3.5 fill-[#00c9a7] text-[#00c9a7] translate-x-0.5" />
               </div>
-              <div className="flex flex-col text-left">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[15px] font-black tracking-tight text-slate-900 dark:text-white font-display">
-                    playzy
-                  </span>
-                  <span className="px-1 py-0.2 rounded text-[8px] font-extrabold uppercase bg-[#00c9a7]/15 text-[#009688] dark:text-[#00c9a7]">
-                    28 TOOLS
-                  </span>
-                </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[17px] font-black tracking-tight text-slate-900 dark:text-white font-sans">
+                  playzy
+                </span>
+                <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-[#d8f8ef] text-[#009688]">
+                  28 TOOLS
+                </span>
               </div>
             </button>
 
@@ -590,36 +533,34 @@ export function AppSidebar({
             type="button"
             onClick={() => {
               onSelectCategory('ai-section');
-              handleToolClick('ai-chat', 'ai-section');
+              handleToolClick('robin', 'ai-section');
             }}
-            className="w-full py-2 px-3 rounded-xl bg-white hover:bg-slate-100 dark:bg-[#181D24] dark:hover:bg-[#202732] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 text-slate-900 dark:text-slate-100 font-bold text-xs flex items-center justify-between transition-all shadow-2xs cursor-pointer group"
+            className="w-full py-2.5 px-3 rounded-2xl bg-white hover:bg-slate-50 dark:bg-[#181D24] dark:hover:bg-[#202732] border border-slate-200/90 dark:border-[#263241] text-slate-900 dark:text-slate-100 font-bold text-xs flex items-center justify-between transition-all shadow-2xs cursor-pointer group"
           >
             <div className="flex items-center gap-2">
-              <div className="w-4.5 h-4.5 rounded-md bg-[#00c9a7]/15 dark:bg-[#00c9a7]/20 flex items-center justify-center text-[#009688] dark:text-[#00c9a7] group-hover:scale-110 transition-transform">
-                <Plus className="w-3.5 h-3.5" />
-              </div>
-              <span>New Chat / Project</span>
+              <span className="text-[#00c9a7] font-black text-sm">+</span>
+              <span className="text-xs font-bold text-slate-900 dark:text-slate-100">New Chat / Project</span>
             </div>
-            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">⌘K</span>
+            <span className="text-[10px] text-slate-400 font-mono">⌘K</span>
           </button>
 
           {/* In-sidebar Tool Filter Search Box */}
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               value={sidebarSearch}
               onChange={(e) => setSidebarSearch(e.target.value)}
               placeholder="Search 28 tools..."
-              className="w-full bg-slate-100/80 dark:bg-[#141A22] border border-slate-200 dark:border-[#222B36] rounded-xl pl-8 pr-7 py-2 text-[13px] font-medium text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-[#00c9a7]/60 transition"
+              className="w-full bg-[#f8fafc] dark:bg-[#141A22] border border-slate-200/90 dark:border-[#222B36] rounded-xl pl-8 pr-7 py-2 text-xs font-medium text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-[#00c9a7]/60 transition"
             />
             {sidebarSearch && (
               <button
                 type="button"
                 onClick={() => setSidebarSearch('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3 h-3" />
               </button>
             )}
           </div>
@@ -749,10 +690,10 @@ export function AppSidebar({
                               key={tool.id}
                               type="button"
                               onClick={() => handleToolClick(tool.id, tool.category)}
-                              className={`w-full px-3 py-2 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer relative group/item ${
+                              className={`w-full px-2.5 py-2 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer relative group/item ${
                                 active
-                                  ? 'bg-white dark:bg-[#1C232D] text-[#009688] dark:text-[#00c9a7] border border-slate-300 dark:border-[#00c9a7]/40 shadow-xs font-bold before:absolute before:left-0.5 before:top-2 before:bottom-2 before:w-1.5 before:bg-[#00c9a7] before:rounded-full'
-                                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5 font-medium'
+                                  ? 'bg-white dark:bg-[#1C232D] text-[#00897B] dark:text-[#00c9a7] border border-slate-200/90 dark:border-[#263241] shadow-2xs font-extrabold before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1.5 before:bg-[#00c9a7] before:rounded-r'
+                                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white font-medium'
                               }`}
                             >
                               <div className="flex items-center gap-2.5 min-w-0 pl-1">
@@ -781,38 +722,32 @@ export function AppSidebar({
           )}
         </div>
 
-        {/* Bottom Pinned Footer: Pro Status + Light/Dark Mode Switcher */}
-        <div className="p-2.5 space-y-2 shrink-0 border-t border-slate-200 dark:border-[#212932] bg-[#F8FAFC] dark:bg-[#0F131A]">
+        {/* Bottom Pinned Footer */}
+        <div className="p-3 space-y-2 shrink-0 border-t border-slate-200/80 dark:border-[#212932] bg-[#F8FAFC] dark:bg-[#0F131A]">
           {/* Quick Theme Toggle Button */}
           <button
             type="button"
             onClick={toggleTheme}
-            className="w-full px-3 py-2 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-[#151B22]"
+            className="w-full px-2 py-1.5 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#151B22]"
           >
-            <div className="flex items-center gap-2.5">
-              {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
-                <Moon className="w-4 h-4 text-indigo-600" />
-              )}
-              <span className="text-[13px] font-semibold">
-                {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-              </span>
+            <div className="flex items-center gap-2">
+              <Moon className="w-4 h-4 text-purple-600" />
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Dark Mode</span>
             </div>
-            <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded bg-slate-200/70 dark:bg-[#161C24]">
-              {theme}
+            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-full bg-[#f1f5f9] dark:bg-[#161C24] uppercase">
+              {theme === 'dark' ? 'DARK' : 'LIGHT'}
             </span>
           </button>
 
           {/* Access Status Card */}
-          <div className="p-2.5 rounded-xl bg-white dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] flex items-center justify-between shadow-2xs">
+          <div className="p-2.5 rounded-2xl bg-white dark:bg-[#141A22] border border-[#d2f9ef] dark:border-[#263241] flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]" />
-              <span className="text-[12px] font-bold text-slate-900 dark:text-slate-100">
+              <span className="w-2 h-2 rounded-full bg-[#00c9a7] shadow-[0_0_6px_#00c9a7]" />
+              <span className="text-xs font-black text-slate-900 dark:text-slate-100">
                 Free Pro Access
               </span>
             </div>
-            <span className="text-[10px] text-[#009688] dark:text-[#00c9a7] font-extrabold px-1.5 py-0.5 rounded bg-[#00c9a7]/10">
+            <span className="text-[9px] text-[#00897B] dark:text-[#00c9a7] font-black px-2 py-0.5 rounded-full bg-[#d8f8ef] dark:bg-[#00c9a7]/15">
               28 TOOLS ACTIVE
             </span>
           </div>

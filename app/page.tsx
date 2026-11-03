@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Menu,
+  Play,
   Sparkles,
   DownloadCloud,
   FileAudio,
@@ -62,7 +63,7 @@ export default function Home() {
 
   // Category & Tool Navigation State
   const [activeCategory, setActiveCategory] = useState<CategoryId>('ai-section');
-  const [activeTool, setActiveTool] = useState<ToolId | null>(null);
+  const [activeTool, setActiveTool] = useState<ToolId | null>('robin');
   const [toolInitialText, setToolInitialText] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -231,67 +232,46 @@ export default function Home() {
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* Skywork Brand Logo */}
+          {/* Brand Logo */}
           <button
             type="button"
             onClick={() => {
-              setActiveTool(null);
+              setActiveTool('robin');
               setActiveCategory('ai-section');
               setSearchQuery('');
             }}
-            className="flex items-center gap-2 sm:gap-2.5 group cursor-pointer focus:outline-none shrink-0"
+            className="flex items-center gap-2 group cursor-pointer focus:outline-none shrink-0"
           >
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] p-[1.5px] shadow-[0_0_16px_rgba(0,201,167,0.35)] group-hover:shadow-[0_0_24px_rgba(0,201,167,0.6)] transition-all">
-              <div className="w-full h-full bg-[#0A0E14] rounded-[10.5px] flex items-center justify-center p-1 overflow-hidden transition-colors">
-                <svg className="w-full h-full" viewBox="0 0 128 128" fill="none">
-                  <path d="M28 20C28 15.39 33.02 12.55 37.01 14.89L96.01 49.89C99.98 52.24 99.98 57.76 96.01 60.11L62 80L28 58V20Z" fill="url(#topLogoGrad)"/>
-                  <path d="M28 58L62 80L37.01 94.41C33.02 96.72 28 93.88 28 89.27V58Z" fill="url(#topLogoFacet)"/>
-                  <path d="M28 58L62 80L96.01 60.11" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.75"/>
-                  <path d="M104 46C109 52 112 59 112 66C112 73 109 80 104 86" stroke="url(#topLogoGrad)" strokeWidth="4.5" strokeLinecap="round" strokeOpacity="0.9"/>
-                  <g transform="translate(62, 58)">
-                    <path d="M0 -14C0.8 -5 5 -0.8 14 0C5 0.8 0.8 5 0 14C-0.8 5 -5 0.8 -14 0C-5 -0.8 -0.8 -5 0 -14Z" fill="#FFFFFF"/>
-                  </g>
-                  <defs>
-                    <linearGradient id="topLogoGrad" x1="16" y1="16" x2="112" y2="112" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stopColor="#00F5D4"/>
-                      <stop offset="50%" stopColor="#00C9A7"/>
-                      <stop offset="100%" stopColor="#0284C7"/>
-                    </linearGradient>
-                    <linearGradient id="topLogoFacet" x1="20" y1="50" x2="70" y2="110" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stopColor="#7000FF" stopOpacity="0.9"/>
-                      <stop offset="100%" stopColor="#00C9A7"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
+            <div className="w-8 h-8 rounded-xl bg-black flex items-center justify-center p-1.5 shadow-sm">
+              <Play className="w-4 h-4 fill-[#00c9a7] text-[#00c9a7] translate-x-0.5" />
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-lg sm:text-[20px] font-black tracking-tight text-slate-900 dark:text-white font-display">
+              <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white font-sans">
                 playzy
               </span>
-              <span className="px-1.5 py-0.2 rounded-md text-[9px] font-black uppercase tracking-wider bg-[#00c9a7]/15 text-[#009688] dark:text-[#00c9a7] border border-[#00c9a7]/30">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#d2f9ef] text-[#00a887]">
                 AI
               </span>
             </div>
           </button>
 
           {/* Workspace Pill */}
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] text-xs text-slate-700 dark:text-slate-300 transition-colors shadow-2xs shrink-0">
-            <span className="w-2 h-2 rounded-full bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]" />
-            <span className="font-semibold">Personal Workspace</span>
+          <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f1f5f9] text-xs text-slate-800 font-semibold shrink-0">
+            <span className="w-2 h-2 rounded-full bg-[#00c9a7]" />
+            <span>Personal Workspace</span>
           </div>
 
-          {/* Model Pill (DeepSeek-R1 / Skywork 3.0) */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] text-xs text-slate-700 dark:text-slate-300 transition-colors shadow-2xs shrink-0">
-            <Sparkles className="w-3.5 h-3.5 text-[#00c9a7] animate-pulse" />
-            <span className="text-slate-400">Model:</span>
-            <span className="font-semibold text-slate-800 dark:text-slate-100">Playzy DeepSeek-R1</span>
-            <span className="px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">671B</span>
+          {/* Model Pill */}
+          <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f1fbf8] border border-[#d2f9ef] text-xs shrink-0">
+            <Sparkles className="w-3.5 h-3.5 text-[#00c9a7]" />
+            <span className="text-slate-500 font-medium">Model:</span>
+            <span className="font-bold text-slate-900">Playzy DeepSeek-R1</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#d2f9ef] text-[#00897B] text-[10px] font-bold">671B</span>
           </div>
         </div>
 
         {/* Right: Search + Quick Downloader + Theme Toggle + Upgrade to Pro + Avatar */}
-        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Quick Search */}
           <div className="relative hidden md:block">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -299,14 +279,14 @@ export default function Home() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search agents &amp; tools..."
-              className="pl-9 pr-7 py-1.5 rounded-full bg-slate-100 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#00c9a7] w-40 lg:w-52 transition-colors"
+              placeholder="Search agents & tools..."
+              className="pl-9 pr-7 py-1.5 rounded-full bg-[#f1f5f9] border border-transparent text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#00c9a7] w-48 lg:w-56 transition-all"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -314,39 +294,32 @@ export default function Home() {
           </div>
 
           {/* Quick Downloader Switcher */}
-          {activeCategory !== 'video-downloader' && (
-            <button
-              type="button"
-              onClick={() => {
-                setActiveCategory('video-downloader');
-                setActiveTool('video-downloader');
-              }}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-[#181D24] dark:hover:bg-[#202732] border border-slate-200 dark:border-[#263241] text-xs font-semibold text-slate-700 dark:text-slate-300 transition active:scale-95 cursor-pointer shadow-2xs"
-            >
-              <DownloadCloud className="w-3.5 h-3.5 text-sky-500" />
-              <span>Downloader</span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => {
+              setActiveCategory('video-downloader');
+              setActiveTool('video-downloader');
+            }}
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#f1f5f9] hover:bg-slate-200 text-xs font-semibold text-slate-700 transition cursor-pointer"
+          >
+            <DownloadCloud className="w-3.5 h-3.5 text-sky-500" />
+            <span>Downloader</span>
+          </button>
 
-          {/* Theme Toggle Button (Light Mode / Dark Mode) */}
+          {/* Theme Toggle Button */}
           <button
             type="button"
             onClick={toggleTheme}
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#181D24] dark:hover:bg-[#202732] border border-slate-200 dark:border-[#263241] text-slate-700 dark:text-slate-300 transition active:scale-95 cursor-pointer shadow-2xs"
+            className="w-8 h-8 rounded-full bg-[#f1f5f9] hover:bg-slate-200 flex items-center justify-center text-purple-600 transition cursor-pointer"
             aria-label="Toggle Theme"
           >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400" />
-            ) : (
-              <Moon className="w-4 h-4 text-indigo-600" />
-            )}
+            <Moon className="w-4 h-4 text-purple-600" />
           </button>
 
-          {/* Upgrade to Pro Button (Skywork Vibrant Cyan Gradient) */}
+          {/* Upgrade to Pro Button */}
           <button
             type="button"
-            className="bg-gradient-to-r from-[#00A9C0] to-[#00c9a7] hover:from-[#00c9a7] hover:to-[#29CC5F] active:scale-[0.98] text-slate-950 text-xs sm:text-[13px] font-bold px-2.5 sm:px-4 py-1.5 rounded-full flex items-center gap-1.5 sm:gap-2 shadow-[0_0_18px_rgba(0,201,167,0.3)] transition-all cursor-pointer shrink-0"
+            className="bg-[#00c9a7] hover:bg-[#00b596] active:scale-[0.98] text-slate-950 text-xs font-black px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-[0_0_12px_rgba(0,201,167,0.35)] transition-all cursor-pointer shrink-0"
           >
             <Crown className="w-3.5 h-3.5 text-slate-950 fill-current shrink-0" />
             <span className="hidden sm:inline">Upgrade to Pro</span>
