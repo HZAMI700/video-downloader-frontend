@@ -1517,7 +1517,43 @@ ${recommendations}
 Note: Powered by OpenCode Inference API & Robin Tor Routing Engine. Adheres to lawful OSINT & CTI guidelines.`;
 }
 
+const CLOUDFLARE_TOKEN = process.env.CLOUDFLARE_API_TOKEN || '';
+const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '';
+const CLOUDFLARE_MODEL = process.env.CLOUDFLARE_MODEL || '@cf/meta/llama-3.1-8b-instruct';
+
+async function callCloudflareChat(messages: Array<{ role: string; content: string }>, maxTokens = 2500): Promise<string> {
+  if (!CLOUDFLARE_TOKEN || !CLOUDFLARE_ACCOUNT_ID) return '';
+  try {
+    const url = `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/ai/run/${CLOUDFLARE_MODEL}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${CLOUDFLARE_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages,
+        max_tokens: maxTokens,
+      }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const choiceContent = data?.result?.response || data?.result?.choices?.[0]?.message?.content;
+      if (choiceContent && typeof choiceContent === 'string' && choiceContent.trim()) {
+        return choiceContent.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+      }
+    } else {
+      console.warn(`Cloudflare Workers AI returned status ${res.status}`);
+    }
+  } catch (err) {
+    console.warn('Cloudflare Workers AI fallback error:', err);
+  }
+  return '';
+}
+
 async function callOpenCodeChat(messages: Array<{ role: string; content: string }>, maxTokens = 2500): Promise<string> {
+  // 1. Try Primary: OpenCode Inference API
   try {
     const res = await fetch(`${OPENCODE_BASE}/chat/completions`, {
       method: 'POST',
@@ -1540,9 +1576,17 @@ async function callOpenCodeChat(messages: Array<{ role: string; content: string 
       if (content && typeof content === 'string' && content.trim()) {
         return content.trim();
       }
+    } else {
+      console.warn(`OpenCode API returned HTTP ${res.status}, engaging Cloudflare fallback`);
     }
   } catch (err) {
-    console.warn('OpenCode API direct fetch error, falling back to grounded threat intelligence:', err);
+    console.warn('OpenCode API direct fetch error, engaging Cloudflare fallback:', err);
+  }
+
+  // 2. Secondary Fallback: Cloudflare Workers AI
+  const cfContent = await callCloudflareChat(messages, maxTokens);
+  if (cfContent) {
+    return cfContent;
   }
 
   return '';

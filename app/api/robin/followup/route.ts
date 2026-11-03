@@ -40,7 +40,22 @@ export async function POST(request: NextRequest) {
       en: 'English',
     }[lang] || 'English';
 
+    const followupMessages = [
+      {
+        role: 'system',
+        content: `You are Robin, an expert dark web threat intelligence analyst. Answer the user follow-up question grounded strictly in the prior investigation context. Respond entirely in ${langName}. Do not use raw markdown asterisks or hashes. Provide clear, professional, concise answers.`,
+      },
+      {
+        role: 'user',
+        content: `Investigation Context:
+${context.slice(0, 4000)}
+
+Follow-up Question: ${question}`,
+      },
+    ];
+
     let answer = '';
+    // 1. Primary: OpenCode Inference API
     try {
       const res = await fetch(`${OPENCODE_BASE}/chat/completions`, {
         method: 'POST',
@@ -51,16 +66,7 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify({
           model: OPENCODE_MODEL,
-          messages: [
-            {
-              role: 'system',
-              content: `You are Robin, an expert dark web threat intelligence analyst. Answer the user follow-up question grounded strictly in the prior investigation context. Respond entirely in ${langName}. Do not use raw markdown asterisks or hashes. Provide clear, professional, concise answers.`,
-            },
-            {
-              role: 'user',
-              content: `Investigation Context:\n${context.slice(0, 4000)}\n\nFollow-up Question: ${question}`,
-            },
-          ],
+          messages: followupMessages,
           temperature: 0.2,
           max_tokens: 1500,
         }),
@@ -69,9 +75,42 @@ export async function POST(request: NextRequest) {
       if (res.ok) {
         const data = await res.json();
         answer = data?.choices?.[0]?.message?.content?.trim() || '';
+      } else {
+        console.warn(`OpenCode followup API returned HTTP ${res.status}, trying Cloudflare fallback`);
       }
     } catch (e) {
-      console.warn('OpenCode API followup fetch error:', e);
+      console.warn('OpenCode API followup fetch error, trying Cloudflare fallback:', e);
+    }
+
+    // 2. Secondary: Cloudflare Workers AI Fallback
+    if (!answer) {
+      const cfToken = process.env.CLOUDFLARE_API_TOKEN || '';
+      const cfAccountId = process.env.CLOUDFLARE_ACCOUNT_ID || '';
+      const cfModel = process.env.CLOUDFLARE_MODEL || '@cf/meta/llama-3.1-8b-instruct';
+
+      try {
+        const cfRes = await fetch(`https://api.cloudflare.com/client/v4/accounts/${cfAccountId}/ai/run/${cfModel}`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${cfToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            messages: followupMessages,
+            max_tokens: 1500,
+          }),
+        });
+
+        if (cfRes.ok) {
+          const cfData = await cfRes.json();
+          const cfText = cfData?.result?.response || cfData?.result?.choices?.[0]?.message?.content;
+          if (cfText && typeof cfText === 'string') {
+            answer = cfText.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+          }
+        }
+      } catch (cfErr) {
+        console.warn('Cloudflare Workers AI followup error:', cfErr);
+      }
     }
 
     if (answer) {
