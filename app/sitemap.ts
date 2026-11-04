@@ -5,6 +5,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const toolSlugs = [
+    'torrent-downloader',
     'robin',
     'email-checker',
     'video-downloader',
