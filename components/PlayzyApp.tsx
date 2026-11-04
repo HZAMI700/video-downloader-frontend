@@ -39,6 +39,7 @@ import { AudioDspStudio } from './Tools/AudioDspStudio';
 import { QuillBotAiStudio } from './Tools/QuillBotAiStudio';
 import { RobinStudio } from './Tools/RobinStudio';
 import { BlackbirdEmailStudio } from './Tools/BlackbirdEmailStudio';
+import { TorrentStudio } from './Tools/TorrentStudio';
 import { PlayzyHomeScreen } from './HomeScreen/PlayzyHomeScreen';
 
 // Existing Video Downloader Components
@@ -512,8 +513,10 @@ export function PlayzyApp({ initialTool = 'robin', initialCategory }: PlayzyAppP
             ) : (
               /* 4. DEDICATED TOOL WORKSPACE */
               <div className="animate-apple-in pt-1">
-                {/* ROBIN DARKNET OSINT THREAT INTELLIGENCE STUDIO */}
-                {activeTool === 'robin' ? (
+                {/* TORRENT TO MP4 VIDEO DOWNLOADER */}
+                {activeTool === 'torrent-downloader' ? (
+                  <TorrentStudio />
+                ) : activeTool === 'robin' ? (
                   <RobinStudio
                     initialQuery={toolInitialText}
                     onBackToCategory={() => handleCloseTool()}

@@ -76,6 +76,7 @@ export type ToolId =
   | 'robin'
   | 'email-checker'
   | 'workspace'
+  | 'torrent-downloader'
   | 'video-downloader';
 
 interface AppSidebarProps {
@@ -146,13 +147,22 @@ export function AppSidebar({
   // Top standalone tools
   const PRIMARY_TOOLS: SidebarToolDef[] = [
     {
+      id: 'torrent-downloader',
+      name: 'Torrent to Video (MP4)',
+      category: 'video-downloader',
+      categoryName: 'Video Downloader',
+      icon: <DownloadCloud className="w-4 h-4 text-emerald-400 shrink-0" />,
+      badge: 'TORRENT',
+      highlight: true,
+    },
+    {
       id: 'video-downloader',
       name: 'Media Downloader',
       category: 'video-downloader',
       categoryName: 'Video Downloader',
       icon: <DownloadCloud className="w-4 h-4 text-sky-500 shrink-0" />,
       badge: '4K & MP3',
-      highlight: true,
+      highlight: false,
     },
     {
       id: 'workspace',
