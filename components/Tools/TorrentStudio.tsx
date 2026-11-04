@@ -16,12 +16,10 @@ import {
   ExternalLink,
   RefreshCw,
   Film,
+  Settings,
+  Server,
+  Check,
 } from 'lucide-react';
-
-interface TorrentInfo {
-  name: string;
-  sizeFormatted: string;
-}
 
 export function TorrentStudio() {
   const [downloadId, setDownloadId] = useState<string | null>(null);
@@ -38,26 +36,108 @@ export function TorrentStudio() {
   const [statusText, setStatusText] = useState('جاهز للتحميل عبر محرك التورنت السحابي');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // Engine Connection Settings & Detection
+  const [engineBaseUrl, setEngineBaseUrl] = useState<string>('');
+  const [isLocalConnected, setIsLocalConnected] = useState<boolean | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [customEngineUrl, setCustomEngineUrl] = useState('');
+  const [isTestingEngine, setIsTestingEngine] = useState(false);
+
   const pollRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Clean up interval on unmount
+  // Auto-detect best engine endpoint on load
   useEffect(() => {
+    async function detectEngine() {
+      // 1. Try local engine first (fastest for desktop users running node server.js)
+      try {
+        const localCheck = await fetch('http://localhost:3000/api/health', {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+          signal: AbortSignal.timeout(1500),
+        });
+        if (localCheck.ok) {
+          setEngineBaseUrl('http://localhost:3000');
+          setIsLocalConnected(true);
+          return;
+        }
+      } catch {
+        // Local engine not running on localhost:3000
+      }
+
+      // 2. Fall back to relative /api/download proxy
+      setEngineBaseUrl('');
+      setIsLocalConnected(false);
+    }
+
+    detectEngine();
+
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
   }, []);
+
+  const testConnection = async (url: string) => {
+    setIsTestingEngine(true);
+    setErrorMessage(null);
+    try {
+      const target = (url || 'http://localhost:3000').replace(/\/+$/, '');
+      const res = await fetch(`${target}/api/health`, {
+        signal: AbortSignal.timeout(2500),
+      });
+      if (res.ok) {
+        setEngineBaseUrl(target);
+        setIsLocalConnected(true);
+        setShowSettings(false);
+      } else {
+        throw new Error(`رد السيرفر بحالة: ${res.status}`);
+      }
+    } catch (err: any) {
+      setErrorMessage(`تعذر الاتصال بالرابط: ${err.message || 'Server unreachable'}`);
+      setIsLocalConnected(false);
+    } finally {
+      setIsTestingEngine(false);
+    }
+  };
+
+  const getApiUrl = (endpoint: string) => {
+    if (engineBaseUrl) {
+      return `${engineBaseUrl}${endpoint}`;
+    }
+    return endpoint;
+  };
 
   const handleStartDownload = async () => {
     setErrorMessage(null);
     setIsStarting(true);
     setStatusText('جاري الاتصال بمحرك التورنت وفحص ملف الفيديو...');
 
+    // Try primary chosen endpoint
+    let targetEndpoint = getApiUrl('/api/download/start');
+
     try {
-      const res = await fetch('/api/download/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
-      });
+      let res: Response;
+      try {
+        res = await fetch(targetEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        });
+      } catch (networkErr: any) {
+        // If relative URL failed (e.g. Vercel 502 or fetch failed), try direct localhost:3000
+        if (!engineBaseUrl) {
+          console.warn('Proxy failed, attempting direct local engine on http://localhost:3000...');
+          targetEndpoint = 'http://localhost:3000/api/download/start';
+          res = await fetch(targetEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}),
+          });
+          setEngineBaseUrl('http://localhost:3000');
+          setIsLocalConnected(true);
+        } else {
+          throw networkErr;
+        }
+      }
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -80,13 +160,21 @@ export function TorrentStudio() {
     } catch (err: any) {
       setIsStarting(false);
       setIsDownloading(false);
-      setErrorMessage(err.message || 'فشل بدء التنزيل. تأكد من تشغيل السيرفر.');
+      const isFetchFailed = err.message && (err.message.includes('fetch failed') || err.message.includes('Failed to fetch'));
+      if (isFetchFailed) {
+        setErrorMessage(
+          'تعذر الاتصال بمحرك التورنت. تأكد من تشغيل السيرفر عبر الأمر (npm start) في مجلد المشروع، أو اضغط على أيقونة الإعدادات ⚙️ لتحديد عنوان السيرفر.'
+        );
+      } else {
+        setErrorMessage(err.message || 'فشل بدء التنزيل. يرجى المحاولة مرة أخرى.');
+      }
     }
   };
 
   const checkProgress = async (id: string) => {
     try {
-      const res = await fetch(`/api/download/progress/${id}`);
+      const url = getApiUrl(`/api/download/progress/${id}`);
+      const res = await fetch(url);
       if (!res.ok) return;
 
       const data = await res.json();
@@ -124,7 +212,7 @@ export function TorrentStudio() {
   };
 
   const triggerFileDownload = (id: string) => {
-    const fileUrl = `/api/download/file/${id}`;
+    const fileUrl = getApiUrl(`/api/download/file/${id}`);
     const anchor = document.createElement('a');
     anchor.style.display = 'none';
     anchor.href = fileUrl;
@@ -136,11 +224,29 @@ export function TorrentStudio() {
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-8 animate-apple-in" dir="rtl">
-      {/* Header Badge & Title */}
+      {/* Header Badge, Connection Telemetry & Title */}
       <div className="text-center space-y-3 pt-2">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-          <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
-          <span>محرك التورنت السحابي المباشر • WebTorrent Engine</span>
+        <div className="flex items-center justify-center gap-2 flex-wrap">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+            <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
+            <span>محرك التورنت السحابي المباشر • WebTorrent Engine</span>
+          </div>
+
+          {/* Engine Status & Settings Toggle */}
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700 transition cursor-pointer"
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                isLocalConnected ? 'bg-emerald-400' : 'bg-amber-400'
+              }`}
+            />
+            <span className="font-mono text-[11px]" dir="ltr">
+              {engineBaseUrl || 'Auto / Cloud Proxy'}
+            </span>
+            <Settings className="w-3 h-3 text-slate-400 mr-1" />
+          </button>
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
@@ -151,6 +257,71 @@ export function TorrentStudio() {
           يقوم السيرفر بالاتصال بشبكة التورنت وتنزيل ملف الفيديو الأكبر مباشرة، ثم إرساله إلى متصفحك كملف MP4 حقيقي جاهز للتشغيل بدون الحاجة لبرامج تورنت على جهازك.
         </p>
       </div>
+
+      {/* Settings Modal / Box */}
+      {showSettings && (
+        <div className="bg-slate-900/95 border border-slate-700/80 rounded-2xl p-5 shadow-2xl space-y-4 animate-apple-in">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center gap-2 text-sm font-bold text-white">
+              <Server className="w-4 h-4 text-emerald-400" />
+              <span>إعدادات الاتصال بمحرك التورنت (Engine Endpoint)</span>
+            </div>
+            <button
+              onClick={() => setShowSettings(false)}
+              className="text-slate-400 hover:text-white text-xs"
+            >
+              إغلاق ✕
+            </button>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-slate-300">
+              عنوان محرك التورنت (Local / Remote Engine URL):
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                dir="ltr"
+                value={customEngineUrl}
+                onChange={(e) => setCustomEngineUrl(e.target.value)}
+                placeholder="http://localhost:3000 أو عنوان السيرفر"
+                className="flex-1 px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500 font-mono"
+              />
+              <button
+                onClick={() => testConnection(customEngineUrl)}
+                disabled={isTestingEngine}
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 transition disabled:opacity-50 cursor-pointer"
+              >
+                {isTestingEngine ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                <span>اتصال وحفظ</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 pt-1 text-[11px] text-slate-400">
+            <span>الخيارات السريعة:</span>
+            <button
+              onClick={() => {
+                setCustomEngineUrl('http://localhost:3000');
+                testConnection('http://localhost:3000');
+              }}
+              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700"
+            >
+              http://localhost:3000 (محلي)
+            </button>
+            <button
+              onClick={() => {
+                setEngineBaseUrl('');
+                setIsLocalConnected(false);
+                setShowSettings(false);
+              }}
+              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700"
+            >
+              الافتراضي (Cloud Proxy)
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Glassmorphic Card */}
       <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
@@ -282,7 +453,7 @@ export function TorrentStudio() {
               بدأ المتصفح تلقائياً بحفظ الفيديو في جهازك. إذا لم يبدأ التنزيل تلقائياً اضغط على الزر أدناه:
             </p>
             <a
-              href={`/api/download/file/${downloadId}`}
+              href={getApiUrl(`/api/download/file/${downloadId}`)}
               download={filename}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition shadow-lg shadow-emerald-600/20"
             >
@@ -292,11 +463,30 @@ export function TorrentStudio() {
           </div>
         )}
 
-        {/* Error Banner */}
+        {/* Error Banner with helpful troubleshooting */}
         {errorMessage && (
-          <div className="mt-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold flex items-center gap-2.5">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{errorMessage}</span>
+          <div className="mt-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold space-y-2">
+            <div className="flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <div className="flex-1 leading-relaxed">{errorMessage}</div>
+            </div>
+            <div className="flex items-center gap-3 pt-2 border-t border-rose-500/20 text-[11px]">
+              <button
+                onClick={() => {
+                  setEngineBaseUrl('http://localhost:3000');
+                  testConnection('http://localhost:3000');
+                }}
+                className="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold"
+              >
+                ربط بالسيرفر المحلي (http://localhost:3000)
+              </button>
+              <button
+                onClick={() => setShowSettings(true)}
+                className="text-rose-300 underline hover:text-white"
+              >
+                تغيير إعدادات السيرفر ⚙️
+              </button>
+            </div>
           </div>
         )}
 
