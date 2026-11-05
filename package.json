@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@webtor/embed-sdk-js": "^0.2.19",
     "clsx": "^2.1.1",
     "framer-motion": "^14.1.0",
     "lucide-react": "^0.475.0",

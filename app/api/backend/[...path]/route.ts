@@ -37,8 +37,8 @@ async function handleProxy(
       cache: 'no-store',
     });
 
-    // If backend returns 404 for Robin (prior to container restart), seamlessly route to Next.js handler
-    if (response.status === 404 && subpath.startsWith('robin')) {
+    // If backend returns 404 for Robin or Torrent routes (prior to container restart), seamlessly route to Next.js handler
+    if (response.status === 404 && (subpath.startsWith('robin') || subpath.startsWith('torrent') || subpath.startsWith('download'))) {
       const internalUrl = new URL(`/api/${subpath}${search}`, request.url);
       return fetch(internalUrl.toString(), {
         method: request.method,

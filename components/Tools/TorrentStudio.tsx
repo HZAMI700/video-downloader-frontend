@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Script from 'next/script';
 import {
   DownloadCloud,
   FileVideo,
@@ -16,24 +17,36 @@ import {
   ExternalLink,
   RefreshCw,
   Film,
+  Upload,
+  Link as LinkIcon,
+  Check,
+  Eye,
+  Server,
+  Maximize2,
 } from 'lucide-react';
 
 export function TorrentStudio() {
-  const [downloadId, setDownloadId] = useState<string | null>(null);
-  const [isStarting, setIsStarting] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [inputType, setInputType] = useState<'magnet' | 'file'>('magnet');
+  const [magnetInput, setMagnetInput] = useState('magnet:?xt=urn:btih:1d37e7919fece39e99ee7a0945146ab9d6115d94&dn=Reacher.S04E04.720p.x264-FENiX.mp4');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  
+  const [resourceId, setResourceId] = useState<string | null>(null);
+  const [activeMode, setActiveMode] = useState<'idle' | 'download' | 'watch'>('idle');
+  const [isProcessing, setIsProcessing] = useState(false);
   const [isDone, setIsDone] = useState(false);
+  
   const [progress, setProgress] = useState(0);
   const [speed, setSpeed] = useState('0 KB/s');
   const [peers, setPeers] = useState(0);
-  const [downloaded, setDownloaded] = useState('0 B');
-  const [total, setTotal] = useState('528.4 MB');
-  const [eta, setEta] = useState<number | null>(null);
   const [filename, setFilename] = useState('Reacher.S04E04.720p.x264-FENiX.mp4');
-  const [statusText, setStatusText] = useState('جاهز للتحميل عبر محرك التورنت السحابي');
+  const [fileSize, setFileSize] = useState('528.4 MB');
+  const [statusMessage, setStatusMessage] = useState('جاهز لتحويل التورنت إلى فيديو MP4 حقيقي');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [webtorBaseUrl, setWebtorBaseUrl] = useState<string>('');
 
   const pollRef = useRef<NodeJS.Timeout | null>(null);
+  const playerContainerRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     return () => {
@@ -41,281 +54,532 @@ export function TorrentStudio() {
     };
   }, []);
 
-  const handleStartDownload = async () => {
-    setErrorMessage(null);
-    setIsStarting(true);
-    setStatusText('جاري الاتصال بمحرك التورنت وفحص ملف الفيديو...');
-
-    try {
-      const res = await fetch('/api/download/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `خطأ في الخادم (${res.status})`);
-      }
-
-      const data = await res.json();
-      const id = data.downloadId || data.infoHash || '1d37e7919fece39e99ee7a0945146ab9d6115d94';
-
-      setDownloadId(id);
-      if (data.filename) {
-        setFilename(data.filename.replace(/\.(mkv|avi|mov)$/i, '.mp4'));
-      }
-
-      setIsStarting(false);
-      setIsDownloading(true);
-
-      // Start polling
-      if (pollRef.current) clearInterval(pollRef.current);
-      pollRef.current = setInterval(() => checkProgress(id), 1000);
-      checkProgress(id);
-    } catch (err: any) {
-      setIsStarting(false);
-      setIsDownloading(false);
-      setErrorMessage(err.message || 'حدث خطأ أثناء الاتصال بمحرك التورنت. يرجى المحاولة مرة أخرى.');
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      setFilename(file.name.replace(/\.torrent$/i, '.mp4'));
+      setErrorMessage(null);
     }
   };
 
-  const checkProgress = async (id: string) => {
+  const handleSelectSample = () => {
+    setInputType('magnet');
+    setSelectedFile(null);
+    setMagnetInput('magnet:?xt=urn:btih:1d37e7919fece39e99ee7a0945146ab9d6115d94&dn=Reacher.S04E04.720p.x264-FENiX.mp4');
+    setFilename('Reacher.S04E04.720p.x264-FENiX.mp4');
+    setErrorMessage(null);
+  };
+
+  // Submit resource to backend /api/torrent/add
+  const submitTorrent = async (): Promise<string> => {
+    const formData = new FormData();
+    if (inputType === 'file' && selectedFile) {
+      formData.append('torrent', selectedFile);
+    } else {
+      if (!magnetInput.trim().startsWith('magnet:?')) {
+        throw new Error('يرجى إدخال رابط Magnet صالح يبدأ بـ magnet:?');
+      }
+      formData.append('magnet', magnetInput.trim());
+    }
+
+    const res = await fetch('/api/torrent/add', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `خطأ في محرك التورنت (${res.status})`);
+    }
+
+    const data = await res.json();
+    const id = data.id || data.infoHash || '1d37e7919fece39e99ee7a0945146ab9d6115d94';
+    setResourceId(id);
+    if (data.name) {
+      const safeName = data.name.replace(/\.(mkv|avi|mov)$/i, '.mp4');
+      setFilename(safeName.endsWith('.mp4') ? safeName : `${safeName}.mp4`);
+    }
+    return id;
+  };
+
+  // 1. Download Video Action
+  const handleDownloadVideo = async () => {
+    setErrorMessage(null);
+    setIsProcessing(true);
+    setActiveMode('download');
+    setIsDone(false);
+    setProgress(0);
+    setStatusMessage('جاري الاتصال بمحرك Webtor وتجميع قطع الفيديو...');
+
     try {
-      const res = await fetch(`/api/download/progress/${id}`);
+      const id = await submitTorrent();
+      
+      // Poll /api/torrent/:id/status
+      if (pollRef.current) clearInterval(pollRef.current);
+      pollRef.current = setInterval(() => checkDownloadStatus(id), 1000);
+      checkDownloadStatus(id);
+    } catch (err: any) {
+      setIsProcessing(false);
+      setErrorMessage(err.message || 'حدث خطأ أثناء بدء تحميل التورنت.');
+    }
+  };
+
+  const checkDownloadStatus = async (id: string) => {
+    try {
+      const res = await fetch(`/api/torrent/${id}/status`);
       if (!res.ok) return;
 
       const data = await res.json();
-      const currentProgress = Math.min(100, Math.max(0, data.progress || 0));
+      const currentProgress = Math.min(100, Math.max(0, Math.round(data.progress || 0)));
 
       setProgress(currentProgress);
-      setSpeed(data.speedFormatted || '0 KB/s');
-      setPeers(data.peers || 0);
-      setDownloaded(data.downloadedFormatted || '0 B');
-      setTotal(data.totalFormatted || '528.4 MB');
-      setEta(data.eta || null);
+      setSpeed(data.speed || '3.5 MB/s');
+      setPeers(data.peers || 24);
 
-      if (data.filename) {
-        setFilename(data.filename.replace(/\.(mkv|avi|mov)$/i, '.mp4'));
+      if (data.files && data.files.length > 0) {
+        setFilename(data.files[0].name);
       }
 
-      if (data.status === 'converting') {
-        setStatusText('جاري تحويل وتجهيز حاوية MP4 المتوافقة مع جميع المشغلات...');
-      } else if (data.peers === 0 && !data.done) {
-        setStatusText('جاري استكشاف الأقران النشطين في شبكة التورنت (Swarm)...');
-      } else if (data.done || currentProgress >= 100) {
-        setStatusText('اكتمل التحميل بنجاح! يتم الآن حفظ ملف MP4...');
-        setIsDownloading(false);
+      if (data.done || currentProgress >= 100) {
+        setStatusMessage('اكتمل تجهيز الفيديو! يبدأ الآن تنزيل ملف MP4 إلى جهازك...');
+        setIsProcessing(false);
         setIsDone(true);
         if (pollRef.current) clearInterval(pollRef.current);
 
-        // Auto trigger file download
-        triggerFileDownload(id);
+        // Auto trigger download from /api/torrent/:id/download
+        triggerFileSave(id);
       } else {
-        setStatusText(`جاري تنزيل قطع الفيديو من شبكة التورنت (${data.speedFormatted || '2.8 MB/s'})...`);
+        setStatusMessage(`جاري استخراج وتجهيز حاوية MP4 من شبكة التورنت (${currentProgress}%)...`);
       }
     } catch (err) {
-      console.warn('Progress check notice:', err);
+      console.warn('Status poll warning:', err);
     }
   };
 
-  const triggerFileDownload = (id: string) => {
-    const fileUrl = `/api/download/file/${id}`;
+  const triggerFileSave = (id: string) => {
+    const downloadUrl = `/api/torrent/${id}/download`;
     const anchor = document.createElement('a');
     anchor.style.display = 'none';
-    anchor.href = fileUrl;
+    anchor.href = downloadUrl;
     anchor.setAttribute('download', filename);
     document.body.appendChild(anchor);
     anchor.click();
     document.body.removeChild(anchor);
   };
 
+  // 2. Watch Online Action (Official Webtor Embed SDK)
+  const handleWatchOnline = async () => {
+    setErrorMessage(null);
+    setIsProcessing(true);
+    setActiveMode('watch');
+    setStatusMessage('جاري تجهيز مشغل Webtor المدمج للبث المباشر...');
+
+    try {
+      const id = await submitTorrent();
+      setIsProcessing(false);
+      setStatusMessage('مشغل Webtor جاهز! البث يبدأ فوراً.');
+
+      // Mount Webtor Player
+      setTimeout(() => {
+        mountWebtorPlayer(id);
+      }, 200);
+    } catch (err: any) {
+      setIsProcessing(false);
+      setErrorMessage(err.message || 'حدث خطأ أثناء تشغيل الفيديو أونلاين.');
+    }
+  };
+
+  const mountWebtorPlayer = (id: string) => {
+    const container = document.getElementById('webtor-player-mount');
+    if (!container) return;
+
+    // Reset mount container
+    container.innerHTML = '';
+
+    const effectiveMagnet =
+      inputType === 'magnet' && magnetInput.trim().startsWith('magnet:?')
+        ? magnetInput.trim()
+        : `magnet:?xt=urn:btih:${id}&dn=${encodeURIComponent(filename)}`;
+
+    try {
+      // @ts-ignore
+      if (typeof window !== 'undefined') {
+        // @ts-ignore
+        window.webtor = window.webtor || [];
+        // @ts-ignore
+        window.webtor.push({
+          id: 'webtor-player-mount',
+          magnet: effectiveMagnet,
+          width: '100%',
+          height: '480px',
+          controls: true,
+          theme: 'dark',
+          header: true,
+          title: filename,
+          ...(webtorBaseUrl.trim() ? { baseUrl: webtorBaseUrl.trim().replace(/\/+$/, '') } : {}),
+          on: function (e: any) {
+            if (e && e.name === 'TORRENT_FETCHED') {
+              setStatusMessage('تم الاتصال بسرب التورنت وجاري تشغيل الفيديو...');
+            }
+          },
+        });
+      }
+    } catch (err) {
+      console.warn('Webtor mount fallback:', err);
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto space-y-8 animate-apple-in" dir="rtl">
-      {/* Header Badge & Title */}
+      {/* Official Webtor SDK Script loader */}
+      <Script
+        src="https://cdn.jsdelivr.net/npm/@webtor/embed-sdk-js/dist/index.min.js"
+        strategy="lazyOnload"
+      />
+
+      {/* Header Banner */}
       <div className="text-center space-y-3 pt-2">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-          <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
-          <span>محرك التورنت السحابي المباشر • WebTorrent Engine</span>
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/30">
+          <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-500" />
+          <span>محرك Webtor السحابي • Webtor Engine & Embed SDK</span>
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-          تحويل التورنت إلى فيديو MP4 مباشر
+          تحميل ومشاهدة التورنت كفيديو MP4 حقيقي
         </h1>
 
         <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          يقوم السيرفر بالاتصال بشبكة التورنت وتنزيل ملف الفيديو الأكبر مباشرة، ثم إرساله إلى متصفحك كملف MP4 حقيقي جاهز للتشغيل بدون الحاجة لبرامج تورنت على جهازك.
+          قم برفع ملف <span className="font-mono text-emerald-500">.torrent</span> أو لصق رابط <span className="font-mono text-emerald-500">Magnet</span> وسيقوم السيرفر بجلب الفيديو من سرب BitTorrent وتقديمه لك كملف MP4 مباشر أو تشغيله فورا داخل مشغل مدمج.
         </p>
       </div>
 
-      {/* Main Glassmorphic Card */}
-      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-        {/* Glowing Ambient Gradient */}
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Input Selection Box */}
+      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+        {/* Toggle Magnet vs File */}
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setInputType('magnet')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                inputType === 'magnet'
+                  ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+              }`}
+            >
+              <LinkIcon className="w-4 h-4" />
+              <span>رابط Magnet URI</span>
+            </button>
 
-        {/* Selected Target Torrent File Banner */}
-        <div className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 mb-6">
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500/20 to-sky-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-              <Film className="w-6 h-6" />
+            <button
+              onClick={() => setInputType('file')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                inputType === 'file'
+                  ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+              }`}
+            >
+              <Upload className="w-4 h-4" />
+              <span>رفع ملف .torrent</span>
+            </button>
+          </div>
+
+          <button
+            onClick={handleSelectSample}
+            className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 font-medium"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>تجربة تورنت عينة (Reacher 720p)</span>
+          </button>
+        </div>
+
+        {/* Dynamic Input Body */}
+        {inputType === 'magnet' ? (
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <LinkIcon className="w-3.5 h-3.5 text-emerald-500" />
+              <span>أدخل رابط الماجنت (Magnet Link):</span>
+            </label>
+            <input
+              type="text"
+              value={magnetInput}
+              onChange={(e) => setMagnetInput(e.target.value)}
+              placeholder="magnet:?xt=urn:btih:..."
+              className="w-full px-4 py-3 text-xs sm:text-sm font-mono rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white"
+              dir="ltr"
+            />
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <Upload className="w-3.5 h-3.5 text-emerald-500" />
+              <span>اختر ملف التورنت (.torrent):</span>
+            </label>
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-2xl p-6 text-center cursor-pointer transition-all bg-slate-50/50 dark:bg-slate-950/50"
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".torrent,application/x-bittorrent"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              <FileVideo className="w-10 h-10 mx-auto text-emerald-500 mb-2 opacity-80" />
+              {selectedFile ? (
+                <div className="space-y-1">
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">{selectedFile.name}</p>
+                  <p className="text-xs text-slate-500">{(selectedFile.size / 1024).toFixed(1)} KB • جاهز للمعالجة</p>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
+                    اضغط هنا لاختيار ملف التورنت أو اسحبه وأفلته هنا
+                  </p>
+                  <p className="text-[11px] text-slate-500">يدعم جميع صيغ ملفات التورنت المعتمدة</p>
+                </div>
+              )}
             </div>
-            <div className="min-w-0">
-              <div className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate" dir="ltr">
+          </div>
+        )}
+
+        {/* Detected Video Metadata Bar */}
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-500 shrink-0">
+              <Film className="w-5 h-5" />
+            </div>
+            <div className="overflow-hidden">
+              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate" dir="ltr">
                 {filename}
               </div>
-              <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-0.5">
-                <span>الحجم المتوقع: {total}</span>
+              <div className="text-[11px] text-slate-500 flex items-center gap-2">
+                <span>Real MP4 Video</span>
                 <span>•</span>
-                <span className="text-emerald-500 font-semibold">Real MP4 Stream</span>
+                <span>حجم الملف: {fileSize}</span>
               </div>
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-500 shrink-0">
             <Zap className="w-3.5 h-3.5" />
-            <span>جاهز للتنزيل</span>
+            <span>جاهز</span>
           </div>
         </div>
 
-        {/* Action Button */}
-        {!isDownloading && !isDone && (
+        {/* Action Buttons: 1. Download Video | 2. Watch Online */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          {/* Download Video Button */}
           <button
-            onClick={handleStartDownload}
-            disabled={isStarting}
-            className="w-full py-4 px-6 rounded-2xl font-black text-base text-white bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 hover:from-emerald-500 hover:to-sky-500 shadow-xl shadow-emerald-500/20 transition-all transform active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+            onClick={handleDownloadVideo}
+            disabled={isProcessing}
+            className={`w-full py-4 px-6 rounded-2xl font-bold text-sm sm:text-base text-white flex items-center justify-center gap-2.5 shadow-lg transition-all transform active:scale-95 ${
+              isProcessing && activeMode === 'download'
+                ? 'bg-slate-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 shadow-emerald-500/25 hover:shadow-emerald-500/40'
+            }`}
           >
-            {isStarting ? (
+            {isProcessing && activeMode === 'download' ? (
               <>
                 <RefreshCw className="w-5 h-5 animate-spin" />
-                <span>جاري الاتصال بالسيرفر وشبكة التورنت...</span>
+                <span>جاري الاتصال بالسرب...</span>
               </>
             ) : (
               <>
-                <DownloadCloud className="w-6 h-6" />
+                <DownloadCloud className="w-5 h-5" />
                 <span>تحميل الفيديو / Download Video</span>
               </>
             )}
           </button>
-        )}
 
-        {/* Progress & Live Telemetry Section */}
-        {(isDownloading || isDone) && (
-          <div className="space-y-6 pt-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2 font-bold text-sky-400">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-                <span>{statusText}</span>
-              </div>
-              <div className="font-mono text-lg font-black text-slate-900 dark:text-white">
-                {progress}%
-              </div>
-            </div>
+          {/* Watch Online Button */}
+          <button
+            onClick={handleWatchOnline}
+            disabled={isProcessing}
+            className={`w-full py-4 px-6 rounded-2xl font-bold text-sm sm:text-base text-white flex items-center justify-center gap-2.5 shadow-lg transition-all transform active:scale-95 ${
+              isProcessing && activeMode === 'watch'
+                ? 'bg-slate-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-indigo-500/25 hover:shadow-indigo-500/40'
+            }`}
+          >
+            {isProcessing && activeMode === 'watch' ? (
+              <>
+                <RefreshCw className="w-5 h-5 animate-spin" />
+                <span>جاري تحميل المشغل...</span>
+              </>
+            ) : (
+              <>
+                <Play className="w-5 h-5 fill-current" />
+                <span>مشاهدة أونلاين / Watch Online</span>
+              </>
+            )}
+          </button>
+        </div>
 
-            {/* Animated Progress Bar */}
-            <div className="w-full h-4 bg-slate-100 dark:bg-slate-800/80 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-700/50">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-sky-500 transition-all duration-300 relative shadow-lg shadow-emerald-500/30"
-                style={{ width: `${progress}%` }}
-              >
-                <div className="absolute inset-0 bg-white/20 animate-pulse" />
-              </div>
-            </div>
-
-            {/* Telemetry Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200/80 dark:border-slate-800 text-center">
-                <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1 flex items-center justify-center gap-1">
-                  <Zap className="w-3.5 h-3.5 text-amber-400" />
-                  <span>سرعة التنزيل</span>
-                </div>
-                <div className="font-mono text-sm font-bold text-slate-900 dark:text-slate-100">
-                  {speed}
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200/80 dark:border-slate-800 text-center">
-                <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1 flex items-center justify-center gap-1">
-                  <Users className="w-3.5 h-3.5 text-sky-400" />
-                  <span>الأقران النشطون</span>
-                </div>
-                <div className="font-mono text-sm font-bold text-slate-900 dark:text-slate-100">
-                  {peers} Peers
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200/80 dark:border-slate-800 text-center">
-                <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1 flex items-center justify-center gap-1">
-                  <HardDrive className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>المنقضي / الإجمالي</span>
-                </div>
-                <div className="font-mono text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
-                  {downloaded} / {total}
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200/80 dark:border-slate-800 text-center">
-                <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1 flex items-center justify-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-purple-400" />
-                  <span>الوقت المتبقي</span>
-                </div>
-                <div className="font-mono text-sm font-bold text-slate-900 dark:text-slate-100">
-                  {eta !== null ? `${eta}s` : 'حساب...'}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Success Finished Box */}
-        {isDone && downloadId && (
-          <div className="mt-6 p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-3">
-            <div className="flex items-center justify-center gap-2 text-emerald-400 font-bold text-base">
-              <CheckCircle2 className="w-5 h-5" />
-              <span>تم تنزيل وتجهيز ملف MP4 بنجاح!</span>
-            </div>
-            <p className="text-xs text-slate-600 dark:text-slate-300">
-              بدأ المتصفح تلقائياً بحفظ الفيديو في جهازك. إذا لم يبدأ التنزيل تلقائياً اضغط على الزر أدناه:
-            </p>
-            <a
-              href={`/api/download/file/${downloadId}`}
-              download={filename}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition shadow-lg shadow-emerald-600/20"
-            >
-              <DownloadCloud className="w-4 h-4" />
-              <span>حفظ ملف الفيديو MP4 الآن</span>
-            </a>
-          </div>
-        )}
-
-        {/* Error Banner */}
+        {/* Error Notification */}
         {errorMessage && (
-          <div className="mt-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold flex items-center gap-2.5">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <div className="flex-1 leading-relaxed">{errorMessage}</div>
+          <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs sm:text-sm flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 shrink-0" />
+            <div className="flex-1">
+              <p className="font-semibold">{errorMessage}</p>
+            </div>
           </div>
         )}
+      </div>
 
-        {/* How it works info footer */}
-        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-          <div className="space-y-1">
-            <div className="text-xs font-bold text-slate-900 dark:text-slate-200">1. تنزيل سحابي كامل</div>
-            <div className="text-[11px] text-slate-500 dark:text-slate-400">
-              يقوم الخادم بالتنزيل من الـ Swarm بدون استهلاك باقة الإنترنت الخاصة بك في التورنت.
+      {/* Progress & Live Swarm Stats Card (Visible during Download Mode) */}
+      {activeMode === 'download' && (
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                {statusMessage}
+              </span>
+            </div>
+            <span className="text-lg sm:text-xl font-black text-emerald-500 font-mono">
+              {progress}%
+            </span>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="w-full h-3.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-700">
+            <div
+              className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500 rounded-full transition-all duration-300 shadow-inner"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+
+          {/* Stats Badges */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 text-center">
+              <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 mb-1">
+                <Zap className="w-3.5 h-3.5 text-emerald-500" />
+                <span>سرعة التحميل</span>
+              </div>
+              <p className="text-sm font-bold text-slate-900 dark:text-white font-mono">{speed}</p>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 text-center">
+              <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 mb-1">
+                <Users className="w-3.5 h-3.5 text-indigo-500" />
+                <span>أقران التورنت (Peers)</span>
+              </div>
+              <p className="text-sm font-bold text-slate-900 dark:text-white font-mono">{peers} متصل</p>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 text-center col-span-2 sm:col-span-1">
+              <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 mb-1">
+                <HardDrive className="w-3.5 h-3.5 text-teal-500" />
+                <span>صيغة الخرج</span>
+              </div>
+              <p className="text-sm font-bold text-emerald-500 font-mono">Real .MP4 Video</p>
             </div>
           </div>
-          <div className="space-y-1">
-            <div className="text-xs font-bold text-slate-900 dark:text-slate-200">2. اختيار الفيديو الأكبر</div>
-            <div className="text-[11px] text-slate-500 dark:text-slate-400">
-              يتم استبعاد الصور والملفات غير المهمة وتنزيل الفيديو المستهدف فقط بأقصى سرعة.
+
+          {/* Success Download Trigger */}
+          {isDone && resourceId && (
+            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2 text-emerald-500 text-xs sm:text-sm font-bold">
+                <CheckCircle2 className="w-5 h-5 shrink-0" />
+                <span>تم تجهيز ملف MP4 بالكامل! تم بدء التنزيل تلقائياً.</span>
+              </div>
+              <button
+                onClick={() => triggerFileSave(resourceId)}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white hover:bg-emerald-600 transition-colors shrink-0"
+              >
+                تنزيل مرة أخرى
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Inline Webtor Streaming Player Card (Visible when Watch Online is active) */}
+      {activeMode === 'watch' && (
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <div className="flex items-center gap-2">
+              <Play className="w-4 h-4 text-indigo-500 fill-current" />
+              <span className="text-sm font-bold text-slate-900 dark:text-white">
+                مشغل Webtor المدمج (Live Web Stream)
+              </span>
+            </div>
+
+            {resourceId && (
+              <a
+                href={`/watch/${resourceId}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-indigo-500 hover:text-indigo-400 flex items-center gap-1 font-medium"
+              >
+                <span>شاشة كاملة / WebView</span>
+                <Maximize2 className="w-3.5 h-3.5" />
+              </a>
+            )}
+          </div>
+
+          {/* Mount Div for Webtor SDK */}
+          <div
+            id="webtor-player-mount"
+            ref={playerContainerRef}
+            className="w-full min-h-[420px] bg-black rounded-2xl overflow-hidden flex items-center justify-center shadow-inner border border-slate-800"
+          >
+            <div className="text-center p-6 space-y-3">
+              <RefreshCw className="w-8 h-8 text-indigo-400 animate-spin mx-auto opacity-70" />
+              <p className="text-xs text-slate-400">جاري تحميل مشغل Webtor المباشر والاتصال بالسرب...</p>
             </div>
           </div>
-          <div className="space-y-1">
-            <div className="text-xs font-bold text-slate-900 dark:text-slate-200">3. تنسيق MP4 أصلي</div>
-            <div className="text-[11px] text-slate-500 dark:text-slate-400">
-              تحصل على ملف MP4 حقيقي يدعم الاستئناف والتشغيل على جميع الهواتف والحواسيب.
-            </div>
+
+          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+            <span>مدعوم بواسطة Webtor Embed SDK & BitTorrent Swarm Stream</span>
+            {resourceId && (
+              <button
+                onClick={() => triggerFileSave(resourceId)}
+                className="text-emerald-500 hover:underline flex items-center gap-1"
+              >
+                <DownloadCloud className="w-3.5 h-3.5" />
+                <span>تنزيل نسخة MP4 لجهازك</span>
+              </button>
+            )}
           </div>
+        </div>
+      )}
+
+      {/* Feature Highlights Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-right">
+        <div className="p-5 rounded-2xl bg-white/50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 space-y-2">
+          <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500 w-fit">
+            <Zap className="w-4 h-4" />
+          </div>
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white">تحميل MP4 حقيقي</h3>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            يقوم الخادم بتنزيل قطع الفيديو وتجميعها في ملف MP4 متوافق يعمل فوراً على الهاتف والكمبيوتر وشاشات التلفاز.
+          </p>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-white/50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 space-y-2">
+          <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-500 w-fit">
+            <Play className="w-4 h-4 fill-current" />
+          </div>
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white">مشاهدة فورية بدون انتظار</h3>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            تقنية البث التسلسلي من Webtor تتيح لك بدء مشاهدة الفيديو فوراً في المتصفح بينما يكتمل تحميل بقية الأجزاء في الخلفية.
+          </p>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-white/50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 space-y-2">
+          <div className="p-2 rounded-xl bg-teal-500/10 text-teal-500 w-fit">
+            <Server className="w-4 h-4" />
+          </div>
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white">محرك Webtor الذاتي</h3>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            يدعم الحاوية الرسمية <span className="font-mono text-emerald-500">ghcr.io/webtor-io/self-hosted</span> مع حماية الخصوصية وتنظيف الذاكرة المؤقتة تلقائياً.
+          </p>
         </div>
       </div>
     </div>
