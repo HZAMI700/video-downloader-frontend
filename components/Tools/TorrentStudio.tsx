@@ -25,6 +25,7 @@ import {
   Maximize2,
   FolderArchive,
   ArrowRight,
+  Copy,
 } from 'lucide-react';
 
 export function TorrentStudio() {
@@ -32,9 +33,10 @@ export function TorrentStudio() {
   const [magnetInput, setMagnetInput] = useState('magnet:?xt=urn:btih:1d37e7919fece39e99ee7a0945146ab9d6115d94&dn=Reacher.S04E04.720p.x264-FENiX.mp4');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
-  const [resourceId, setResourceId] = useState<string | null>('1d37e7919fece39e99ee7a0945146ab9d6115d94');
+  const [resourceId, setResourceId] = useState<string>('1d37e7919fece39e99ee7a0945146ab9d6115d94');
   const [activeMode, setActiveMode] = useState<'idle' | 'download' | 'watch'>('idle');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [copied, setCopied] = useState(false);
   
   const [filename, setFilename] = useState('Reacher.S04E04.720p.x264-FENiX.mp4');
   const [fileSize, setFileSize] = useState('554.9 MB');
@@ -43,7 +45,6 @@ export function TorrentStudio() {
   const [webtorBaseUrl, setWebtorBaseUrl] = useState<string>('');
 
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
-  const downloadContainerRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,70 +98,29 @@ export function TorrentStudio() {
     return id;
   };
 
-  // 1. Download Video Action (Mounts Webtor Download Engine)
+  // 1. Download Video Action
   const handleDownloadVideo = async () => {
     setErrorMessage(null);
     setIsProcessing(true);
     setActiveMode('download');
-    setStatusMessage('جاري الاتصال بمحرك Webtor وتجهيز خيارات التحميل الحقيقية...');
+    setStatusMessage('جاري الاتصال بسرب Webtor وفتح بوابة التنزيل المباشر للملف الكامل...');
 
     try {
       const id = await submitTorrent();
       setIsProcessing(false);
-      setStatusMessage('مركز التحميل جاهز! يمكنك حفظ ملف الفيديو الأصلي بالكامل.');
+      setStatusMessage(`تم تجهيز رابط التحميل للملف الأصلي بالكامل (${fileSize})!`);
 
-      // Mount Webtor Downloader
+      // Trigger direct download portal in a new tab so user gets the real file immediately
+      const downloadPortalUrl = `https://webtor.io/#/${id}`;
+      window.open(downloadPortalUrl, '_blank');
+
+      // Mount the active video player container as well so user has inline controls and download
       setTimeout(() => {
-        mountWebtorDownloader(id);
-      }, 250);
+        mountWebtorPlayer(id);
+      }, 200);
     } catch (err: any) {
       setIsProcessing(false);
       setErrorMessage(err.message || 'حدث خطأ أثناء بدء تحميل التورنت.');
-    }
-  };
-
-  const mountWebtorDownloader = (id: string) => {
-    const container = document.getElementById('webtor-download-mount');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    const effectiveMagnet =
-      inputType === 'magnet' && magnetInput.trim().startsWith('magnet:?')
-        ? magnetInput.trim()
-        : `magnet:?xt=urn:btih:${id}&dn=${encodeURIComponent(filename)}`;
-
-    try {
-      // @ts-ignore
-      if (typeof window !== 'undefined') {
-        // @ts-ignore
-        window.webtor = window.webtor || [];
-        // @ts-ignore
-        window.webtor.push({
-          id: 'webtor-download-mount',
-          magnet: effectiveMagnet,
-          mode: 'download',
-          width: '100%',
-          height: '420px',
-          header: true,
-          title: filename,
-          theme: 'dark',
-          ...(webtorBaseUrl.trim() ? { baseUrl: webtorBaseUrl.trim().replace(/\/+$/, '') } : {}),
-          on: function (e: any) {
-            if (e && e.name === 'TORRENT_FETCHED') {
-              setStatusMessage('تم استكشاف سرب التورنت وتجهيز الملف الحقيقي للتحميل!');
-              if (e.data && e.data.files && e.data.files.length > 0) {
-                const largest = e.data.files.slice().sort((a: any, b: any) => (b.length || 0) - (a.length || 0))[0];
-                if (largest && largest.length) {
-                  setFileSize(`${(largest.length / (1024 * 1024)).toFixed(1)} MB`);
-                }
-              }
-            }
-          },
-        });
-      }
-    } catch (err) {
-      console.warn('Webtor download mount notice:', err);
     }
   };
 
@@ -179,7 +139,7 @@ export function TorrentStudio() {
       // Mount Webtor Player
       setTimeout(() => {
         mountWebtorPlayer(id);
-      }, 250);
+      }, 200);
     } catch (err: any) {
       setIsProcessing(false);
       setErrorMessage(err.message || 'حدث خطأ أثناء تشغيل الفيديو أونلاين.');
@@ -187,7 +147,8 @@ export function TorrentStudio() {
   };
 
   const mountWebtorPlayer = (id: string) => {
-    const container = document.getElementById('webtor-player-mount');
+    const mountId = activeMode === 'download' ? 'webtor-download-player-mount' : 'webtor-player-mount';
+    const container = document.getElementById(mountId);
     if (!container) return;
 
     container.innerHTML = '';
@@ -204,10 +165,10 @@ export function TorrentStudio() {
         window.webtor = window.webtor || [];
         // @ts-ignore
         window.webtor.push({
-          id: 'webtor-player-mount',
+          id: mountId,
           magnet: effectiveMagnet,
           width: '100%',
-          height: '480px',
+          height: '460px',
           controls: true,
           theme: 'dark',
           header: true,
@@ -229,6 +190,17 @@ export function TorrentStudio() {
     } catch (err) {
       console.warn('Webtor mount notice:', err);
     }
+  };
+
+  const handleCopyMagnet = () => {
+    const effectiveMagnet =
+      inputType === 'magnet' && magnetInput.trim().startsWith('magnet:?')
+        ? magnetInput.trim()
+        : `magnet:?xt=urn:btih:${resourceId}&dn=${encodeURIComponent(filename)}`;
+
+    navigator.clipboard.writeText(effectiveMagnet);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const directWebtorUrl = resourceId ? `https://webtor.io/#/${resourceId}` : 'https://webtor.io';
@@ -253,7 +225,7 @@ export function TorrentStudio() {
         </h1>
 
         <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          قم برفع ملف <span className="font-mono text-emerald-500">.torrent</span> أو لصق رابط <span className="font-mono text-emerald-500">Magnet</span> وسيقوم محرك Webtor بسحب أجزاء الفيديو من سرب BitTorrent وتقديم ملف الـ MP4 الأصلي كاملاً (بحجمه الكامل) للتحميل أو المشاهدة الفورية.
+          قم برفع ملف <span className="font-mono text-emerald-500">.torrent</span> أو لصق رابط <span className="font-mono text-emerald-500">Magnet</span> وسيقوم محرك Webtor السحابي بجلب أجزاء الفيديو من سرب BitTorrent وتقديم ملف الـ MP4 الأصلي كاملاً بحجمه الحقيقي الكامل للتحميل أو المشاهدة الفورية.
         </p>
       </div>
 
@@ -386,7 +358,7 @@ export function TorrentStudio() {
             {isProcessing && activeMode === 'download' ? (
               <>
                 <RefreshCw className="w-5 h-5 animate-spin" />
-                <span>جاري الاتصال بمحرك التحميل...</span>
+                <span>جاري فتح بوابة التحميل...</span>
               </>
             ) : (
               <>
@@ -431,73 +403,75 @@ export function TorrentStudio() {
         )}
       </div>
 
-      {/* 1. Webtor Download Engine Card (Visible when Download Video is clicked) */}
+      {/* 1. Download Confirmation & Stream Card (Visible when Download Video is clicked) */}
       {activeMode === 'download' && (
         <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-            <div className="flex items-center gap-2">
-              <DownloadCloud className="w-5 h-5 text-emerald-500" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-500 shrink-0">
+                <DownloadCloud className="w-6 h-6" />
+              </div>
               <div>
-                <span className="text-sm font-bold text-slate-900 dark:text-white block">
-                  مركز تحميل الفيديو من سرب Webtor الحقيقي
+                <span className="text-base font-bold text-slate-900 dark:text-white block">
+                  تحميل فيديو MP4 الأصلي الكامل
                 </span>
-                <span className="text-[11px] text-slate-500">
-                  الحجم الأصلي: <strong className="text-emerald-500">{fileSize}</strong> • ملف MP4 حقيقي متكامل
+                <span className="text-xs text-slate-500">
+                  الحجم الحقيقي: <strong className="text-emerald-500 font-mono">{fileSize}</strong> • جودة عالية كاملة بدون ضغط
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* Direct Action Links */}
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <a
                 href={directWebtorUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-emerald-500/30"
+                className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md shadow-emerald-600/25"
               >
-                <span>فتح صفحة التحميل المباشر</span>
+                <DownloadCloud className="w-4 h-4" />
+                <span>تنزيل الملف كاملاً ({fileSize})</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
 
               <button
-                onClick={handleWatchOnline}
-                className="px-3 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-500 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                onClick={handleCopyMagnet}
+                className="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium flex items-center gap-1.5 transition-colors"
+                title="نسخ رابط الماجنت"
               >
-                <Play className="w-3.5 h-3.5 fill-current" />
-                <span>مشاهدة أونلاين</span>
+                {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                <span>{copied ? 'تم النسخ' : 'نسخ Magnet'}</span>
               </button>
             </div>
           </div>
 
-          {/* Mount Div for Webtor Download SDK */}
-          <div
-            id="webtor-download-mount"
-            ref={downloadContainerRef}
-            className="w-full min-h-[380px] bg-slate-950 rounded-2xl overflow-hidden flex items-center justify-center shadow-inner border border-slate-800"
-          >
-            <div className="text-center p-6 space-y-3">
-              <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto opacity-70" />
-              <p className="text-xs text-slate-400">
-                جاري الاتصال بسرب BitTorrent وتحضير روابط تنزيل الفيديو الكامل ({fileSize})...
+          {/* Status Alert */}
+          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-3 text-xs sm:text-sm text-emerald-700 dark:text-emerald-400">
+            <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-500" />
+            <div>
+              <p className="font-bold">تم فتح بوابة التحميل السحابية للملف الكامل بنجاح في تبويب جديد!</p>
+              <p className="text-[11px] text-emerald-600/80 dark:text-emerald-400/80 mt-0.5">
+                إذا لم يبدأ التحميل تلقائياً، اضغط على زر "تنزيل الملف كاملاً" أعلاه أو استخدم أيقونة التحميل في أعلى المشغل أدناه.
               </p>
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span>
-                يقوم محرك Webtor بتحميل الفيديو كاملاً ({fileSize}) مباشرة من الأقران بدون أي اقتطاع أو ضغط ملفات وهمي.
-              </span>
+          {/* Mount Div for Webtor Video Stream & Player Controls */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 px-1">
+              <span>المشغل المدمج جاهز للبث المباشر والتحميل:</span>
+              <span className="font-mono text-emerald-500">{filename}</span>
             </div>
-            <a
-              href={directWebtorUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-emerald-600 dark:text-emerald-400 hover:underline font-bold shrink-0 flex items-center gap-1"
+
+            <div
+              id="webtor-download-player-mount"
+              className="w-full min-h-[440px] bg-black rounded-2xl overflow-hidden flex items-center justify-center shadow-inner border border-slate-800"
             >
-              <span>تحميل فوري عبر بوابة Webtor السحابية</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </a>
+              <div className="text-center p-6 space-y-3">
+                <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto opacity-70" />
+                <p className="text-xs text-slate-400">جاري الاتصال بسرب BitTorrent وتحميل المشغل المباشر...</p>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -514,13 +488,16 @@ export function TorrentStudio() {
             </div>
 
             <div className="flex items-center gap-2">
-              <button
-                onClick={handleDownloadVideo}
+              <a
+                href={directWebtorUrl}
+                target="_blank"
+                rel="noreferrer"
                 className="text-xs text-emerald-500 hover:text-emerald-400 flex items-center gap-1 font-semibold px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20"
               >
                 <DownloadCloud className="w-3.5 h-3.5" />
                 <span>تحميل الملف الكامل ({fileSize})</span>
-              </button>
+                <ExternalLink className="w-3 h-3" />
+              </a>
 
               {resourceId && (
                 <a
@@ -554,7 +531,7 @@ export function TorrentStudio() {
               href={directWebtorUrl}
               target="_blank"
               rel="noreferrer"
-              className="text-emerald-500 hover:underline flex items-center gap-1"
+              className="text-emerald-500 hover:underline flex items-center gap-1 font-medium"
             >
               <DownloadCloud className="w-3.5 h-3.5" />
               <span>تحميل مباشر للملف الأصلي ({fileSize})</span>
@@ -589,9 +566,9 @@ export function TorrentStudio() {
           <div className="p-2 rounded-xl bg-teal-500/10 text-teal-500 w-fit">
             <Server className="w-4 h-4" />
           </div>
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white">محرك Webtor الذاتي</h3>
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white">محرك Webtor السحابي</h3>
           <p className="text-xs text-slate-500 leading-relaxed">
-            يدعم الحاوية الرسمية <span className="font-mono text-emerald-500">ghcr.io/webtor-io/self-hosted</span> مع حماية الخصوصية وتنظيف الذاكرة المؤقتة تلقائياً.
+            يعمل عبر محرك Webtor السحابي الموثوق مع إمكانية التحميل المباشر وحفظ الملف بجميع اللغات والترجمات.
           </p>
         </div>
       </div>

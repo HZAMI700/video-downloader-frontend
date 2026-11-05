@@ -78,11 +78,12 @@ export function WatchPlayerClient({ id }: WatchPlayerClientProps) {
         <div className="flex items-center gap-3">
           <a
             href={`/api/torrent/${id}/download`}
-            download
+            target="_blank"
+            rel="noreferrer"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-all shadow-md shadow-emerald-600/20"
           >
             <DownloadCloud className="w-3.5 h-3.5" />
-            <span>تحميل MP4</span>
+            <span>تحميل MP4 الكامل</span>
           </a>
         </div>
       </header>
