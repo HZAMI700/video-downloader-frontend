@@ -72,6 +72,12 @@ export function TVPulsarLandingClient() {
   };
 
   const techSpecs = [
+    {
+      label: 'أيقونة التطبيق الرسمية',
+      value: 'Pulsar TV HD Icon',
+      hasIcon: true,
+      sub: 'شعار التطبيق الرسمي للإصدار 2.0.0',
+    },
     { label: 'اسم التطبيق', value: 'TVPulsar • Live Sports, Channels & Movies', sub: 'تي في بولسار' },
     { label: 'رقم الإصدار (Version Name)', value: '2.0.0', sub: 'أحدث إصدار رسمي مستقر' },
     { label: 'رمز البناء (Version Code)', value: '20', sub: 'Build #20' },
@@ -181,10 +187,12 @@ export function TVPulsarLandingClient() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 p-0.5 shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-                <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                  <Tv className="w-5 h-5 text-emerald-400" />
-                </div>
+              <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-700/80 shadow-lg shadow-black/40 group-hover:scale-105 transition-transform bg-black flex-shrink-0">
+                <img
+                  src="/tvpulsar-icon.png"
+                  alt="TVPulsar Icon"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -222,9 +230,23 @@ export function TVPulsarLandingClient() {
       <main className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-14 space-y-16">
         {/* Hero Section */}
         <section className="text-center space-y-6 pt-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm animate-pulse">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-            <span>إصدار رسمي معتمد • نوفمبر 2026 • تحديث رئيسي Version 2.0.0</span>
+          {/* App Official Icon Showcase */}
+          <div className="relative inline-block mb-1 group">
+            <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-[28px] blur-xl opacity-35 group-hover:opacity-60 transition duration-300" />
+            <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-[24px] overflow-hidden border-2 border-slate-700/80 shadow-2xl bg-black">
+              <img
+                src="/tvpulsar-icon.png"
+                alt="TVPulsar App Icon v2.0.0"
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm animate-pulse">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <span>إصدار رسمي معتمد • نوفمبر 2026 • تحديث رئيسي Version 2.0.0</span>
+            </div>
           </div>
 
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-[1.25] sm:leading-[1.2]">
@@ -243,10 +265,12 @@ export function TVPulsarLandingClient() {
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-slate-800/80 text-right">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-cyan-600 p-0.5 shadow-lg shadow-emerald-500/30 flex-shrink-0">
-                  <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-                    <Tv className="w-7 h-7 text-emerald-400" />
-                  </div>
+                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden border border-slate-700/80 shadow-xl shadow-black/50 flex-shrink-0 bg-black">
+                  <img
+                    src="/tvpulsar-icon.png"
+                    alt="TVPulsar App Icon"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg text-white">TVPulsar • Version 2.0.0</h3>
@@ -395,16 +419,29 @@ export function TVPulsarLandingClient() {
                     <span className="text-xs sm:text-sm font-bold text-slate-300">{spec.label}</span>
                   </div>
                   <div className="sm:w-2/3 flex flex-col sm:items-start text-right">
-                    <span
-                      className={`text-xs sm:text-sm font-semibold text-white ${
-                        spec.isMono ? 'font-mono text-emerald-400' : ''
-                      }`}
-                    >
-                      {spec.value}
-                    </span>
-                    {spec.sub && (
-                      <span className="text-[11px] text-slate-400 mt-0.5">{spec.sub}</span>
-                    )}
+                    <div className="flex items-center gap-3">
+                      {spec.hasIcon && (
+                        <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-700 bg-black flex-shrink-0 shadow-md">
+                          <img
+                            src="/tvpulsar-icon.png"
+                            alt="TVPulsar Icon"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <span
+                          className={`text-xs sm:text-sm font-semibold text-white ${
+                            spec.isMono ? 'font-mono text-emerald-400' : ''
+                          }`}
+                        >
+                          {spec.value}
+                        </span>
+                        {spec.sub && (
+                          <span className="text-[11px] text-slate-400 block mt-0.5">{spec.sub}</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -479,9 +516,17 @@ export function TVPulsarLandingClient() {
         </section>
 
         {/* Bottom Download Banner */}
-        <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-teal-950/40 border border-emerald-500/30 text-center space-y-5 shadow-2xl relative overflow-hidden">
+        <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-teal-950/40 border border-emerald-500/30 text-center space-y-6 shadow-2xl relative overflow-hidden">
           <div className="absolute inset-0 bg-radial from-emerald-500/10 to-transparent pointer-events-none" />
           
+          <div className="w-20 h-20 rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl shadow-black mx-auto bg-black">
+            <img
+              src="/tvpulsar-icon.png"
+              alt="TVPulsar App Icon"
+              className="w-full h-full object-cover"
+            />
+          </div>
+
           <h2 className="text-2xl sm:text-4xl font-black text-white">
             جاهز لمشاهدة المباريات والأفلام بجودة فائقة؟
           </h2>
@@ -492,7 +537,7 @@ export function TVPulsarLandingClient() {
           <div className="pt-2">
             <button
               onClick={handleDownload}
-              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-base bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 text-slate-950 shadow-xl shadow-emerald-500/25 hover:brightness-110 transition-all transform active:scale-95"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-base bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 text-slate-950 shadow-xl shadow-emerald-500/25 hover:brightness-110 transition-all transform active:scale-95 cursor-pointer"
             >
               <Download className="w-5 h-5" />
               <span>تحميل TVPulsar_v2.0.0.apk (23.93 MB)</span>
@@ -510,8 +555,12 @@ export function TVPulsarLandingClient() {
       >
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
-              <Tv className="w-5 h-5 text-emerald-400" />
+            <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-700/80 bg-black flex items-center justify-center shrink-0 shadow-md">
+              <img
+                src="/tvpulsar-icon.png"
+                alt="TVPulsar Icon"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="hidden sm:block">
               <span className="font-bold text-sm text-white block">TVPulsar • Live Sports & Movies</span>

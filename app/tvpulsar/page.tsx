@@ -34,12 +34,21 @@ export const metadata: Metadata = {
     siteName: 'Playzy & TVPulsar',
     locale: 'ar_AR',
     type: 'website',
+    images: [
+      {
+        url: `${siteUrl}/tvpulsar-icon.png`,
+        width: 512,
+        height: 512,
+        alt: 'TVPulsar App Icon',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'تحميل تطبيق TVPulsar v2.0.0 للأندرويد APK',
     description:
       'رابط تحميل مباشر وسريع لملف TVPulsar_v2.0.0.apk (23.93 MB) على ميديافاير لبث المباريات والقنوات والأفلام بدون إعلانات.',
+    images: [`${siteUrl}/tvpulsar-icon.png`],
   },
 };
 
@@ -48,6 +57,8 @@ export default function TVPulsarPage() {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: 'TVPulsar • Live Sports, Channels & Movies',
+    image: `${siteUrl}/tvpulsar-icon.png`,
+    thumbnailUrl: `${siteUrl}/tvpulsar-icon.png`,
     operatingSystem: 'Android 7.0 and up (API 24 - 34+)',
     applicationCategory: 'EntertainmentApplication',
     softwareVersion: '2.0.0',
