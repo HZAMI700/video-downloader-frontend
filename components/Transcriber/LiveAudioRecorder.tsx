@@ -116,17 +116,17 @@ export function LiveAudioRecorder({ onRecordingComplete, onCancel }: LiveAudioRe
       {/* Microphone Visualizer / Pulse Circle */}
       <div className="relative">
         {isRecording && !isPaused && (
-          <div className="absolute -inset-3 rounded-full bg-purple-500/20 animate-ping" />
+          <div className="absolute -inset-3 rounded-full bg-sunken" />
         )}
         <div
-          className={`w-24 h-24 rounded-full flex items-center justify-center text-white shadow-xl transition-all ${
+          className={`w-24 h-24 rounded-full flex items-center justify-center text-fg transition-all ${
             isRecording
               ? isPaused
-                ? 'bg-amber-500 shadow-amber-500/30'
-                : 'bg-red-500 shadow-red-500/30'
+                ? 'bg-warning'
+                : 'bg-danger'
               : recordedFile
-              ? 'bg-emerald-500 shadow-emerald-500/30'
-              : 'bg-gradient-to-tr from-purple-600 to-indigo-600 shadow-purple-500/30'
+              ? 'bg-accent'
+              : ' bg-accent'
           }`}
         >
           <Mic className="w-10 h-10" />
@@ -135,10 +135,10 @@ export function LiveAudioRecorder({ onRecordingComplete, onCancel }: LiveAudioRe
 
       {/* Timer & Status */}
       <div className="space-y-1">
-        <p className="font-mono text-3xl font-extrabold text-slate-800">
+        <p className="font-mono text-3xl font-semibold text-fg">
           {formatTimer(recordSeconds)}
         </p>
-        <p className="text-xs font-semibold text-slate-500">
+        <p className="text-xs font-medium text-muted">
           {isRecording
             ? isPaused
               ? 'Recording Paused'
@@ -155,7 +155,7 @@ export function LiveAudioRecorder({ onRecordingComplete, onCancel }: LiveAudioRe
           {[12, 24, 38, 18, 30, 42, 20, 36, 14, 28, 40, 22].map((height, i) => (
             <div
               key={i}
-              className="w-1.5 bg-gradient-to-t from-purple-600 to-indigo-500 rounded-full animate-pulse"
+              className="w-1.5 bg-accent rounded-full"
               style={{
                 height: `${height}px`,
                 animationDelay: `${(i * 0.1).toFixed(1)}s`,
@@ -174,7 +174,7 @@ export function LiveAudioRecorder({ onRecordingComplete, onCancel }: LiveAudioRe
 
       {/* Error Notice */}
       {error && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-danger-soft border border-danger/30 text-danger text-xs">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -186,7 +186,7 @@ export function LiveAudioRecorder({ onRecordingComplete, onCancel }: LiveAudioRe
           <button
             type="button"
             onClick={startRecording}
-            className="flex items-center gap-2 px-8 py-3 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-purple-500/25 transition-all transform active:scale-95"
+            className="flex items-center gap-2 px-8 py-3 rounded-full bg-accent hover:bg-accent-hover text-on-accent font-medium text-sm transition-all transform"
           >
             <Mic className="w-4 h-4" />
             <span>Start Recording</span>
@@ -197,7 +197,7 @@ export function LiveAudioRecorder({ onRecordingComplete, onCancel }: LiveAudioRe
               <button
                 type="button"
                 onClick={resumeRecording}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-warning hover:bg-warning text-on-accent font-medium text-xs transition-colors"
               >
                 <Play className="w-4 h-4" />
                 <span>Resume</span>
@@ -206,7 +206,7 @@ export function LiveAudioRecorder({ onRecordingComplete, onCancel }: LiveAudioRe
               <button
                 type="button"
                 onClick={pauseRecording}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-line hover:bg-line text-fg font-medium text-xs transition-colors"
               >
                 <Pause className="w-4 h-4" />
                 <span>Pause</span>
@@ -216,7 +216,7 @@ export function LiveAudioRecorder({ onRecordingComplete, onCancel }: LiveAudioRe
             <button
               type="button"
               onClick={stopRecording}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-red-500 hover:bg-red-600 text-white font-semibold text-xs shadow-md transition-colors"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-danger hover:bg-danger text-on-accent font-medium text-xs transition-colors"
             >
               <Square className="w-4 h-4" />
               <span>Stop Recording</span>
@@ -227,7 +227,7 @@ export function LiveAudioRecorder({ onRecordingComplete, onCancel }: LiveAudioRe
             <button
               type="button"
               onClick={startRecording}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-semibold transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-line text-fg hover:bg-sunken text-xs font-medium transition-colors"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Record Again</span>
@@ -236,7 +236,7 @@ export function LiveAudioRecorder({ onRecordingComplete, onCancel }: LiveAudioRe
             <button
               type="button"
               onClick={handleTranscribeNow}
-              className="flex items-center gap-2 px-8 py-3 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white font-bold text-sm shadow-lg shadow-emerald-500/25 transition-all transform active:scale-95"
+              className="flex items-center gap-2 px-8 py-3 rounded-full bg-accent hover:bg-accent-hover text-on-accent font-medium text-sm transition-all transform"
             >
               <Sparkles className="w-4 h-4" />
               <span>Transcribe Recording Now</span>

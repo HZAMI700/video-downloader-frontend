@@ -393,8 +393,8 @@ export const CATEGORIES: CategoryDefinition[] = [
     id: 'ai-voice',
     name: 'AI Voice Studio',
     badge: '36+ VOICES',
-    heroBadge: 'ElevenLabs Engine • 36+ Voices in 16 Languages',
-    heroTitle: 'ElevenLabs AI Voice Studio & Audio DSP',
+    heroBadge: '36+ voices in 16 languages',
+    heroTitle: 'AI Voice Studio & Audio Tools',
     heroDescription:
       'Ultra-realistic voice synthesis across global languages, instant voice cloning, and audio mastering.',
     themeColor: 'purple',
@@ -406,7 +406,7 @@ export const CATEGORIES: CategoryDefinition[] = [
         categoryName: 'AI Voice Studio',
         shortDesc: 'Ultra-realistic text-to-speech with 36+ voices',
         fullDesc:
-          'ElevenLabs acoustic synthesis with emotional range, accents, stability, clarity, and pitch control.',
+          'Speech synthesis with emotional range, accents, stability, clarity, and pitch control.',
         iconName: 'Sparkles',
         pastelBg: 'bg-[#F3EEFF]',
         iconBg: 'bg-white text-purple-600 shadow-sm',

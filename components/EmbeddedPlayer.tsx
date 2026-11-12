@@ -136,13 +136,13 @@ export const EmbeddedPlayer: React.FC<EmbeddedPlayerProps> = ({
 
   if (error || !originalStreamUrl) {
     return (
-      <div className="w-full h-full min-h-[220px] flex flex-col items-center justify-center p-4 bg-slate-900 text-white rounded-2xl text-center space-y-2">
-        <AlertCircle className="w-8 h-8 text-amber-400 opacity-90" />
-        <p className="text-xs text-slate-300 font-medium">Live embed preview unavailable for this link.</p>
+      <div className="w-full h-full min-h-[220px] flex flex-col items-center justify-center p-4 bg-surface text-fg rounded-2xl text-center space-y-2">
+        <AlertCircle className="w-8 h-8 text-warning opacity-90" />
+        <p className="text-xs text-fg font-medium">Live embed preview unavailable for this link.</p>
         {onClose && (
           <button
             onClick={onClose}
-            className="text-xs text-purple-400 hover:text-purple-300 underline font-semibold mt-2"
+            className="text-xs text-muted hover:text-muted underline font-medium mt-2"
           >
             Back to thumbnail
           </button>
@@ -152,11 +152,11 @@ export const EmbeddedPlayer: React.FC<EmbeddedPlayerProps> = ({
   }
 
   return (
-    <div className="relative w-full h-full bg-black rounded-2xl overflow-hidden shadow-inner flex items-center justify-center group">
+    <div className="relative w-full h-full bg-black rounded-2xl overflow-hidden flex items-center justify-center group">
       {isLoading && (
-        <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center space-y-2 text-white">
-          <Loader2 className="w-6 h-6 animate-spin text-purple-400" />
-          <span className="text-[11px] font-medium text-slate-300">Checking ad-clear proxy...</span>
+        <div className="absolute inset-0 bg-bg/80 z-10 flex flex-col items-center justify-center space-y-2 text-fg">
+          <Loader2 className="w-6 h-6 animate-spin text-muted" />
+          <span className="text-xs font-medium text-fg">Checking ad-clear proxy...</span>
         </div>
       )}
 
@@ -176,7 +176,7 @@ export const EmbeddedPlayer: React.FC<EmbeddedPlayerProps> = ({
         {isUsingWorker && (
           <span
             title="Clean Stream: Routed via Ad-Clearing Cloudflare Proxy"
-            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/90 backdrop-blur-md text-white shadow"
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-accent/90 text-fg"
           >
             <ShieldCheck className="w-3 h-3" />
             <span>Ad-Free Proxy</span>
@@ -187,8 +187,8 @@ export const EmbeddedPlayer: React.FC<EmbeddedPlayerProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/70 hover:bg-black/90 backdrop-blur-md text-white border border-white/20 transition-all shadow"
-            title="Switch back to thumbnail image"
+            className="px-2 py-0.5 rounded-full text-xs font-medium bg-black/70 hover:bg-black/90 text-white border border-line transition-all"
+            title="Switch back to thumbnail image" aria-label="Switch back to thumbnail image"
           >
             Close Player
           </button>

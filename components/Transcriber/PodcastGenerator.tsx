@@ -122,14 +122,14 @@ export function PodcastGenerator() {
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
       <div className="text-center space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 border border-purple-200 text-purple-700 text-xs font-semibold">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sunken border border-line text-muted text-xs font-medium">
           <Radio className="w-3.5 h-3.5" />
           <span>AI Podcast Studio</span>
         </div>
-        <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+        <h2 className="text-3xl font-semibold text-fg tracking-tight">
           Free AI Podcast Generator
         </h2>
-        <p className="text-sm text-slate-500 max-w-xl mx-auto">
+        <p className="text-sm text-muted max-w-xl mx-auto">
           Generate complete podcast episode scripts, multi-speaker dialogues, and audio voiceovers from any topic in seconds.
         </p>
       </div>
@@ -143,7 +143,7 @@ export function PodcastGenerator() {
         onChange={handleFileInput}
       />
 
-      <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xl shadow-purple-500/5 space-y-6">
+      <div className="bg-surface rounded-3xl border border-line p-6 sm:p-8 space-y-6">
         {/* File Drop Area for Topic / Script Notes */}
         <div
           onDragOver={(e) => {
@@ -155,35 +155,35 @@ export function PodcastGenerator() {
           onClick={() => fileInputRef.current?.click()}
           className={`flex items-center justify-between p-4 rounded-2xl border-2 border-dashed cursor-pointer transition-all ${
             isDragOver
-              ? 'border-purple-600 bg-purple-50 scale-[1.01]'
-              : 'border-slate-200 hover:border-purple-300 bg-slate-50/50'
+              ? 'border-line bg-sunken scale-[1.01]'
+              : 'border-line hover:border-line bg-sunken/50'
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-sunken text-muted flex items-center justify-center">
               <UploadCloud className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-800">
+              <p className="text-xs font-medium text-fg">
                 {droppedFileName
                   ? `Notes loaded: ${droppedFileName}`
                   : isDragOver
                   ? 'Release to load notes file!'
                   : 'Drop notes, transcript, or document (.txt, .md, .srt)'}
               </p>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-xs text-muted">
                 {droppedFileName ? 'Click or drop another file to replace' : 'Auto-extracts topic and key talking points'}
               </p>
             </div>
           </div>
-          <span className="text-[11px] font-bold px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 shadow-xs">
+          <span className="text-xs font-medium px-3 py-1.5 rounded-lg bg-surface border border-line text-fg">
             Browse File
           </span>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+            <label className="block text-xs font-medium uppercase tracking-wider text-fg mb-2">
               Podcast Topic or Keyword
             </label>
             <input
@@ -191,19 +191,19 @@ export function PodcastGenerator() {
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="e.g. The Future of Artificial Intelligence, Healthy Habit Building..."
-              className="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-100 text-sm text-slate-900"
+              className="w-full px-4 py-3 rounded-2xl border border-line focus:border-line focus:ring-2 focus:ring-line text-sm text-fg"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+              <label className="block text-xs font-medium uppercase tracking-wider text-fg mb-2">
                 Episode Format
               </label>
               <select
                 value={style}
                 onChange={(e) => setStyle(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 focus:outline-none focus:border-purple-600 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-line text-xs font-medium text-fg focus:border-line bg-surface"
               >
                 <option value="discussion">Co-Hosts Discussion (Alex & Taylor)</option>
                 <option value="solo">Solo Host Deep Dive</option>
@@ -212,13 +212,13 @@ export function PodcastGenerator() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+              <label className="block text-xs font-medium uppercase tracking-wider text-fg mb-2">
                 Tone & Style
               </label>
               <select
                 value={tone}
                 onChange={(e) => setTone(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 focus:outline-none focus:border-purple-600 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-line text-xs font-medium text-fg focus:border-line bg-surface"
               >
                 <option value="informative">Informative & Educational</option>
                 <option value="storytelling">Narrative & Engaging</option>
@@ -231,7 +231,7 @@ export function PodcastGenerator() {
             type="button"
             onClick={handleGenerate}
             disabled={isGenerating || !topic.trim()}
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-purple-500/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-2xl bg-accent hover:bg-accent-hover text-on-accent font-medium text-sm disabled:opacity-50 transition-all flex items-center justify-center gap-2"
           >
             <Sparkles className="w-4 h-4" />
             <span>{isGenerating ? 'Generating Episode...' : 'Generate Podcast Episode'}</span>
@@ -239,9 +239,9 @@ export function PodcastGenerator() {
         </div>
 
         {generatedScript && (
-          <div className="pt-6 border-t border-slate-100 space-y-4">
+          <div className="pt-6 border-t border-line space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-purple-700 flex items-center gap-1.5">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted flex items-center gap-1.5">
                 <BookOpen className="w-4 h-4" />
                 <span>Generated Script & Audio</span>
               </span>
@@ -250,8 +250,8 @@ export function PodcastGenerator() {
                 <button
                   type="button"
                   onClick={toggleSpeech}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
-                    isPlaying ? 'bg-amber-100 text-amber-800' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors ${
+                    isPlaying ? 'bg-warning-soft text-warning' : 'bg-sunken text-muted hover:bg-sunken'
                   }`}
                 >
                   {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -261,16 +261,16 @@ export function PodcastGenerator() {
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sunken hover:bg-line text-fg text-xs font-medium transition-colors"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied ? <Check className="w-3.5 h-3.5 text-accent" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copied ? 'Copied' : 'Copy'}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleDownload}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sunken hover:bg-line text-fg text-xs font-medium transition-colors"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download TXT</span>
@@ -278,7 +278,7 @@ export function PodcastGenerator() {
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 font-mono text-xs text-slate-800 whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto">
+            <div className="p-4 rounded-2xl bg-sunken border border-line font-mono text-xs text-fg whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto">
               {generatedScript}
             </div>
           </div>

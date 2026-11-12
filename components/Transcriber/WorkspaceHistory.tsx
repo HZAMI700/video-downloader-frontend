@@ -66,14 +66,14 @@ export function WorkspaceHistory({ onSelectTranscript }: WorkspaceHistoryProps) 
     <div className="w-full max-w-4xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#edf7ee] border border-[#499557]/30 text-[#499557] text-xs font-semibold shadow-2xs">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-soft border border-accent/30 text-accent text-xs font-medium">
             <FolderOpen className="w-3.5 h-3.5" />
             <span>Local Browser Workspace</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-fg tracking-tight mt-1">
             My Transcripts & History
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="text-xs sm:text-sm text-muted">
             Saved securely in your browser. No login or cloud account required.
           </p>
         </div>
@@ -82,7 +82,7 @@ export function WorkspaceHistory({ onSelectTranscript }: WorkspaceHistoryProps) 
           <button
             type="button"
             onClick={handleClearAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 text-xs font-medium transition-colors w-fit"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-danger/30 text-danger hover:bg-danger-soft text-xs font-medium transition-colors w-fit"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span>Clear History</span>
@@ -91,13 +91,13 @@ export function WorkspaceHistory({ onSelectTranscript }: WorkspaceHistoryProps) 
       </div>
 
       {items.length === 0 ? (
-        <div className="bg-white rounded-2xl sm:rounded-[22px] border border-slate-200/80 p-12 text-center space-y-4 shadow-2xs">
-          <div className="w-16 h-16 rounded-full bg-[#edf7ee] text-[#499557] flex items-center justify-center mx-auto shadow-2xs">
+        <div className="bg-surface rounded-card border border-line p-12 text-center space-y-4">
+          <div className="w-16 h-16 rounded-full bg-accent-soft text-accent flex items-center justify-center mx-auto">
             <FileAudio className="w-8 h-8" />
           </div>
           <div className="space-y-1">
-            <h3 className="text-base font-bold text-slate-800">No transcripts yet</h3>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            <h3 className="text-base font-medium text-fg">No transcripts yet</h3>
+            <p className="text-xs text-muted max-w-sm mx-auto">
               Your transcribed audio, video files, and recordings will automatically appear here for easy access.
             </p>
           </div>
@@ -116,24 +116,24 @@ export function WorkspaceHistory({ onSelectTranscript }: WorkspaceHistoryProps) 
             return (
               <div
                 key={item.id}
-                className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md transition-shadow space-y-3"
+                className="bg-surface rounded-2xl border border-line p-5 transition-shadow space-y-3"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-line pb-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-sunken text-muted flex items-center justify-center flex-shrink-0">
                       <FileAudio className="w-4 h-4" />
                     </div>
                     <div className="truncate">
-                      <h4 className="text-sm font-bold text-slate-900 truncate max-w-md">
+                      <h4 className="text-sm font-medium text-fg truncate max-w-md">
                         {item.title}
                       </h4>
-                      <div className="flex items-center gap-3 text-[11px] text-slate-400">
+                      <div className="flex items-center gap-3 text-xs text-muted">
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           <span>{dateStr}</span>
                         </span>
                         <span>•</span>
-                        <span className="uppercase font-semibold text-purple-600">
+                        <span className="uppercase font-medium text-muted">
                           {item.language}
                         </span>
                         <span>•</span>
@@ -146,11 +146,11 @@ export function WorkspaceHistory({ onSelectTranscript }: WorkspaceHistoryProps) 
                     <button
                       type="button"
                       onClick={() => handleCopy(item)}
-                      className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-                      title="Copy text"
+                      className="p-1.5 rounded-lg text-muted hover:text-fg hover:bg-sunken transition-colors"
+                      title="Copy text" aria-label="Copy text"
                     >
                       {copiedId === item.id ? (
-                        <Check className="w-4 h-4 text-emerald-600" />
+                        <Check className="w-4 h-4 text-accent" />
                       ) : (
                         <Copy className="w-4 h-4" />
                       )}
@@ -159,8 +159,8 @@ export function WorkspaceHistory({ onSelectTranscript }: WorkspaceHistoryProps) 
                     <button
                       type="button"
                       onClick={() => handleDownloadTxt(item)}
-                      className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-                      title="Download TXT"
+                      className="p-1.5 rounded-lg text-muted hover:text-fg hover:bg-sunken transition-colors"
+                      title="Download TXT" aria-label="Download TXT"
                     >
                       <Download className="w-4 h-4" />
                     </button>
@@ -168,15 +168,15 @@ export function WorkspaceHistory({ onSelectTranscript }: WorkspaceHistoryProps) 
                     <button
                       type="button"
                       onClick={() => handleDelete(item.id)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                      title="Delete record"
+                      className="p-1.5 rounded-lg text-muted hover:text-danger hover:bg-danger-soft transition-colors"
+                      title="Delete record" aria-label="Delete record"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                <p className="text-xs text-muted line-clamp-3 leading-relaxed">
                   {item.text}
                 </p>
               </div>

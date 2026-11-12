@@ -17,14 +17,14 @@ export const ShinyText: React.FC<ShinyTextProps> = ({
 }) => {
   return (
     <span
-      className={`inline-block relative overflow-hidden font-extrabold ${className}`}
+      className={`inline-block relative overflow-hidden font-semibold ${className}`}
     >
-      <span className="bg-gradient-to-r from-purple-600 via-indigo-500 to-cyan-500 bg-clip-text text-transparent">
+      <span className=" text-accent">
         {text}
       </span>
       {!disabled && (
         <span
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer pointer-events-none"
+          className="absolute inset-0 pointer-events-none"
           style={{ animationDuration: `${speed}s` }}
         />
       )}

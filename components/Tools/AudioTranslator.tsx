@@ -224,25 +224,7 @@ export function AudioTranslator({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 animate-apple-in">
-      {/* Top Apple Navigation Bar */}
-      {onBackToCategory && (
-        <div className="flex items-center gap-2 pb-1 border-b border-zinc-200/70">
-          <button
-            type="button"
-            onClick={onBackToCategory}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-bold text-zinc-700 transition active:scale-95 shadow-2xs"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" />
-            <span>Back to Audio Tools</span>
-          </button>
-          <span className="text-zinc-300">/</span>
-          <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
-            Free AI Audio Translator
-          </span>
-        </div>
-      )}
+    <div className="w-full max-w-5xl mx-auto space-y-6 animate-enter">
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -258,30 +240,30 @@ export function AudioTranslator({
 
       {/* Header */}
       <div className="text-center space-y-3 pt-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
-          <Languages className="w-4 h-4 text-blue-600" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-info-soft text-info border border-info/30">
+          <Languages className="w-4 h-4 text-info" />
           <span>150+ Spoken Languages Supported</span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+        <h1 className="font-serif text-3xl sm:text-4xl font-medium text-fg">
           AI Audio Translator Online — Translate Audio to 150+ Languages
         </h1>
-        <p className="text-sm sm:text-base text-slate-500 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-sm sm:text-base text-muted max-w-2xl mx-auto leading-relaxed">
           Convert spoken audio from podcasts, interviews, YouTube, and videos into translated text & subtitles in seconds. No login required.
         </p>
       </div>
 
       {/* Language Selector Bar */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/40 p-6 sm:p-8 space-y-6">
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
+      <div className="bg-surface rounded-3xl border border-line p-6 sm:p-8 space-y-6">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 p-3 rounded-2xl bg-sunken border border-line">
           {/* Source Language */}
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <span className="text-xs font-bold text-slate-500 whitespace-nowrap">From:</span>
+            <span className="text-xs font-medium text-muted whitespace-nowrap">From:</span>
             <div className="relative flex-1 sm:w-52">
               <select
                 value={sourceLang}
                 onChange={(e) => setSourceLang(e.target.value)}
-                className="w-full pl-3 pr-8 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-600 appearance-none shadow-xs"
+                className="w-full pl-3 pr-8 py-2 rounded-xl bg-surface border border-line text-xs font-medium text-fg focus:border-info appearance-none"
               >
                 {LANGUAGES.map((l) => (
                   <option key={l.code} value={l.code}>
@@ -289,15 +271,15 @@ export function AudioTranslator({
                   </option>
                 ))}
               </select>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <ChevronDown className="w-3.5 h-3.5 text-muted absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
 
-          <ArrowRight className="w-5 h-5 text-blue-600 hidden sm:block flex-shrink-0" />
+          <ArrowRight className="w-5 h-5 text-info hidden sm:block flex-shrink-0" />
 
           {/* Target Language */}
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <span className="text-xs font-bold text-slate-500 whitespace-nowrap">Translate To:</span>
+            <span className="text-xs font-medium text-muted whitespace-nowrap">Translate To:</span>
             <div className="relative flex-1 sm:w-52">
               <select
                 value={targetLang}
@@ -307,7 +289,7 @@ export function AudioTranslator({
                     handleRunTranslation(job.text, e.target.value);
                   }
                 }}
-                className="w-full pl-3 pr-8 py-2 rounded-xl bg-white border border-blue-300 text-xs font-bold text-blue-800 focus:outline-none focus:border-blue-600 appearance-none shadow-xs"
+                className="w-full pl-3 pr-8 py-2 rounded-xl bg-surface border border-info/30 text-xs font-medium text-info focus:border-info appearance-none"
               >
                 {LANGUAGES.filter((l) => l.code !== 'auto').map((l) => (
                   <option key={l.code} value={l.code}>
@@ -315,7 +297,7 @@ export function AudioTranslator({
                   </option>
                 ))}
               </select>
-              <ChevronDown className="w-3.5 h-3.5 text-blue-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <ChevronDown className="w-3.5 h-3.5 text-info absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
         </div>
@@ -336,24 +318,24 @@ export function AudioTranslator({
           }}
           className={`flex flex-col items-center justify-center text-center p-8 rounded-2xl border-2 border-dashed transition-all space-y-4 ${
             isDragOver
-              ? 'border-blue-500 bg-blue-50/70 scale-[1.01] shadow-lg shadow-blue-500/10'
-              : 'border-slate-200 hover:border-blue-300 bg-slate-50/40'
+              ? 'border-info bg-info-soft scale-[1.01]'
+              : 'border-line hover:border-info/30 bg-sunken/40'
           }`}
         >
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/25 cursor-pointer transform hover:scale-105 transition-all"
+            className="w-16 h-16 rounded-full bg-info text-on-accent flex items-center justify-center cursor-pointer transform transition-all"
           >
             <UploadCloud className="w-8 h-8" />
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-base sm:text-lg font-bold text-slate-900">
+            <h3 className="text-base sm:text-lg font-medium text-fg">
               {isDragOver
                 ? 'Release to drop & translate audio file!'
                 : 'Upload Audio File or Paste Media Link to Translate'}
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-muted">
               Drag and drop any audio or video file, or paste URL • Supports MP3, WAV, M4A, AAC, MP4 up to 100 MB
             </p>
           </div>
@@ -363,7 +345,7 @@ export function AudioTranslator({
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isProcessing}
-              className="flex items-center gap-2 px-7 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50"
+              className="flex items-center gap-2 px-7 py-3 rounded-xl bg-info hover:bg-info text-on-accent font-medium text-xs transition-all disabled:opacity-50"
             >
               <UploadCloud className="w-4 h-4" />
               <span>Upload Audio File</span>
@@ -372,7 +354,7 @@ export function AudioTranslator({
             <button
               type="button"
               onClick={() => setShowLinkInput(!showLinkInput)}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs transition-colors"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl border border-line hover:bg-sunken text-fg font-medium text-xs transition-colors"
             >
               <Link2 className="w-4 h-4" />
               <span>Online Link</span>
@@ -381,19 +363,19 @@ export function AudioTranslator({
 
           {/* Link Bar */}
           {showLinkInput && (
-            <form onSubmit={handleUrlSubmit} className="w-full max-w-xl pt-2 animate-fadeIn">
-              <div className="flex items-center gap-2 bg-white border border-slate-300 rounded-xl p-1.5 focus-within:border-blue-600 shadow-xs">
+            <form onSubmit={handleUrlSubmit} className="w-full max-w-xl pt-2 animate-enter">
+              <div className="flex items-center gap-2 bg-surface border border-line rounded-xl p-1.5 focus-within:border-info">
                 <input
                   type="url"
                   value={mediaUrl}
                   onChange={(e) => setMediaUrl(e.target.value)}
                   placeholder="Paste YouTube, TikTok, or direct audio link..."
-                  className="flex-1 bg-transparent px-3 py-1.5 text-xs text-slate-900 focus:outline-none"
+                  className="flex-1 bg-transparent px-3 py-1.5 text-xs text-fg"
                 />
                 <button
                   type="submit"
                   disabled={isProcessing || !mediaUrl.trim()}
-                  className="px-5 py-2 rounded-lg bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                  className="px-5 py-2 rounded-lg bg-info text-on-accent font-medium text-xs hover:bg-info disabled:opacity-50 transition-colors"
                 >
                   Translate
                 </button>
@@ -404,34 +386,34 @@ export function AudioTranslator({
 
         {/* Error Alert */}
         {errorMessage && (
-          <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs">
+          <div className="flex items-start gap-3 p-4 rounded-xl bg-danger-soft border border-danger/30 text-danger text-xs">
             <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <p className="font-semibold">{errorMessage}</p>
+            <p className="font-medium">{errorMessage}</p>
           </div>
         )}
 
         {/* Processing Spinner */}
         {isProcessing && (
-          <div className="py-10 flex flex-col items-center justify-center space-y-3 text-center animate-fadeIn">
-            <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-            <p className="text-sm font-bold text-slate-800">
+          <div className="py-10 flex flex-col items-center justify-center space-y-3 text-center animate-enter">
+            <Loader2 className="w-10 h-10 text-info animate-spin" />
+            <p className="text-sm font-medium text-fg">
               {job?.stage === 'transcribing'
                 ? 'Transcribing audio speech...'
                 : isTranslating
                 ? 'Translating into target language...'
                 : 'Processing audio stream...'}
             </p>
-            <p className="text-xs text-slate-400">Powered by Groq Whisper & LLaMA</p>
+            <p className="text-xs text-muted">Powered by Groq Whisper & LLaMA</p>
           </div>
         )}
 
         {/* Translation Results: Dual Side-by-Side View */}
         {job?.status === 'completed' && job.text && (
-          <div className="space-y-4 pt-4 border-t border-slate-200 animate-fadeIn">
+          <div className="space-y-4 pt-4 border-t border-line animate-enter">
             {/* Action Bar */}
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-blue-600" />
+              <h3 className="text-base font-semibold text-fg flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-info" />
                 <span>Translation Result</span>
               </h3>
 
@@ -439,7 +421,7 @@ export function AudioTranslator({
                 <button
                   type="button"
                   onClick={() => downloadTextFile(translatedText || job.text, `translated_${targetLang}.txt`)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line hover:bg-sunken text-xs font-medium text-fg transition-colors"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download TXT</span>
@@ -448,7 +430,7 @@ export function AudioTranslator({
                 <a
                   href={getTranscriptionExportUrl(job.job_id, 'srt')}
                   download
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line hover:bg-sunken text-xs font-medium text-fg transition-colors"
                 >
                   <FileText className="w-3.5 h-3.5" />
                   <span>Original SRT</span>
@@ -459,69 +441,69 @@ export function AudioTranslator({
             {/* Dual Column Layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Left Column: Original Spoken Audio Transcript */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+              <div className="p-4 sm:p-5 rounded-2xl bg-sunken border border-line space-y-3 flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <span className="text-xs font-medium text-muted uppercase tracking-wider">
                       Original Audio ({job.language?.toUpperCase() || 'AUDIO'})
                     </span>
                     <div className="flex items-center gap-1">
                       <button
                         type="button"
                         onClick={() => handleSpeakText(job.text, job.language || 'en')}
-                        title="Listen"
-                        className="p-1 text-slate-400 hover:text-slate-700 rounded-md transition-colors"
+                        title="Listen" aria-label="Listen"
+                        className="p-1 text-muted hover:text-fg rounded-md transition-colors"
                       >
                         <Volume2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         type="button"
                         onClick={() => handleCopy(job.text, true)}
-                        className="flex items-center gap-1 text-[11px] font-bold text-slate-600 hover:text-slate-900 px-2 py-0.5 rounded-md hover:bg-slate-200 transition-colors"
+                        className="flex items-center gap-1 text-xs font-medium text-muted hover:text-fg px-2 py-0.5 rounded-md hover:bg-line transition-colors"
                       >
-                        {copiedOriginal ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedOriginal ? <Check className="w-3.5 h-3.5 text-accent" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{copiedOriginal ? 'Copied' : 'Copy'}</span>
                       </button>
                     </div>
                   </div>
-                  <div className="max-h-80 overflow-y-auto text-xs sm:text-sm text-slate-800 leading-relaxed font-sans pr-2">
+                  <div className="max-h-80 overflow-y-auto text-xs sm:text-sm text-fg leading-relaxed font-sans pr-2">
                     {job.text}
                   </div>
                 </div>
               </div>
 
               {/* Right Column: AI Translated Text */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-blue-50/50 border border-blue-200 space-y-3 flex flex-col justify-between">
+              <div className="p-4 sm:p-5 rounded-2xl bg-info-soft border border-info/30 space-y-3 flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">
+                    <span className="text-xs font-medium text-info uppercase tracking-wider">
                       Translated ({targetLang.toUpperCase()})
                     </span>
                     <div className="flex items-center gap-1">
                       <button
                         type="button"
                         onClick={() => handleSpeakText(translatedText, targetLang)}
-                        title="Listen"
-                        className="p-1 text-blue-500 hover:text-blue-800 rounded-md transition-colors"
+                        title="Listen" aria-label="Listen"
+                        className="p-1 text-info hover:text-info rounded-md transition-colors"
                       >
                         <Volume2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         type="button"
                         onClick={() => handleCopy(translatedText, false)}
-                        className="flex items-center gap-1 text-[11px] font-bold text-blue-700 hover:text-blue-900 px-2 py-0.5 rounded-md hover:bg-blue-100 transition-colors"
+                        className="flex items-center gap-1 text-xs font-medium text-info hover:text-info px-2 py-0.5 rounded-md hover:bg-info-soft transition-colors"
                       >
-                        {copiedTranslated ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedTranslated ? <Check className="w-3.5 h-3.5 text-accent" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{copiedTranslated ? 'Copied' : 'Copy'}</span>
                       </button>
                     </div>
                   </div>
 
-                  <div className="max-h-80 overflow-y-auto text-xs sm:text-sm text-slate-900 leading-relaxed font-sans pr-2">
+                  <div className="max-h-80 overflow-y-auto text-xs sm:text-sm text-fg leading-relaxed font-sans pr-2">
                     {isTranslating ? (
-                      <div className="flex items-center gap-2 text-blue-600 py-6">
+                      <div className="flex items-center gap-2 text-info py-6">
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="text-xs font-semibold">Generating translation...</span>
+                        <span className="text-xs font-medium">Generating translation...</span>
                       </div>
                     ) : (
                       translatedText || 'Select target language above to translate.'

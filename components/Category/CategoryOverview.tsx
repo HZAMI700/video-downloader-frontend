@@ -98,23 +98,23 @@ export function CategoryOverview({
   };
 
   return (
-    <div className="w-full space-y-8 animate-apple-in">
+    <div className="w-full space-y-8 animate-enter">
       {/* Category Hero Banner */}
       <section className="text-center max-w-2xl mx-auto pt-2 pb-4">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] shadow-sm mb-4">
-          <span className="w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface border border-line mb-4">
+          <span className="w-5 h-5 rounded-full bg-accent/15 text-accent flex items-center justify-center">
             <Sparkles className="w-3 h-3" />
           </span>
-          <span className="text-[12px] font-semibold tracking-tight text-slate-700 dark:text-slate-300">
+          <span className="text-xs font-medium tracking-tight text-fg">
             {category.heroBadge}
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-[-0.03em] text-slate-900 dark:text-white leading-[1.1] mb-3.5">
+        <h1 className="font-serif text-3xl sm:text-4xl font-medium text-fg">
           {category.heroTitle}
         </h1>
 
-        <p className="text-[14px] sm:text-[15.5px] text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
+        <p className="text-sm sm:text-base text-muted font-normal leading-relaxed">
           {category.heroDescription}
         </p>
       </section>
@@ -127,50 +127,50 @@ export function CategoryOverview({
               <article
                 key={tool.id}
                 onClick={() => onSelectTool(tool.id)}
-                className={`bg-white dark:bg-[#181D24] rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-[#263241] shadow-2xs hover:shadow-xs hover:border-[#00c9a7]/40 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all`}
+                className={`bg-surface rounded-2xl p-5 sm:p-6 border border-line hover:border-accent/40 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-all`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <div
-                      className={`w-11 h-11 rounded-xl ${tool.iconBg} flex items-center justify-center transition-transform group-hover:scale-105 shadow-2xs`}
+                      className={`w-11 h-11 rounded-xl ${tool.iconBg} flex items-center justify-center transition-transform`}
                     >
                       {renderIcon(tool.iconName, 'w-5 h-5')}
                     </div>
                     <span
-                      className={`text-[11px] font-bold ${tool.badgeColor} px-2.5 py-0.5 rounded-full shadow-2xs border border-slate-200 dark:border-[#263241]`}
+                      className={`text-xs font-medium ${tool.badgeColor} px-2.5 py-0.5 rounded-full border border-line`}
                     >
                       {tool.pillTag}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white mb-1.5 group-hover:text-[#009688] dark:group-hover:text-[#00c9a7] transition-colors">
+                  <h3 className="text-lg font-semibold tracking-tight text-fg mb-1.5 group-hover:text-accent transition-colors">
                     {tool.name}
                   </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed min-h-[40px]">
+                  <p className="text-sm text-muted leading-relaxed min-h-[40px]">
                     {tool.shortDesc}
                   </p>
                 </div>
 
-                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-[#263241] flex items-center justify-between text-sm font-bold text-slate-700 dark:text-slate-200 group-hover:text-[#009688] dark:group-hover:text-[#00c9a7] transition">
+                <div className="pt-4 mt-4 border-t border-line flex items-center justify-between text-sm font-medium text-fg group-hover:text-accent transition">
                   <span className="flex items-center gap-2">
-                    <span className="px-3 py-1 rounded-xl bg-slate-100 hover:bg-[#00c9a7]/10 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] group-hover:border-[#00c9a7]/40">Launch Tool</span>
-                    <span className="text-xs font-medium text-slate-400">
+                    <span className="px-3 py-1 rounded-xl bg-sunken hover:bg-accent/10 border border-line group-hover:border-accent/40">Launch Tool</span>
+                    <span className="text-xs font-medium text-muted">
                       • 100% Free
                     </span>
                   </span>
-                  <ChevronRight className="w-4.5 h-4.5 transition-transform group-hover:translate-x-1 text-slate-400 group-hover:text-[#00c9a7]" />
+                  <ChevronRight className="w-4.5 h-4.5 transition-transform group-hover:translate-x-1 text-muted group-hover:text-accent" />
                 </div>
               </article>
             ))}
           </div>
         </section>
       ) : (
-        <div className="p-12 text-center bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] my-6">
-          <Search className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">
+        <div className="p-12 text-center bg-surface rounded-3xl border border-line my-6">
+          <Search className="w-10 h-10 text-muted mx-auto mb-3" />
+          <h3 className="text-base font-medium text-fg">
             No tools found matching &quot;{searchFilter}&quot;
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-muted mt-1">
             Try searching for another keyword or clear the search filter.
           </p>
         </div>

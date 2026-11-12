@@ -575,7 +575,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
   const [selectedGenderFilter, setSelectedGenderFilter] = useState('All');
 
   const [scriptText, setScriptText] = useState(
-    'Welcome to Playzy AI Voice Studio. Generate lifelike, expressive voiceovers in 36+ voices and 16 languages with ElevenLabs-grade quality and zero login required.'
+    'Welcome to Playzy AI Voice Studio. Generate lifelike, expressive voiceovers in 36+ voices and 16 languages with no login required.'
   );
 
   // ElevenLabs Pro Controls
@@ -1101,27 +1101,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
   });
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 animate-apple-in pb-12">
-      {/* Top Apple Navigation Bar */}
-      {onBackToCategory && (
-        <div className="flex items-center gap-2 pb-1 border-b border-slate-200/70">
-          <button
-            type="button"
-            onClick={onBackToCategory}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 transition active:scale-95 shadow-2xs"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" />
-            <span>Back to AI Voice Studio</span>
-          </button>
-          <span className="text-slate-300">/</span>
-          <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#499557] animate-pulse" />
-            {toolId === 'ai-voice-clone'
-              ? 'AI Voice Clone'
-              : 'AI Voice Generator (ElevenLabs 36+ Voices)'}
-          </span>
-        </div>
-      )}
+    <div className="w-full max-w-5xl mx-auto space-y-6 animate-enter pb-12">
       {/* Hidden File Inputs */}
       <input
         ref={fileInputRef}
@@ -1158,34 +1138,32 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
       <audio ref={audioPlayerRef} preload="auto" className="hidden" />
 
       {/* ElevenLabs Studio Header Banner */}
-      <div className="relative rounded-2xl sm:rounded-[22px] p-6 sm:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white shadow-xl border border-slate-800 overflow-hidden">
-        <div className="absolute -right-16 -top-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative rounded-card p-6 sm:p-8 bg-bg text-fg border border-line overflow-hidden">
 
         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-emerald-300 border border-emerald-500/30 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-              <span>ElevenLabs Pro Voice Studio • 36+ Voices • 16 Languages</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-sunken text-accent border border-accent/30">
+              <Sparkles className="w-3.5 h-3.5 text-accent" />
+              <span>36+ voices · 16 languages</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
+            <h1 className="font-serif text-3xl sm:text-4xl font-medium text-fg">
               AI Voice Generator &amp; Voice Lab
             </h1>
-            <p className="text-sm text-slate-400 max-w-xl leading-relaxed">
+            <p className="text-sm text-muted max-w-xl leading-relaxed">
               Generate lifelike human speech across dozens of languages, accents, and emotions with
               studio-level clarity. 100% free with no login required.
             </p>
           </div>
 
           {/* Mode Switcher Tabs */}
-          <div className="flex bg-slate-800/80 p-1.5 rounded-2xl border border-slate-700/80 backdrop-blur-md self-start md:self-auto">
+          <div className="flex bg-surface/80 p-1.5 rounded-2xl border border-line self-start md:self-auto">
             <button
               type="button"
               onClick={() => setActiveTab('generate')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${
                 activeTab === 'generate'
-                  ? 'bg-[#499557] text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-accent text-on-accent'
+                  : 'text-muted hover:text-fg'
               }`}
             >
               <Volume2 className="w-4 h-4" />
@@ -1194,10 +1172,10 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
             <button
               type="button"
               onClick={() => setActiveTab('clone')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${
                 activeTab === 'clone'
-                  ? 'bg-[#499557] text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-accent text-on-accent'
+                  : 'text-muted hover:text-fg'
               }`}
             >
               <Mic className="w-4 h-4" />
@@ -1208,29 +1186,29 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
       </div>
 
       {/* Main Studio Card */}
-      <div className="bg-white dark:bg-[#181D24] rounded-2xl sm:rounded-[22px] border border-slate-200/80 dark:border-[#263241] shadow-2xs p-6 sm:p-8 space-y-6">
+      <div className="bg-surface rounded-card border border-line p-6 sm:p-8 space-y-6">
         {/* TAB 1: TEXT TO SPEECH (VOICE GENERATOR) */}
         {activeTab === 'generate' && (
           <div className="space-y-6">
             {/* Active Voice Pill Bar (ElevenLabs Selector) */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241]">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4.5 rounded-2xl bg-sunken border border-line">
               <div className="flex items-center gap-3.5">
-                <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-black text-xl shadow-md shadow-purple-500/20 flex-shrink-0">
+                <div className="w-13 h-13 rounded-2xl bg-accent text-on-accent flex items-center justify-center font-semibold text-xl flex-shrink-0">
                   {activeVoice.flag}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
+                    <span className="text-base sm:text-lg font-semibold text-fg">
                       {activeVoice.name}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-md text-[10.5px] font-bold bg-purple-100 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800/40">
+                    <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-sunken text-muted border border-line">
                       {activeVoice.gender}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-md text-[10.5px] font-bold bg-slate-200 dark:bg-[#1E252F] text-slate-700 dark:text-slate-300">
+                    <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-line text-fg">
                       {activeVoice.category}
                     </span>
                   </div>
-                  <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">{activeVoice.desc}</p>
+                  <p className="text-xs sm:text-sm text-muted mt-0.5 line-clamp-1">{activeVoice.desc}</p>
                 </div>
               </div>
 
@@ -1238,12 +1216,12 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                 <button
                   type="button"
                   onClick={() => handleAuditionVoice(activeVoice)}
-                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium border transition-all cursor-pointer ${
                     auditioningVoiceId === activeVoice.id
-                      ? 'bg-purple-600 text-white border-purple-600 animate-pulse'
-                      : 'bg-white dark:bg-[#181D24] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#202732]'
+                      ? 'bg-accent text-on-accent border-line animate-pulse'
+                      : 'bg-surface border-line text-fg hover:bg-sunken'
                   }`}
-                  title="Audition voice sample"
+                  title="Audition voice sample" aria-label="Audition voice sample"
                 >
                   {auditioningVoiceId === activeVoice.id ? (
                     <Pause className="w-4 h-4" />
@@ -1256,7 +1234,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                 <button
                   type="button"
                   onClick={() => setIsVoicePickerOpen(true)}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-on-accent text-xs sm:text-sm font-medium transition-all cursor-pointer"
                 >
                   <Languages className="w-4 h-4" />
                   <span>Browse 36+ Voices</span>
@@ -1274,17 +1252,17 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
               onDrop={handleScriptFileDrop}
               className={`rounded-2xl border-2 transition-all p-4.5 space-y-3.5 ${
                 isScriptDragOver
-                  ? 'border-purple-600 bg-purple-50/70 dark:bg-purple-950/20 scale-[1.005]'
-                  : 'border-slate-200 dark:border-[#263241] bg-white dark:bg-[#141A22] hover:border-slate-300 dark:hover:border-[#354354]'
+                  ? 'border-line bg-sunken scale-[1.005]'
+                  : 'border-line bg-surface hover:border-line'
               }`}
             >
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-sm text-slate-900 dark:text-slate-100">Voiceover Script</span>
+                  <span className="font-semibold text-sm text-fg">Voiceover Script</span>
                   <button
                     type="button"
                     onClick={() => scriptFileInputRef.current?.click()}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-purple-600 dark:text-purple-400 hover:underline cursor-pointer"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-muted hover:underline cursor-pointer"
                   >
                     <UploadCloud className="w-3.5 h-3.5" />
                     <span>Upload .txt script</span>
@@ -1293,14 +1271,14 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
                 {/* Quick Sample Script Selector */}
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-400 text-xs font-medium">Load Sample:</span>
+                  <span className="text-muted text-xs font-medium">Load Sample:</span>
                   <select
                     onChange={(e) => {
                       const found = SAMPLE_SCRIPTS.find((s) => s.label === e.target.value);
                       if (found) setScriptText(found.text);
                     }}
                     defaultValue=""
-                    className="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-[#181D24] border border-slate-200 dark:border-[#263241] text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer"
+                    className="px-3 py-1.5 rounded-lg bg-sunken border border-line text-xs font-medium text-fg cursor-pointer"
                   >
                     <option value="" disabled>
                       Select sample...
@@ -1319,38 +1297,38 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                 value={scriptText}
                 onChange={(e) => setScriptText(e.target.value)}
                 placeholder="Type or paste your voiceover script here, or drop a text/script file..."
-                className="w-full bg-transparent border-none text-sm sm:text-base text-slate-900 dark:text-slate-100 focus:outline-none resize-none leading-relaxed placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                className="w-full bg-transparent border-none text-sm sm:text-base text-fg resize-none leading-relaxed placeholder:text-muted"
               />
 
-              <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-[#263241] text-xs text-slate-400 font-medium">
+              <div className="flex items-center justify-between pt-2.5 border-t border-line text-xs text-muted font-medium">
                 <span>
                   {scriptText.trim().split(/\s+/).filter(Boolean).length} words • {scriptText.length} characters
                 </span>
-                <span className="text-emerald-600 dark:text-[#00c9a7] font-bold">Estimated audio duration: ~{Math.ceil(scriptText.split(/\s+/).filter(Boolean).length * 0.45)}s</span>
+                <span className="text-accent font-medium">Estimated audio duration: ~{Math.ceil(scriptText.split(/\s+/).filter(Boolean).length * 0.45)}s</span>
               </div>
             </div>
 
             {/* ElevenLabs Advanced Settings Accordion */}
-            <div className="border border-slate-200 dark:border-[#263241] rounded-2xl overflow-hidden">
+            <div className="border border-line rounded-2xl overflow-hidden">
               <button
                 type="button"
                 onClick={() => setShowSettingsDrawer(!showSettingsDrawer)}
-                className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 dark:bg-[#12171F] dark:hover:bg-[#1A222D] transition-colors text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 cursor-pointer"
+                className="w-full flex items-center justify-between p-4 bg-sunken hover:bg-sunken transition-colors text-xs sm:text-sm font-medium text-fg cursor-pointer"
               >
                 <span className="flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                  <span>ElevenLabs Voice Settings (Stability, Clarity, Pitch, Speed)</span>
+                  <Sliders className="w-4 h-4 text-muted" />
+                  <span>Voice settings (stability, clarity, pitch, speed)</span>
                 </span>
                 {showSettingsDrawer ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
 
               {showSettingsDrawer && (
-                <div className="p-5 bg-white dark:bg-[#141A22] border-t border-slate-200 dark:border-[#263241] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 animate-fadeIn">
+                <div className="p-5 bg-surface border-t border-line grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 animate-enter">
                   {/* Stability Slider */}
                   <div className="space-y-2">
-                    <div className="flex justify-between text-xs font-bold">
-                      <span className="text-slate-700 dark:text-slate-300">Stability:</span>
-                      <span className="text-purple-600 dark:text-purple-400">{stability}%</span>
+                    <div className="flex justify-between text-xs font-medium">
+                      <span className="text-fg">Stability:</span>
+                      <span className="text-muted">{stability}%</span>
                     </div>
                     <input
                       type="range"
@@ -1358,9 +1336,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                       max="100"
                       value={stability}
                       onChange={(e) => setStability(Number(e.target.value))}
-                      className="w-full accent-purple-600 cursor-pointer"
+                      className="w-full accent-accent cursor-pointer"
                     />
-                    <div className="flex justify-between text-[10px] text-slate-400">
+                    <div className="flex justify-between text-xs text-muted">
                       <span>More Variable</span>
                       <span>More Stable</span>
                     </div>
@@ -1368,9 +1346,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
                   {/* Similarity / Clarity */}
                   <div className="space-y-2">
-                    <div className="flex justify-between text-xs font-bold">
-                      <span className="text-slate-700 dark:text-slate-300">Clarity Enhancement:</span>
-                      <span className="text-purple-600 dark:text-purple-400">{similarity}%</span>
+                    <div className="flex justify-between text-xs font-medium">
+                      <span className="text-fg">Clarity Enhancement:</span>
+                      <span className="text-muted">{similarity}%</span>
                     </div>
                     <input
                       type="range"
@@ -1378,9 +1356,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                       max="100"
                       value={similarity}
                       onChange={(e) => setSimilarity(Number(e.target.value))}
-                      className="w-full accent-purple-600 cursor-pointer"
+                      className="w-full accent-accent cursor-pointer"
                     />
-                    <div className="flex justify-between text-[10px] text-slate-400">
+                    <div className="flex justify-between text-xs text-muted">
                       <span>Low</span>
                       <span>High Fidelity</span>
                     </div>
@@ -1388,9 +1366,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
                   {/* Speed */}
                   <div className="space-y-2">
-                    <div className="flex justify-between text-xs font-bold">
-                      <span className="text-slate-700 dark:text-slate-300">Speed (Rate):</span>
-                      <span className="text-purple-600 dark:text-purple-400">{speedRate.toFixed(2)}x</span>
+                    <div className="flex justify-between text-xs font-medium">
+                      <span className="text-fg">Speed (Rate):</span>
+                      <span className="text-muted">{speedRate.toFixed(2)}x</span>
                     </div>
                     <input
                       type="range"
@@ -1399,9 +1377,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                       step="0.05"
                       value={speedRate}
                       onChange={(e) => setSpeedRate(Number(e.target.value))}
-                      className="w-full accent-purple-600 cursor-pointer"
+                      className="w-full accent-accent cursor-pointer"
                     />
-                    <div className="flex justify-between text-[10px] text-slate-400">
+                    <div className="flex justify-between text-xs text-muted">
                       <span>0.5x Slow</span>
                       <span>2.0x Fast</span>
                     </div>
@@ -1409,9 +1387,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
                   {/* Pitch */}
                   <div className="space-y-2">
-                    <div className="flex justify-between text-xs font-bold">
-                      <span className="text-slate-700 dark:text-slate-300">Pitch Offset:</span>
-                      <span className="text-purple-600 dark:text-purple-400">{pitchOffset.toFixed(2)}x</span>
+                    <div className="flex justify-between text-xs font-medium">
+                      <span className="text-fg">Pitch Offset:</span>
+                      <span className="text-muted">{pitchOffset.toFixed(2)}x</span>
                     </div>
                     <input
                       type="range"
@@ -1420,9 +1398,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                       step="0.05"
                       value={pitchOffset}
                       onChange={(e) => setPitchOffset(Number(e.target.value))}
-                      className="w-full accent-purple-600 cursor-pointer"
+                      className="w-full accent-accent cursor-pointer"
                     />
-                    <div className="flex justify-between text-[10px] text-slate-400">
+                    <div className="flex justify-between text-xs text-muted">
                       <span>Deeper</span>
                       <span>Higher</span>
                     </div>
@@ -1433,44 +1411,44 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
             {/* Error notice */}
             {error && (
-              <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center gap-2">
+              <div className="p-4 rounded-2xl bg-danger-soft border border-danger/30 text-danger text-xs flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                <span className="font-semibold">{error}</span>
+                <span className="font-medium">{error}</span>
               </div>
             )}
 
             {/* 1. STATE: GENERATING (Dedicated 15-second multi-stage loading experience) */}
             {isGenerating && (
-              <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#0B0F17] via-slate-900 to-[#101726] border border-emerald-500/30 text-white space-y-6 shadow-2xl animate-apple-in">
+              <div className="p-6 sm:p-8 rounded-3xl bg-bg border border-accent/30 text-fg space-y-6 animate-enter">
                 {/* Top Header Row with Countdown */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-line">
                   <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#00c9a7]/20 to-sky-500/20 border border-[#00c9a7]/40 flex items-center justify-center text-2xl shadow-lg shadow-[#00c9a7]/10">
+                    <div className="w-12 h-12 rounded-2xl bg-accent/20 border border-accent/40 flex items-center justify-center text-2xl">
                       {activeVoice.flag}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="text-base sm:text-lg font-black text-white">
+                        <h4 className="text-base sm:text-lg font-semibold text-fg">
                           Synthesizing {activeVoice.name}&apos;s Voice
                         </h4>
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 animate-pulse">
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-accent/20 text-accent border border-accent/30 animate-pulse">
                           15s Neural Mastering
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-muted">
                         {activeVoice.language} • {activeVoice.category} • Dual MP3 &amp; WAV Pipeline
                       </p>
                     </div>
                   </div>
 
                   {/* Countdown Timer Badge */}
-                  <div className="flex items-center gap-3 self-end sm:self-auto bg-slate-950/80 px-4 py-2 rounded-2xl border border-slate-800 shadow-inner">
-                    <Clock className="w-4 h-4 text-[#00c9a7] animate-spin" />
+                  <div className="flex items-center gap-3 self-end sm:self-auto bg-bg/80 px-4 py-2 rounded-2xl border border-line">
+                    <Clock className="w-4 h-4 text-accent animate-spin" />
                     <div className="text-right">
-                      <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">
+                      <span className="text-xs text-muted block font-medium uppercase tracking-wider">
                         Time Remaining
                       </span>
-                      <span className="text-lg font-black font-mono text-[#00c9a7]">
+                      <span className="text-lg font-semibold font-mono text-accent">
                         00:{generationRemaining < 10 ? `0${generationRemaining}` : generationRemaining}
                       </span>
                     </div>
@@ -1492,25 +1470,25 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                         key={idx}
                         className={`p-3 rounded-2xl border transition-all ${
                           isCurrent
-                            ? 'bg-[#00c9a7]/15 border-[#00c9a7]/50 shadow-[0_0_15px_rgba(0,201,167,0.2)]'
+                            ? 'bg-accent/15 border-accent/50'
                             : isPast
-                            ? 'bg-slate-900/60 border-emerald-500/30 text-emerald-400'
-                            : 'bg-slate-900/30 border-slate-800 text-slate-500'
+                            ? 'bg-surface/60 border-accent/30 text-accent'
+                            : 'bg-surface/30 border-line text-muted'
                         }`}
                       >
-                        <div className="flex items-center justify-between text-[10px] font-bold uppercase mb-1">
+                        <div className="flex items-center justify-between text-xs font-medium uppercase mb-1">
                           <span>Step {item.step}</span>
                           {isPast ? (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
                           ) : isCurrent ? (
-                            <Loader2 className="w-3.5 h-3.5 animate-spin text-[#00c9a7]" />
+                            <Loader2 className="w-3.5 h-3.5 animate-spin text-accent" />
                           ) : (
-                            <span className="w-2 h-2 rounded-full bg-slate-700" />
+                            <span className="w-2 h-2 rounded-full bg-sunken" />
                           )}
                         </div>
                         <div
-                          className={`text-xs font-bold truncate ${
-                            isCurrent ? 'text-white' : isPast ? 'text-slate-200' : 'text-slate-500'
+                          className={`text-xs font-medium truncate ${
+                            isCurrent ? 'text-fg' : isPast ? 'text-muted' : 'text-muted'
                           }`}
                         >
                           {item.label}
@@ -1522,28 +1500,28 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
                 {/* Smooth Progress Bar */}
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold">
-                    <span className="text-slate-300 flex items-center gap-2">
-                      <Sparkles className="w-3.5 h-3.5 text-[#00c9a7] animate-pulse" />
+                  <div className="flex items-center justify-between text-xs font-medium">
+                    <span className="text-muted flex items-center gap-2">
+                      <Sparkles className="w-3.5 h-3.5 text-accent" />
                       <span>{generationStage}</span>
                     </span>
-                    <span className="text-[#00c9a7] font-mono text-sm">{generationProgress}%</span>
+                    <span className="text-accent font-mono text-sm">{generationProgress}%</span>
                   </div>
 
-                  <div className="w-full h-3 rounded-full bg-slate-950 border border-slate-800 p-0.5 overflow-hidden">
+                  <div className="w-full h-3 rounded-full bg-bg border border-line p-0.5 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-teal-500 via-[#00c9a7] to-cyan-400 shadow-[0_0_12px_rgba(0,201,167,0.5)] transition-all duration-200"
+                      className="h-full rounded-full bg-accent transition-all duration-200"
                       style={{ width: `${generationProgress}%` }}
                     />
                   </div>
                 </div>
 
                 {/* Animated Neural Wave Spectrogram */}
-                <div className="flex items-center justify-between gap-1 h-14 py-2 px-3 rounded-2xl bg-slate-950/70 border border-slate-800">
+                <div className="flex items-center justify-between gap-1 h-14 py-2 px-3 rounded-2xl bg-bg/70 border border-line">
                   {Array.from({ length: 56 }).map((_, i) => (
                     <div
                       key={i}
-                      className="w-1 rounded-full bg-gradient-to-t from-emerald-500 via-teal-400 to-cyan-300 animate-pulse"
+                      className="w-1 rounded-full bg-accent"
                       style={{
                         height: `${20 + ((i * 17 + generationProgress * 3) % 75)}%`,
                         animationDelay: `${(i * 0.05) % 1}s`,
@@ -1552,7 +1530,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                   ))}
                 </div>
 
-                <p className="text-xs text-center text-slate-400">
+                <p className="text-xs text-center text-muted">
                   Synthesizing neural voice with {activeVoice.name}. Dual lossless audio tracks (MP3 &amp; WAV) will be revealed in a few seconds.
                 </p>
               </div>
@@ -1565,9 +1543,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                   type="button"
                   onClick={handleGenerateSpeech}
                   disabled={!scriptText.trim()}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 px-8 rounded-2xl bg-[#00c9a7] hover:bg-[#00b395] text-slate-950 font-extrabold text-base shadow-lg shadow-[#00c9a7]/20 transition-all active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2.5 py-4 px-8 rounded-2xl bg-accent hover:bg-accent text-on-accent font-semibold text-base transition-all disabled:opacity-50 cursor-pointer"
                 >
-                  <Sparkles className="w-5 h-5 text-slate-950" />
+                  <Sparkles className="w-5 h-5 text-fg" />
                   <span>Generate Voice ({activeVoice.name} • {activeVoice.language})</span>
                 </button>
               </div>
@@ -1575,43 +1553,43 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
             {/* 3. STATE: GENERATED (The BEST Audio Player Bar & Dual MP3/WAV Downloads) */}
             {!isGenerating && (generatedMp3Url || generatedWavUrl) && (
-              <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#0A0E17] via-slate-950 to-[#0F172A] text-white space-y-6 animate-apple-in shadow-2xl border border-emerald-500/30">
+              <div className="p-6 sm:p-8 rounded-3xl bg-bg text-fg space-y-6 animate-enter border border-accent/30">
                 {/* Header Row: Voice Info + Dual Format Switcher Pills */}
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-800">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-line">
                   <div className="flex items-center gap-3.5">
-                    <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-[#00c9a7]/20 to-sky-500/20 text-white flex items-center justify-center border border-[#00c9a7]/40 text-2xl shadow-lg shadow-[#00c9a7]/10">
+                    <div className="w-13 h-13 rounded-2xl bg-accent/20 text-fg flex items-center justify-center border border-accent/40 text-2xl">
                       {activeVoice.flag}
                     </div>
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="text-base sm:text-lg font-black text-white">
+                        <h4 className="text-base sm:text-lg font-semibold text-fg">
                           {activeVoice.name} Speech Synthesized
                         </h4>
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1">
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase bg-accent/20 text-accent border border-accent/40 flex items-center gap-1">
                           <Check className="w-3 h-3 stroke-[3]" />
                           <span>Ready to Play</span>
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400 mt-0.5">
+                      <p className="text-xs text-muted mt-0.5">
                         {activeVoice.language} • {activeVoice.category} • 24-bit Neural Audio Engine
                       </p>
                     </div>
                   </div>
 
                   {/* DUAL FORMAT TOGGLE PILLS: MP3 vs WAV */}
-                  <div className="flex items-center gap-2 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 self-start lg:self-auto">
+                  <div className="flex items-center gap-2 bg-surface/90 p-1.5 rounded-2xl border border-line self-start lg:self-auto">
                     <button
                       type="button"
                       onClick={() => handleSwitchFormat('mp3')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                         selectedFormat === 'mp3'
-                          ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-900/30'
-                          : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                          ? ' bg-accent text-on-accent'
+                          : 'text-muted hover:text-fg hover:bg-surface'
                       }`}
                     >
                       <FileAudio className="w-4 h-4" />
                       <span>MP3 Format</span>
-                      <span className="px-1.5 py-0.5 rounded text-[10px] bg-black/20 text-emerald-200">
+                      <span className="px-1.5 py-0.5 rounded text-xs bg-black/20 text-accent">
                         {mp3Size}
                       </span>
                     </button>
@@ -1619,15 +1597,15 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                     <button
                       type="button"
                       onClick={() => handleSwitchFormat('wav')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                         selectedFormat === 'wav'
-                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-900/30'
-                          : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                          ? ' bg-accent text-on-accent'
+                          : 'text-muted hover:text-fg hover:bg-surface'
                       }`}
                     >
                       <Disc className="w-4 h-4" />
                       <span>WAV Format</span>
-                      <span className="px-1.5 py-0.5 rounded text-[10px] bg-black/20 text-indigo-200">
+                      <span className="px-1.5 py-0.5 rounded text-xs bg-black/20 text-muted">
                         {wavSize}
                       </span>
                     </button>
@@ -1635,9 +1613,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                 </div>
 
                 {/* THE BEST AUDIO PLAYER BAR */}
-                <div className="p-5 sm:p-6 rounded-2xl bg-slate-900/80 border border-slate-800/90 space-y-4 shadow-inner">
+                <div className="p-5 sm:p-6 rounded-2xl bg-surface/80 border border-line space-y-4">
                   {/* Dynamic Waveform Visualizer */}
-                  <div className="flex items-center justify-between gap-1 h-16 py-2 px-3 rounded-xl bg-slate-950/90 border border-slate-800">
+                  <div className="flex items-center justify-between gap-1 h-16 py-2 px-3 rounded-xl bg-bg/90 border border-line">
                     {Array.from({ length: 60 }).map((_, i) => {
                       const progressRatio = audioDuration > 0 ? playbackTime / audioDuration : 0;
                       const barPosition = i / 60;
@@ -1651,10 +1629,10 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                           key={i}
                           className={`w-1 rounded-full transition-all duration-100 ${
                             isPlaying && isPassed
-                              ? 'bg-gradient-to-t from-emerald-400 via-teal-300 to-cyan-200 shadow-[0_0_6px_#00c9a7]'
+                              ? ' bg-accent'
                               : isPassed
-                              ? 'bg-[#00c9a7]'
-                              : 'bg-slate-700/80'
+                              ? 'bg-accent'
+                              : 'bg-sunken/80'
                           }`}
                           style={{ height: `${Math.max(12, Math.min(100, dynamicHeight))}%` }}
                         />
@@ -1666,24 +1644,24 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                   <div className="space-y-1.5">
                     <div
                       onClick={handleSeek}
-                      className="relative w-full h-3 bg-slate-950 hover:bg-slate-800/90 rounded-full cursor-pointer group transition-colors p-0.5 border border-slate-800/80"
+                      className="relative w-full h-3 bg-bg hover:bg-surface/90 rounded-full cursor-pointer group transition-colors p-0.5 border border-line"
                       title="Click or drag to seek"
                     >
                       <div
-                        className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-300 rounded-full transition-all relative"
+                        className="h-full bg-accent rounded-full transition-all relative"
                         style={{
                           width: `${audioDuration > 0 ? Math.min(100, (playbackTime / audioDuration) * 100) : 0}%`,
                         }}
                       >
                         {/* Draggable glowing thumb */}
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white shadow-[0_0_10px_#00c9a7] opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-surface opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     </div>
 
                     {/* Timestamps & Active Format Tag */}
-                    <div className="flex items-center justify-between text-xs font-mono text-slate-400">
-                      <span className="font-bold text-emerald-400">{formatTime(playbackTime)}</span>
-                      <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-slate-500">
+                    <div className="flex items-center justify-between text-xs font-mono text-muted">
+                      <span className="font-medium text-accent">{formatTime(playbackTime)}</span>
+                      <span className="text-xs font-sans font-medium uppercase tracking-wider text-muted">
                         Playing {selectedFormat.toUpperCase()} • {selectedFormat === 'mp3' ? '320kbps' : 'Lossless 24-bit'}
                       </span>
                       <span>{formatTime(audioDuration)}</span>
@@ -1698,8 +1676,8 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                       <button
                         type="button"
                         onClick={() => handleSkip(-5)}
-                        className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
-                        title="Rewind 5 seconds"
+                        className="w-10 h-10 rounded-xl bg-surface hover:bg-sunken text-muted hover:text-fg flex items-center justify-center transition cursor-pointer"
+                        title="Rewind 5 seconds" aria-label="Rewind 5 seconds"
                       >
                         <RotateCcw className="w-4 h-4" />
                       </button>
@@ -1708,9 +1686,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                       <button
                         type="button"
                         onClick={togglePlayAudio}
-                        className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#00A9C0] to-[#00c9a7] hover:from-[#00c9a7] hover:to-[#00A9C0] text-slate-950 flex items-center justify-center shadow-[0_0_24px_rgba(0,201,167,0.45)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                        className="w-14 h-14 rounded-full bg-accent hover:bg-accent text-on-accent flex items-center justify-center transition-all cursor-pointer"
                         title={isPlaying ? 'Pause Audio' : 'Play Audio'}
-                      >
+                       aria-label="Pause">
                         {isPlaying ? (
                           <Pause className="w-6 h-6 fill-current" />
                         ) : (
@@ -1722,8 +1700,8 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                       <button
                         type="button"
                         onClick={() => handleSkip(5)}
-                        className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
-                        title="Forward 5 seconds"
+                        className="w-10 h-10 rounded-xl bg-surface hover:bg-sunken text-muted hover:text-fg flex items-center justify-center transition cursor-pointer"
+                        title="Forward 5 seconds" aria-label="Forward 5 seconds"
                       >
                         <RotateCw className="w-4 h-4" />
                       </button>
@@ -1732,10 +1710,10 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                       <button
                         type="button"
                         onClick={toggleLoop}
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition active:scale-95 cursor-pointer ${
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition cursor-pointer ${
                           isLooping
-                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                            : 'bg-slate-800 text-slate-400 hover:text-white'
+                            ? 'bg-accent/20 text-accent border border-accent/40'
+                            : 'bg-surface text-muted hover:text-fg'
                         }`}
                         title={isLooping ? 'Loop Enabled' : 'Enable Loop'}
                       >
@@ -1746,7 +1724,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                     {/* Center/Right: Speed Presets & Volume Control */}
                     <div className="flex items-center gap-4 flex-wrap">
                       {/* Speed Presets */}
-                      <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+                      <div className="flex items-center gap-1 bg-bg/80 p-1 rounded-xl border border-line">
                         {[0.75, 1.0, 1.25, 1.5, 2.0].map((spd) => (
                           <button
                             key={spd}
@@ -1755,10 +1733,10 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                               setPlaybackSpeed(spd);
                               if (audioPlayerRef.current) audioPlayerRef.current.playbackRate = spd;
                             }}
-                            className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                            className={`px-2 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                               playbackSpeed === spd
-                                ? 'bg-[#00c9a7] text-slate-950 font-black'
-                                : 'text-slate-400 hover:text-white'
+                                ? 'bg-accent text-on-accent font-semibold'
+                                : 'text-muted hover:text-fg'
                             }`}
                           >
                             {spd}x
@@ -1767,17 +1745,17 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                       </div>
 
                       {/* Volume Control */}
-                      <div className="flex items-center gap-2 bg-slate-950/80 px-3 py-1.5 rounded-xl border border-slate-800">
+                      <div className="flex items-center gap-2 bg-bg/80 px-3 py-1.5 rounded-xl border border-line">
                         <button
                           type="button"
                           onClick={toggleMute}
-                          className="text-slate-400 hover:text-white transition cursor-pointer"
+                          className="text-muted hover:text-fg transition cursor-pointer"
                           title={isMuted ? 'Unmute' : 'Mute'}
-                        >
+                         aria-label="Mute">
                           {isMuted || volume === 0 ? (
-                            <VolumeX className="w-4 h-4 text-rose-400" />
+                            <VolumeX className="w-4 h-4 text-danger" />
                           ) : (
-                            <Volume2 className="w-4 h-4 text-[#00c9a7]" />
+                            <Volume2 className="w-4 h-4 text-accent" />
                           )}
                         </button>
                         <input
@@ -1787,7 +1765,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                           step="0.05"
                           value={isMuted ? 0 : volume}
                           onChange={(e) => handleVolumeChange(Number(e.target.value))}
-                          className="w-16 sm:w-20 accent-[#00c9a7] cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                          className="w-16 sm:w-20 accent-accent cursor-pointer h-1.5 bg-surface rounded-lg"
                           title={`Volume: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
                         />
                       </div>
@@ -1798,10 +1776,10 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                 {/* DOWNLOAD SECTION: DUAL DOWNLOAD BUTTONS (MP3 & WAV) */}
                 <div className="pt-2 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs uppercase font-extrabold tracking-wider text-slate-400">
+                    <span className="text-xs uppercase font-semibold tracking-wider text-muted">
                       Download Your Voiceover Files
                     </span>
-                    <span className="text-xs text-[#00c9a7] font-semibold">100% Free • No Watermark</span>
+                    <span className="text-xs text-accent font-medium">100% Free • No Watermark</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -1809,18 +1787,18 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                     <a
                       href={generatedMp3Url || '#'}
                       download={`playzy_${activeVoice.name.toLowerCase()}_speech_${Date.now()}.mp3`}
-                      className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-xl shadow-emerald-950/40 active:scale-[0.99] transition-all cursor-pointer group"
+                      className="flex items-center justify-between p-4 rounded-2xl bg-accent hover:bg-accent text-on-accent transition-all cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
+                        <div className="w-10 h-10 rounded-xl bg-sunken flex items-center justify-center text-fg transition-transform">
                           <Download className="w-5 h-5" />
                         </div>
                         <div>
-                          <div className="text-sm font-extrabold">Download MP3 Audio</div>
-                          <div className="text-[11px] text-emerald-100">320kbps Universal Format • {mp3Size}</div>
+                          <div className="text-sm font-semibold">Download MP3 Audio</div>
+                          <div className="text-xs text-accent">320kbps Universal Format • {mp3Size}</div>
                         </div>
                       </div>
-                      <span className="text-xs font-bold px-2 py-1 rounded-lg bg-black/20 text-white">
+                      <span className="text-xs font-medium px-2 py-1 rounded-lg bg-black/20 text-white">
                         .MP3
                       </span>
                     </a>
@@ -1829,20 +1807,20 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                     <a
                       href={generatedWavUrl || '#'}
                       download={`playzy_${activeVoice.name.toLowerCase()}_speech_${Date.now()}.wav`}
-                      className="flex items-center justify-between p-4 rounded-2xl bg-white hover:bg-slate-100 text-slate-900 dark:bg-[#1E252F] dark:hover:bg-[#283240] dark:text-white border border-slate-200 dark:border-[#354354] shadow-xl active:scale-[0.99] transition-all cursor-pointer group"
+                      className="flex items-center justify-between p-4 rounded-2xl bg-surface hover:bg-sunken text-fg border border-line transition-all cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-500 dark:text-indigo-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <div className="w-10 h-10 rounded-xl bg-sunken text-muted flex items-center justify-center transition-transform">
                           <Disc className="w-5 h-5" />
                         </div>
                         <div>
-                          <div className="text-sm font-extrabold">Download WAV Audio</div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                          <div className="text-sm font-semibold">Download WAV Audio</div>
+                          <div className="text-xs text-muted">
                             24-bit Lossless Studio PCM • {wavSize}
                           </div>
                         </div>
                       </div>
-                      <span className="text-xs font-bold px-2 py-1 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-300">
+                      <span className="text-xs font-medium px-2 py-1 rounded-lg bg-sunken text-muted">
                         .WAV
                       </span>
                     </a>
@@ -1853,9 +1831,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                     <button
                       type="button"
                       onClick={handleGenerateSpeech}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-bold transition active:scale-95 cursor-pointer"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface hover:bg-surface text-muted hover:text-fg border border-line text-xs font-medium transition cursor-pointer"
                     >
-                      <RotateCcw className="w-4 h-4 text-[#00c9a7]" />
+                      <RotateCcw className="w-4 h-4 text-accent" />
                       <span>Generate Again / Revise Script</span>
                     </button>
                   </div>
@@ -1868,30 +1846,30 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
         {/* TAB 2: INSTANT VOICE CLONE */}
         {activeTab === 'clone' && (
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-50/60 to-indigo-50/40 border border-purple-200/80 space-y-4">
+            <div className="p-6 rounded-2xl bg-sunken border border-line space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-base font-extrabold text-slate-900">
+                  <h3 className="text-base font-semibold text-fg">
                     Instant Voice Cloning Lab
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted">
                     Provide a 10-30 second clear audio recording. Our neural network analyzes voice acoustics, pitch, and cadence.
                   </p>
                 </div>
-                <span className="px-3 py-1 text-xs font-extrabold uppercase bg-purple-200 text-purple-900 rounded-lg">
+                <span className="px-3 py-1 text-xs font-semibold uppercase bg-sunken text-muted rounded-lg">
                   Zero Login
                 </span>
               </div>
 
               {/* Voice Name Input */}
               <div className="max-w-md space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Voice Profile Name:</label>
+                <label className="text-xs font-medium text-fg">Voice Profile Name:</label>
                 <input
                   type="text"
                   value={cloneVoiceName}
                   onChange={(e) => setCloneVoiceName(e.target.value)}
                   placeholder="e.g. My Personal Clone, Narrator Voice..."
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-xs text-slate-900 font-semibold focus:outline-none focus:border-purple-600 shadow-xs"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface border border-line text-xs text-fg font-medium focus:border-line"
                 />
               </div>
 
@@ -1900,10 +1878,10 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                 <button
                   type="button"
                   onClick={isRecording ? handleStopRecord : handleStartRecord}
-                  className={`flex items-center justify-center gap-2 py-4 px-4 rounded-xl font-bold text-xs shadow-xs transition-all ${
+                  className={`flex items-center justify-center gap-2 py-4 px-4 rounded-xl font-medium text-xs transition-all ${
                     isRecording
-                      ? 'bg-red-600 hover:bg-red-700 text-white animate-pulse'
-                      : 'bg-white border border-purple-300 text-purple-700 hover:bg-purple-50'
+                      ? 'bg-danger hover:bg-danger text-on-accent animate-pulse'
+                      : 'bg-surface border border-line text-muted hover:bg-sunken'
                   }`}
                 >
                   <Mic className="w-4 h-4" />
@@ -1925,21 +1903,21 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                     }
                   }}
                   onClick={() => fileInputRef.current?.click()}
-                  className={`flex items-center justify-center gap-2 py-4 px-4 rounded-xl border-2 border-dashed cursor-pointer font-bold text-xs transition-all ${
+                  className={`flex items-center justify-center gap-2 py-4 px-4 rounded-xl border-2 border-dashed cursor-pointer font-medium text-xs transition-all ${
                     isCloneDragOver
-                      ? 'border-purple-600 bg-purple-100/70 scale-[1.01]'
-                      : 'bg-white border-slate-300 hover:border-purple-300 text-slate-700'
+                      ? 'border-line bg-sunken scale-[1.01]'
+                      : 'bg-surface border-line hover:border-line text-fg'
                   }`}
                 >
-                  <UploadCloud className="w-4 h-4 text-purple-600" />
+                  <UploadCloud className="w-4 h-4 text-muted" />
                   <span>Drop Audio Sample (.mp3, .wav)</span>
                 </div>
               </div>
 
               {(sampleAudio || recordedBlob) && (
-                <div className="flex items-center justify-between p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold animate-fadeIn">
+                <div className="flex items-center justify-between p-4 rounded-xl bg-accent-soft border border-accent/30 text-accent text-xs font-medium animate-enter">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <CheckCircle2 className="w-4 h-4 text-accent" />
                     <span>
                       Audio sample captured: {sampleAudio?.name || 'Live Microphone Audio Clip (Ready)'}
                     </span>
@@ -1950,7 +1928,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                       setSampleAudio(null);
                       setRecordedBlob(null);
                     }}
-                    className="text-slate-400 hover:text-slate-600 font-bold"
+                    className="text-muted hover:text-muted font-medium"
                   >
                     Remove
                   </button>
@@ -1960,13 +1938,13 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
             {/* Test script for clone */}
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-700">Enter text to speak with cloned voice:</label>
+              <label className="text-xs font-medium text-fg">Enter text to speak with cloned voice:</label>
               <textarea
                 rows={4}
                 value={scriptText}
                 onChange={(e) => setScriptText(e.target.value)}
                 placeholder="Type what you want your cloned voice to say..."
-                className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-purple-600 shadow-inner"
+                className="w-full p-4 rounded-2xl bg-sunken border border-line text-xs sm:text-sm text-fg focus:border-line"
               />
             </div>
 
@@ -1981,7 +1959,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                 setCloneSuccess(true);
                 handleGenerateSpeech();
               }}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold text-sm shadow-xl shadow-purple-500/25 transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 rounded-2xl bg-accent hover:bg-accent-hover text-on-accent font-semibold text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
               {isGenerating ? (
                 <>
@@ -1995,15 +1973,15 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
             {/* Generated Cloned Audio Output */}
             {!isGenerating && (generatedMp3Url || generatedWavUrl) && cloneSuccess && (
-              <div className="p-6 rounded-2xl bg-slate-900 text-white space-y-4 animate-apple-in border border-purple-500/30">
+              <div className="p-6 rounded-2xl bg-surface text-fg space-y-4 animate-enter border border-line">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-sunken text-muted flex items-center justify-center">
                       <Mic className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-extrabold">{cloneVoiceName} Ready</h4>
-                      <p className="text-[11px] text-slate-400">Neural Cloned Voice Audio</p>
+                      <h4 className="text-sm font-semibold">{cloneVoiceName} Ready</h4>
+                      <p className="text-xs text-muted">Neural Cloned Voice Audio</p>
                     </div>
                   </div>
                 </div>
@@ -2012,7 +1990,7 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                   <button
                     type="button"
                     onClick={togglePlayAudio}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs shadow-md transition active:scale-95"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent hover:bg-accent-hover text-on-accent font-semibold text-xs transition"
                   >
                     {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
                     <span>{isPlaying ? 'Pause' : 'Play Voice'}</span>
@@ -2021,9 +1999,9 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                   <a
                     href={generatedMp3Url || generatedWavUrl || '#'}
                     download={`playzy_clone_${Date.now()}.mp3`}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-xs shadow-md transition active:scale-95"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-surface hover:bg-sunken text-fg font-semibold text-xs transition"
                   >
-                    <Download className="w-4 h-4 text-purple-600" />
+                    <Download className="w-4 h-4 text-muted" />
                     <span>Download Audio (MP3)</span>
                   </a>
                 </div>
@@ -2035,17 +2013,17 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
       {/* 36+ VOICES ELEVENLABS MODAL / DRAWER */}
       {isVoicePickerOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 animate-enter">
+          <div className="bg-surface rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-line overflow-hidden">
             {/* Modal Header */}
-            <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+            <div className="p-5 border-b border-line flex items-center justify-between bg-sunken/70">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold">
+                <div className="w-10 h-10 rounded-xl bg-accent text-on-accent flex items-center justify-center font-medium">
                   <Languages className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-slate-900">ElevenLabs Voice Library</h3>
-                  <p className="text-xs text-slate-500">
+                  <h3 className="text-lg font-semibold text-fg">Voice library</h3>
+                  <p className="text-xs text-muted">
                     Browse 36+ studio-grade voices across 16 global languages
                   </p>
                 </div>
@@ -2054,37 +2032,37 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
               <button
                 type="button"
                 onClick={() => setIsVoicePickerOpen(false)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 transition-colors"
-              >
+                className="p-2 rounded-xl text-muted hover:text-fg hover:bg-line/50 transition-colors"
+               aria-label="Close">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Search and Filters */}
-            <div className="p-4 sm:p-5 border-b border-slate-100 bg-white space-y-3">
+            <div className="p-4 sm:p-5 border-b border-line bg-surface space-y-3">
               {/* Search Bar */}
-              <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 focus-within:border-purple-600 focus-within:ring-2 focus-within:ring-purple-100">
-                <Search className="w-4 h-4 text-slate-400" />
+              <div className="flex items-center gap-2 bg-sunken border border-line rounded-2xl px-3.5 py-2 focus-within:border-line focus-within:ring-2 focus-within:ring-line">
+                <Search className="w-4 h-4 text-muted" />
                 <input
                   type="text"
                   value={voiceSearchQuery}
                   onChange={(e) => setVoiceSearchQuery(e.target.value)}
                   placeholder="Search by voice name, language, or style (e.g. Adam, British, Narration)..."
-                  className="w-full bg-transparent border-none text-xs sm:text-sm text-slate-900 focus:outline-none"
+                  className="w-full bg-transparent border-none text-xs sm:text-sm text-fg"
                 />
               </div>
 
               {/* Language Filter Pills */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar text-xs">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
                 {['All', 'English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Arabic', 'Hindi', 'Japanese', 'Chinese', 'Korean', 'Russian'].map((lng) => (
                   <button
                     key={lng}
                     type="button"
                     onClick={() => setSelectedLangFilter(lng)}
-                    className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
+                    className={`px-3 py-1.5 rounded-xl font-medium whitespace-nowrap transition-all ${
                       selectedLangFilter === lng
-                        ? 'bg-purple-600 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        ? 'bg-accent text-on-accent'
+                        : 'bg-sunken text-muted hover:bg-line'
                     }`}
                   >
                     {lng}
@@ -2095,16 +2073,16 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
               {/* Gender and Category Filters */}
               <div className="flex items-center justify-between text-xs pt-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-400 font-bold">Gender:</span>
+                  <span className="text-muted font-medium">Gender:</span>
                   {['All', 'Female', 'Male'].map((g) => (
                     <button
                       key={g}
                       type="button"
                       onClick={() => setSelectedGenderFilter(g)}
-                      className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
                         selectedGenderFilter === g
-                          ? 'bg-slate-900 text-white'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          ? 'bg-surface text-fg'
+                          : 'bg-sunken text-muted hover:bg-line'
                       }`}
                     >
                       {g}
@@ -2112,14 +2090,14 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                   ))}
                 </div>
 
-                <span className="text-slate-400 font-medium">
+                <span className="text-muted font-medium">
                   Showing {filteredVoices.length} voices
                 </span>
               </div>
             </div>
 
             {/* Voices Grid */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 bg-slate-50/50">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 bg-sunken/50">
               {filteredVoices.map((v) => {
                 const isSelected = selectedVoiceId === v.id;
                 const isAuditioning = auditioningVoiceId === v.id;
@@ -2130,10 +2108,10 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                       setSelectedVoiceId(v.id);
                       setIsVoicePickerOpen(false);
                     }}
-                    className={`p-4 rounded-2xl border bg-white cursor-pointer transition-all flex flex-col justify-between gap-3 group ${
+                    className={`p-4 rounded-2xl border bg-surface cursor-pointer transition-all flex flex-col justify-between gap-3 group ${
                       isSelected
-                        ? 'border-purple-600 ring-2 ring-purple-100 shadow-md'
-                        : 'border-slate-200 hover:border-purple-300 hover:shadow-xs'
+                        ? 'border-line ring-2 ring-line'
+                        : 'border-line hover:border-line'
                     }`}
                   >
                     <div className="space-y-2">
@@ -2141,35 +2119,35 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
                         <div className="flex items-center gap-2">
                           <span className="text-xl">{v.flag}</span>
                           <div>
-                            <span className="text-sm font-extrabold text-slate-900 block leading-tight">
+                            <span className="text-sm font-semibold text-fg block leading-tight">
                               {v.name}
                             </span>
-                            <span className="text-[10px] text-slate-500 font-semibold">
+                            <span className="text-xs text-muted font-medium">
                               {v.language}
                             </span>
                           </div>
                         </div>
 
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600">
+                        <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-sunken text-muted">
                           {v.gender}
                         </span>
                       </div>
 
-                      <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-muted line-clamp-2 leading-relaxed">
                         {v.desc}
                       </p>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                    <div className="flex items-center justify-between pt-2 border-t border-line">
                       <button
                         type="button"
                         onClick={(e) => handleAuditionVoice(v, e)}
-                        className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                           isAuditioning
-                            ? 'bg-purple-600 text-white animate-pulse'
-                            : 'bg-slate-100 text-slate-700 hover:bg-purple-50 hover:text-purple-700'
+                            ? 'bg-accent text-on-accent animate-pulse'
+                            : 'bg-sunken text-fg hover:bg-sunken hover:text-muted'
                         }`}
-                        title="Audition sample"
+                        title="Audition sample" aria-label="Audition sample"
                       >
                         {isAuditioning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
                         <span>{isAuditioning ? 'Playing' : 'Preview'}</span>
@@ -2177,8 +2155,8 @@ export function AiVoiceStudio({ toolId, onBackToCategory }: AiVoiceStudioProps) 
 
                       <button
                         type="button"
-                        className={`text-xs font-bold ${
-                          isSelected ? 'text-purple-600' : 'text-slate-400 group-hover:text-purple-600'
+                        className={`text-xs font-medium ${
+                          isSelected ? 'text-muted' : 'text-muted group-hover:text-muted'
                         }`}
                       >
                         {isSelected ? 'Selected ✓' : 'Use Voice'}
