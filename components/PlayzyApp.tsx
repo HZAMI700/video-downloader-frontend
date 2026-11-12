@@ -1,26 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Menu,
-  Play,
-  Sparkles,
-  DownloadCloud,
-  FileAudio,
-  Search,
-  ChevronRight,
-  ChevronLeft,
-  X,
-  ExternalLink,
-  Crown,
-  User,
-  Sliders,
-  FolderOpen,
-  Sun,
-  Moon,
-} from 'lucide-react';
+import { Menu, Play, Search, ChevronRight, Sun, Moon } from 'lucide-react';
 import { useTheme } from './ThemeContext';
-import { AppSidebar, ToolId } from './AppSidebar';
+import { AppSidebar, ALL_NAV_TOOLS, ToolId } from './AppSidebar';
 import {
   CategoryId,
   CATEGORIES,
@@ -40,6 +23,7 @@ import { QuillBotAiStudio } from './Tools/QuillBotAiStudio';
 import { RobinStudio } from './Tools/RobinStudio';
 import { BlackbirdEmailStudio } from './Tools/BlackbirdEmailStudio';
 import { TorrentStudio } from './Tools/TorrentStudio';
+import { IconButton } from './ui/Button';
 import { PlayzyHomeScreen } from './HomeScreen/PlayzyHomeScreen';
 
 // Existing Video Downloader Components
@@ -64,7 +48,7 @@ interface PlayzyAppProps {
   initialCategory?: CategoryId;
 }
 
-export function PlayzyApp({ initialTool = 'robin', initialCategory }: PlayzyAppProps) {
+export function PlayzyApp({ initialTool = null, initialCategory }: PlayzyAppProps) {
   const { theme, toggleTheme } = useTheme();
 
   // Resolve starting category based on initial tool
@@ -83,8 +67,6 @@ export function PlayzyApp({ initialTool = 'robin', initialCategory }: PlayzyAppP
   const [activeCategory, setActiveCategory] = useState<CategoryId>(resolvedCategory);
   const [activeTool, setActiveTool] = useState<ToolId | null>(initialTool ?? null);
   const [toolInitialText, setToolInitialText] = useState<string>('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isMoreModalOpen, setIsMoreModalOpen] = useState(false);
 
@@ -138,6 +120,18 @@ export function PlayzyApp({ initialTool = 'robin', initialCategory }: PlayzyAppP
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Ctrl/Cmd+K opens the tool search from anywhere
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsMoreModalOpen(true);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, []);
 
   // Cleanup polling on unmount
@@ -236,7 +230,6 @@ export function PlayzyApp({ initialTool = 'robin', initialCategory }: PlayzyAppP
   const handleSelectCategory = (categoryId: CategoryId) => {
     setActiveCategory(categoryId);
     setActiveTool(null);
-    setSearchQuery('');
   };
 
   // Switch to a specific tool, update URL, and ensure category is active
@@ -262,7 +255,6 @@ export function PlayzyApp({ initialTool = 'robin', initialCategory }: PlayzyAppP
 
   const handleCloseTool = (pushState = true) => {
     setActiveTool(null);
-    setSearchQuery('');
     if (pushState && typeof window !== 'undefined') {
       if (window.location.pathname !== '/') {
         window.history.pushState(null, '', '/');
@@ -273,195 +265,117 @@ export function PlayzyApp({ initialTool = 'robin', initialCategory }: PlayzyAppP
   const currentCategoryDef = getCategoryById(activeCategory) || CATEGORIES[0];
   const currentToolDef = activeTool ? getToolById(activeTool) : undefined;
 
+  const isHome = activeTool === null && activeCategory !== 'video-downloader' && activeCategory !== 'workspace';
+  const isDark = theme === 'dark';
+  const navTool = activeTool ? ALL_NAV_TOOLS.find((t) => t.id === activeTool) : undefined;
+  const pageName =
+    navTool?.name ??
+    currentToolDef?.name ??
+    (activeCategory === 'video-downloader'
+      ? 'Video Downloader'
+      : activeCategory === 'workspace'
+      ? 'Saved work'
+      : currentCategoryDef.name);
+
   return (
-    <div className="min-h-screen w-full bg-[#F8FAFC] dark:bg-[#0F131A] flex flex-col font-sans text-slate-900 dark:text-slate-100 transition-colors duration-200">
-      {/* Top Global Navigation Bar - Matching Target Screenshot */}
-      <header className="w-full bg-white/95 dark:bg-[#0F131A]/95 backdrop-blur-md border-b border-slate-200 dark:border-[#212932] sticky top-0 z-40 px-2.5 sm:px-6 h-14 flex items-center justify-between shrink-0 transition-colors duration-200">
-        {/* Left: Mobile Toggle + Playzy Logo + Workspace & Model Selectors */}
-        <div className="flex items-center gap-2 sm:gap-6 min-w-0">
-          <button
-            type="button"
+    <div className="min-h-screen w-full bg-bg flex flex-col font-sans text-fg">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-3 focus:py-2 focus:rounded-ctl focus:bg-surface focus:border focus:border-line focus:text-sm"
+      >
+        Skip to content
+      </a>
+
+      <header className="w-full bg-bg/95 backdrop-blur-sm border-b border-line sticky top-0 z-40 px-3 sm:px-5 h-14 flex items-center justify-between gap-3 shrink-0">
+        <div className="flex items-center gap-1 min-w-0">
+          <IconButton
+            label="Open menu"
+            className="lg:hidden -ml-1"
             onClick={() => setIsMobileSidebarOpen(true)}
-            aria-label="Open Mobile Menu"
-            className="lg:hidden p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#181D24] transition-colors shrink-0"
           >
             <Menu className="w-5 h-5" />
-          </button>
+          </IconButton>
 
-          {/* Brand Logo */}
           <button
             type="button"
             onClick={() => handleCloseTool()}
-            className="flex items-center gap-2 group cursor-pointer focus:outline-none shrink-0"
+            aria-label="Playzy home"
+            className="flex items-center gap-2 h-10 px-1.5 rounded-ctl shrink-0"
           >
-            <div className="w-8 h-8 rounded-xl bg-black flex items-center justify-center p-1.5 shadow-sm">
-              <Play className="w-4 h-4 fill-[#00c9a7] text-[#00c9a7] translate-x-0.5" />
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white font-sans">
-                playzy
-              </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#d2f9ef] text-[#00a887]">
-                AI
-              </span>
-            </div>
+            <span className="w-7 h-7 rounded-ctl bg-fg flex items-center justify-center" aria-hidden="true">
+              <Play className="w-3.5 h-3.5 fill-bg text-bg translate-x-px" />
+            </span>
+            <span className="text-lg font-semibold tracking-tight text-fg">playzy</span>
           </button>
-
-          {/* Workspace Pill */}
-          <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f1f5f9] text-xs text-slate-800 font-semibold shrink-0">
-            <span className="w-2 h-2 rounded-full bg-[#00c9a7]" />
-            <span>Personal Workspace</span>
-          </div>
-
-          {/* Model Pill */}
-          <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f1fbf8] border border-[#d2f9ef] text-xs shrink-0">
-            <Sparkles className="w-3.5 h-3.5 text-[#00c9a7]" />
-            <span className="text-slate-500 font-medium">Model:</span>
-            <span className="font-bold text-slate-900">Playzy DeepSeek-R1</span>
-            <span className="px-1.5 py-0.5 rounded bg-[#d2f9ef] text-[#00897B] text-[10px] font-bold">671B</span>
-          </div>
         </div>
 
-        {/* Right: Search + Quick Downloader + Theme Toggle + Upgrade to Pro + Avatar */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Quick Search */}
-          <div className="relative hidden md:block">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search agents & tools..."
-              className="pl-9 pr-7 py-1.5 rounded-full bg-[#f1f5f9] border border-transparent text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#00c9a7] w-48 lg:w-56 transition-all"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            )}
-          </div>
-
-          {/* Quick Downloader Switcher */}
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
             type="button"
-            onClick={() => handleSelectTool('video-downloader')}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#f1f5f9] hover:bg-slate-200 text-xs font-semibold text-slate-700 transition cursor-pointer"
+            onClick={() => setIsMoreModalOpen(true)}
+            className="hidden sm:flex items-center gap-2 h-9 w-56 lg:w-72 px-3 rounded-ctl bg-surface border border-line text-sm text-muted hover:border-line-strong transition-colors"
           >
-            <DownloadCloud className="w-3.5 h-3.5 text-sky-500" />
-            <span>Downloader</span>
+            <Search className="w-4 h-4 shrink-0" aria-hidden="true" />
+            <span className="flex-1 text-left truncate">Search tools</span>
+            <kbd className="font-mono text-xs text-muted border border-line rounded-sm px-1.5 py-0.5">Ctrl K</kbd>
           </button>
-
-          {/* Theme Toggle Button */}
-          <button
-            type="button"
+          <IconButton label="Search tools" className="sm:hidden" onClick={() => setIsMoreModalOpen(true)}>
+            <Search className="w-5 h-5" />
+          </IconButton>
+          <IconButton
+            label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
             onClick={toggleTheme}
-            className="w-8 h-8 rounded-full bg-[#f1f5f9] hover:bg-slate-200 flex items-center justify-center text-purple-600 transition cursor-pointer"
-            aria-label="Toggle Theme"
           >
-            <Moon className="w-4 h-4 text-purple-600" />
-          </button>
-
-          {/* Upgrade to Pro Button */}
-          <button
-            type="button"
-            className="bg-[#00c9a7] hover:bg-[#00b596] active:scale-[0.98] text-slate-950 text-xs font-black px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-[0_0_12px_rgba(0,201,167,0.35)] transition-all cursor-pointer shrink-0"
-          >
-            <Crown className="w-3.5 h-3.5 text-slate-950 fill-current shrink-0" />
-            <span className="hidden sm:inline">Upgrade to Pro</span>
-            <span className="sm:hidden">Pro</span>
-          </button>
-
-          {/* User Profile Avatar with Online Ring */}
-          <button
-            type="button"
-            aria-label="User Account"
-            className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#181D24] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 flex items-center justify-center text-slate-700 dark:text-slate-200 transition-colors cursor-pointer relative shrink-0"
-          >
-            <User className="w-4 h-4 stroke-[2.2]" />
-            <span className="w-2 h-2 rounded-full bg-[#00c9a7] border-2 border-white dark:border-[#0F131A] absolute -bottom-0.5 -right-0.5" />
-          </button>
+            <Sun className="w-5 h-5 hidden dark:block" />
+            <Moon className="w-5 h-5 dark:hidden" />
+          </IconButton>
         </div>
       </header>
 
-      {/* Main Body Layout: Sidebar + Main Canvas */}
-      <div className="flex-1 flex w-full min-h-0 bg-[#F8FAFC] dark:bg-[#0F131A] transition-colors duration-200">
-        {/* Left Sidebar */}
+      <div className="flex-1 flex w-full min-h-0">
         <AppSidebar
           activeCategory={activeCategory}
           activeTool={activeTool}
           onSelectCategory={handleSelectCategory}
           onSelectTool={handleSelectTool}
-          isCollapsed={isSidebarCollapsed}
-          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          onGoHome={() => handleCloseTool()}
           isMobileOpen={isMobileSidebarOpen}
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
           isMoreModalOpen={isMoreModalOpen}
           setIsMoreModalOpen={setIsMoreModalOpen}
         />
 
-        {/* Main Content Area */}
-        <main className="flex-1 bg-[#F8FAFC] dark:bg-[#0F131A] p-2.5 sm:p-5 lg:p-7 overflow-y-auto min-h-[calc(100vh-3.5rem)] flex flex-col justify-between transition-colors duration-200 w-full min-w-0">
-          <div className="w-full min-w-0">
-            {/* Breadcrumb Row when inside a tool */}
-            {activeTool !== null && (
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-[#212932] gap-2 flex-wrap">
-                <div className="flex items-center gap-1.5 sm:gap-2 text-xs flex-wrap min-w-0">
-                  <button
-                    type="button"
-                    onClick={() => handleCloseTool()}
-                    className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-bold transition flex items-center gap-1 shrink-0"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                    <span className="hidden xs:inline">Workspace Home</span>
-                    <span className="xs:hidden">Home</span>
-                  </button>
-                  <span className="text-slate-300 dark:text-slate-600">/</span>
-                  <span className="font-semibold text-slate-600 dark:text-slate-400 truncate max-w-[120px] sm:max-w-none">
-                    {activeCategory === 'video-downloader'
-                      ? 'Playzy Video Downloader'
-                      : activeCategory === 'workspace'
-                      ? 'Saved Workspace'
-                      : currentCategoryDef.name}
-                  </span>
-                  {currentToolDef && (
-                    <>
-                      <span className="text-slate-300 dark:text-slate-600">/</span>
-                      <span className="font-extrabold text-[#009688] dark:text-[#00c9a7] truncate max-w-[140px] sm:max-w-none">
-                        {currentToolDef.name}
-                      </span>
-                    </>
-                  )}
-                </div>
-
+        <main
+          id="main"
+          className="flex-1 min-w-0 min-h-[calc(100vh-3.5rem)] flex flex-col px-4 sm:px-6 lg:px-8 py-5 lg:py-6"
+        >
+          <div className="w-full min-w-0 flex-1">
+            {!isHome && (
+              <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm mb-5 min-w-0">
                 <button
                   type="button"
                   onClick={() => handleCloseTool()}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white px-2.5 py-1 rounded-lg bg-white dark:bg-[#181D24] border border-slate-200 dark:border-[#263241] shadow-2xs shrink-0 cursor-pointer"
+                  className="text-muted hover:text-fg transition-colors rounded-sm shrink-0"
                 >
-                  <span className="hidden xs:inline">Close Tool</span>
-                  <X className="w-3.5 h-3.5" />
+                  Home
                 </button>
-              </div>
+                <ChevronRight className="w-3.5 h-3.5 text-muted shrink-0" aria-hidden="true" />
+                <span className="text-fg font-medium truncate" aria-current="page">
+                  {pageName}
+                </span>
+              </nav>
             )}
 
-            {/* DYNAMIC CONTENT SWITCHER */}
+
             {/* 1. PLAYZY VIDEO DOWNLOADER FULL SUITE */}
             {activeCategory === 'video-downloader' ? (
-              <div className="space-y-10 md:space-y-12 animate-apple-in max-w-5xl mx-auto pt-2">
-                <div className="text-center max-w-2xl mx-auto space-y-2">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/30">
-                    <DownloadCloud className="w-4 h-4 text-sky-400" />
-                    <span>Playzy Downloader • 4K Video &amp; 320kbps MP3</span>
-                  </div>
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-                    Free Video &amp; Audio Downloader
+              <div className="space-y-10 md:space-y-12 animate-enter max-w-5xl mx-auto pt-4">
+                <div className="max-w-2xl mx-auto text-center">
+                  <h1 className="font-serif text-3xl sm:text-4xl font-medium text-fg">
+                    Video and audio downloader
                   </h1>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                    Download videos and audio from YouTube, TikTok, Vimeo, and 1000+ sites with zero registration.
+                  <p className="mt-3 text-base text-muted">
+                    Paste a link from YouTube, TikTok, Vimeo or 1,000+ other sites. No account needed.
                   </p>
                 </div>
 
@@ -491,28 +405,20 @@ export function PlayzyApp({ initialTool = 'robin', initialCategory }: PlayzyAppP
               </div>
             ) : activeCategory === 'workspace' ? (
               /* 2. LOCAL WORKSPACE HISTORY */
-              <div className="animate-apple-in max-w-5xl mx-auto pt-2">
+              <div className="animate-enter max-w-5xl mx-auto pt-2">
                 <WorkspaceHistory />
               </div>
             ) : activeTool === null ? (
               /* 3. HOMESCREEN */
-              searchQuery ? (
-                <CategoryOverview
-                  category={currentCategoryDef}
-                  onSelectTool={handleSelectTool}
-                  searchFilter={searchQuery}
-                />
-              ) : (
-                <PlayzyHomeScreen
-                  onSelectTool={(toolId, initialText) => {
-                    handleSelectTool(toolId, initialText);
-                  }}
-                  onOpenAllToolsModal={() => setIsMoreModalOpen(true)}
-                />
-              )
+              <PlayzyHomeScreen
+                onSelectTool={(toolId, initialText) => {
+                  handleSelectTool(toolId, initialText);
+                }}
+                onOpenAllToolsModal={() => setIsMoreModalOpen(true)}
+              />
             ) : (
               /* 4. DEDICATED TOOL WORKSPACE */
-              <div className="animate-apple-in pt-1">
+              <div className="animate-enter pt-1">
                 {/* TORRENT TO MP4 VIDEO DOWNLOADER */}
                 {activeTool === 'torrent-downloader' ? (
                   <TorrentStudio />
@@ -560,24 +466,7 @@ export function PlayzyApp({ initialTool = 'robin', initialCategory }: PlayzyAppP
                   />
                 ) : activeTool === 'podcast-generator' ? (
                   /* AI PODCAST STUDIO */
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 pb-1 border-b border-slate-200 dark:border-[#212932]">
-                      <button
-                        type="button"
-                        onClick={() => handleCloseTool()}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-[#181D24] dark:hover:bg-[#202732] border border-slate-200 dark:border-[#263241] text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 shadow-xs"
-                      >
-                        <ChevronLeft className="w-3.5 h-3.5" />
-                        <span>Back to Audio Tools</span>
-                      </button>
-                      <span className="text-slate-300 dark:text-slate-600">/</span>
-                      <span className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-                        Free AI Podcast Generator
-                      </span>
-                    </div>
-                    <PodcastGenerator />
-                  </div>
+                  <PodcastGenerator />
                 ) : activeTool === 'youtube-to-mp3' ||
                   activeTool === 'youtube-to-mp4' ||
                   activeTool === 'tiktok-to-mp3' ||
@@ -613,16 +502,15 @@ export function PlayzyApp({ initialTool = 'robin', initialCategory }: PlayzyAppP
                   <CategoryOverview
                     category={currentCategoryDef}
                     onSelectTool={handleSelectTool}
-                    searchFilter={searchQuery}
+                    searchFilter=""
                   />
                 )}
               </div>
             )}
           </div>
 
-          {/* Clean Footer */}
-          <footer className="pt-10 pb-2 border-t border-slate-200 dark:border-[#212932] text-center text-xs text-slate-400 dark:text-slate-500">
-            <p>© {new Date().getFullYear()} Playzy AI Suite. 100% Free &amp; Secure. All workspace tools active.</p>
+          <footer className="pt-10 pb-1 text-xs text-muted">
+            <p>© {new Date().getFullYear()} Playzy. Free to use, no account needed.</p>
           </footer>
         </main>
       </div>

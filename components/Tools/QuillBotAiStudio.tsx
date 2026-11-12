@@ -73,65 +73,65 @@ export const QUILLBOT_TOOLS: AiToolCardConfig[] = [
     id: 'paraphrasing-tool',
     title: 'Paraphraser',
     description: 'Rewrite and refine text with fluency & creative modes',
-    icon: <RefreshCw className="w-4 h-4 text-[#499557]" />,
-    iconBg: 'bg-[#edf7ee] border-[#499557]/30',
-    badgeColor: 'text-[#499557] bg-[#edf7ee] border-[#499557]/40',
+    icon: <RefreshCw className="w-4 h-4 text-accent" />,
+    iconBg: 'bg-accent-soft border-accent/30',
+    badgeColor: 'text-accent bg-accent-soft border-accent/40',
   },
   {
     id: 'grammar-checker',
     title: 'Grammar Checker',
     description: 'Fix spelling, grammar, punctuation with zero errors',
-    icon: <CheckCheck className="w-4 h-4 text-rose-600" />,
-    iconBg: 'bg-rose-50 border-rose-200/80',
-    badgeColor: 'text-rose-700 bg-rose-50 border-rose-200',
+    icon: <CheckCheck className="w-4 h-4 text-danger" />,
+    iconBg: 'bg-danger-soft border-danger/80',
+    badgeColor: 'text-danger bg-danger-soft border-danger/30',
   },
   {
     id: 'ai-detector',
     title: 'AI Detector',
     description: 'Detect AI text with a precise 0-100 probability score',
-    icon: <ShieldAlert className="w-4 h-4 text-[#499557]" />,
-    iconBg: 'bg-[#edf7ee] border-[#499557]/30',
-    badgeColor: 'text-[#499557] bg-[#edf7ee] border-[#499557]/40',
+    icon: <ShieldAlert className="w-4 h-4 text-accent" />,
+    iconBg: 'bg-accent-soft border-accent/30',
+    badgeColor: 'text-accent bg-accent-soft border-accent/40',
   },
   {
     id: 'ai-humanizer',
     title: 'AI Humanizer',
     description: 'Make writing sound natural and bypass AI detectors',
-    icon: <UserCheck className="w-4 h-4 text-teal-600" />,
-    iconBg: 'bg-teal-50 border-teal-200/80',
-    badgeColor: 'text-teal-700 bg-teal-50 border-teal-200',
+    icon: <UserCheck className="w-4 h-4 text-accent" />,
+    iconBg: 'bg-accent-soft border-accent/80',
+    badgeColor: 'text-accent bg-accent-soft border-accent/30',
   },
   {
     id: 'summarizer',
     title: 'Summarizer',
     description: 'Condense long text into bullet points or concise TL;DR',
-    icon: <AlignLeft className="w-4 h-4 text-purple-600" />,
-    iconBg: 'bg-purple-50 border-purple-200/80',
-    badgeColor: 'text-purple-700 bg-purple-50 border-purple-200',
+    icon: <AlignLeft className="w-4 h-4 text-muted" />,
+    iconBg: 'bg-sunken border-line',
+    badgeColor: 'text-muted bg-sunken border-line',
   },
   {
     id: 'translator',
     title: 'Translator',
     description: 'Translate quickly and accurately across 30+ languages',
-    icon: <Languages className="w-4 h-4 text-slate-700" />,
-    iconBg: 'bg-slate-100 border-slate-300/80',
-    badgeColor: 'text-slate-700 bg-slate-100 border-slate-300',
+    icon: <Languages className="w-4 h-4 text-fg" />,
+    iconBg: 'bg-sunken border-line',
+    badgeColor: 'text-fg bg-sunken border-line',
   },
   {
     id: 'plagiarism-checker',
     title: 'Plagiarism Checker',
     description: 'Detect unoriginal content across billions of web pages',
-    icon: <FileSearch className="w-4 h-4 text-amber-600" />,
-    iconBg: 'bg-amber-50 border-amber-200/80',
-    badgeColor: 'text-amber-700 bg-amber-50 border-amber-200',
+    icon: <FileSearch className="w-4 h-4 text-warning" />,
+    iconBg: 'bg-warning-soft border-warning/80',
+    badgeColor: 'text-warning bg-warning-soft border-warning/30',
   },
   {
     id: 'ai-chat',
     title: 'AI Chat',
     description: "Unlock your writing potential with Playzy's free AI chat",
-    icon: <MessageSquare className="w-4 h-4 text-blue-600" />,
-    iconBg: 'bg-blue-50 border-blue-200/80',
-    badgeColor: 'text-blue-700 bg-blue-50 border-blue-200',
+    icon: <MessageSquare className="w-4 h-4 text-info" />,
+    iconBg: 'bg-info-soft border-info/80',
+    badgeColor: 'text-info bg-info-soft border-info/30',
   },
 ];
 
@@ -400,7 +400,7 @@ export function QuillBotAiStudio({
         return (
           <span
             key={idx}
-            className="bg-emerald-100 text-emerald-950 font-bold px-1 py-0.5 rounded border-b-2 border-emerald-500 shadow-2xs"
+            className="bg-accent-soft text-accent font-medium px-1 py-0.5 rounded border-b-2 border-accent"
             title="Rephrased vocabulary"
           >
             {token}
@@ -589,7 +589,7 @@ export function QuillBotAiStudio({
     QUILLBOT_TOOLS.find((t) => t.id === currentTool) || QUILLBOT_TOOLS[0];
 
   return (
-    <div className="w-full space-y-4 animate-apple-in font-sans">
+    <div className="w-full space-y-4 animate-enter font-sans">
       {/* Hidden file input */}
       <input
         ref={fileInputRef}
@@ -599,41 +599,30 @@ export function QuillBotAiStudio({
         onChange={handleFileInputChange}
       />
 
-      {/* Playzy Signature Header & Tool Switcher Card */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-3 sm:p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
-        {/* Brand & Active Tool identity */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#edf7ee] text-[#499557] flex items-center justify-center font-black shadow-2xs flex-shrink-0">
-            {activeToolMeta.icon}
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-base font-extrabold tracking-tight text-slate-900">{activeToolMeta.title}</span>
-              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#edf7ee] text-[#499557] border border-[#499557]/20">
-                Playzy AI
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-500 font-medium">
-              World’s Favorite AI Writing & Research Platform
-            </p>
-          </div>
-        </div>
-
-        {/* Quick Sibling Tool Switcher */}
-        <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-0.5 custom-scrollbar">
+      {/* Title and sibling tool tabs */}
+      <div className="space-y-4">
+        <h1 className="font-serif text-3xl font-medium text-fg">{activeToolMeta.title}</h1>
+        <div
+          role="tablist"
+          aria-label="Writing tools"
+          className="flex items-center gap-1 overflow-x-auto no-scrollbar border-b border-line"
+        >
           {QUILLBOT_TOOLS.map((t) => {
             const isActive = currentTool === t.id;
             return (
               <button
                 key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
                 onClick={() => handleToolChange(t.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                className={`h-10 px-3 -mb-px border-b-2 text-sm whitespace-nowrap transition-colors ${
                   isActive
-                    ? 'bg-[#499557] text-white shadow-2xs'
-                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/70'
+                    ? 'border-accent text-accent font-medium'
+                    : 'border-transparent text-muted hover:text-fg'
                 }`}
               >
-                <span>{t.title}</span>
+                {t.title}
               </button>
             );
           })}
@@ -641,20 +630,20 @@ export function QuillBotAiStudio({
       </div>
 
       {/* Standalone Control Sub-Bar (Modes & Controls) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-2.5 rounded-2xl border border-slate-200/70 bg-[#f8faf9] shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         {/* Left: Mode Selection for Paraphraser */}
         {currentTool === 'paraphrasing-tool' ? (
           <div className="flex flex-wrap items-center gap-1">
-            <span className="text-xs font-bold text-slate-600 mr-1.5">Modes:</span>
+            <span className="text-xs font-medium text-muted mr-1.5">Modes:</span>
             {['standard', 'fluency', 'formal', 'academic', 'simple', 'creative', 'shorten', 'expand'].map((m) => (
               <button
                 key={m}
                 type="button"
                 onClick={() => setParaphraseMode(m)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold capitalize transition-all ${
+                className={`px-3 py-1 rounded-full text-xs font-medium capitalize transition-all ${
                   paraphraseMode === m
-                    ? 'bg-[#edf7ee] text-[#499557] font-bold border border-[#499557]/40 shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    ? 'bg-accent-soft text-accent font-medium border border-accent/40'
+                    : 'text-muted hover:text-fg hover:bg-sunken'
                 }`}
               >
                 {m}
@@ -663,35 +652,35 @@ export function QuillBotAiStudio({
           </div>
         ) : currentTool === 'ai-detector' ? (
           <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1.5 text-xs font-bold text-[#499557] bg-[#edf7ee] px-3 py-1 rounded-full border border-[#499557]/20">
+            <span className="flex items-center gap-1.5 text-xs font-medium text-accent bg-accent-soft px-3 py-1 rounded-full border border-accent/20">
               <ShieldAlert className="w-3.5 h-3.5" />
               <span>AI Content Detector (0-100 Score)</span>
             </span>
-            <span className="text-[11px] text-slate-500 font-medium hidden sm:inline">
+            <span className="text-xs text-muted font-medium hidden sm:inline">
               Deep neural scan analyzing vocabulary repetition and syntax
             </span>
           </div>
         ) : currentTool === 'grammar-checker' ? (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-[#499557] bg-[#edf7ee] px-3 py-1 rounded-full border border-[#499557]/20">
+            <span className="text-xs font-medium text-accent bg-accent-soft px-3 py-1 rounded-full border border-accent/20">
               0 Errors Proofreader
             </span>
-            <span className="text-[11px] text-slate-500 font-medium hidden sm:inline">
+            <span className="text-xs text-muted font-medium hidden sm:inline">
               Fixes spelling, punctuation, and subject-verb disagreements instantly
             </span>
           </div>
         ) : currentTool === 'ai-humanizer' ? (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-600 mr-1">Tone:</span>
+            <span className="text-xs font-medium text-muted mr-1">Tone:</span>
             {['balanced', 'academic', 'casual'].map((t) => (
               <button
                 key={t}
                 type="button"
                 onClick={() => setHumanizeTone(t)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold capitalize transition-all ${
+                className={`px-3 py-1 rounded-full text-xs font-medium capitalize transition-all ${
                   humanizeTone === t
-                    ? 'bg-[#edf7ee] text-[#499557] font-bold border border-[#499557]/30'
-                    : 'text-slate-600 hover:bg-slate-100'
+                    ? 'bg-accent-soft text-accent font-medium border border-accent/30'
+                    : 'text-muted hover:bg-sunken'
                 }`}
               >
                 {t}
@@ -700,14 +689,14 @@ export function QuillBotAiStudio({
           </div>
         ) : currentTool === 'summarizer' ? (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-600 mr-1">Format:</span>
+            <span className="text-xs font-medium text-muted mr-1">Format:</span>
             <button
               type="button"
               onClick={() => setSummaryFormat('paragraph')}
-              className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                 summaryFormat === 'paragraph'
-                  ? 'bg-[#edf7ee] text-[#499557] font-bold border border-[#499557]/30'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  ? 'bg-accent-soft text-accent font-medium border border-accent/30'
+                  : 'text-muted hover:bg-sunken'
               }`}
             >
               Paragraph
@@ -715,10 +704,10 @@ export function QuillBotAiStudio({
             <button
               type="button"
               onClick={() => setSummaryFormat('bullets')}
-              className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                 summaryFormat === 'bullets'
-                  ? 'bg-[#edf7ee] text-[#499557] font-bold border border-[#499557]/30'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  ? 'bg-accent-soft text-accent font-medium border border-accent/30'
+                  : 'text-muted hover:bg-sunken'
               }`}
             >
               Bullet Points
@@ -726,11 +715,11 @@ export function QuillBotAiStudio({
           </div>
         ) : currentTool === 'translator' ? (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-600">Translate to:</span>
+            <span className="text-xs font-medium text-muted">Translate to:</span>
             <select
               value={targetLang}
               onChange={(e) => setTargetLang(e.target.value)}
-              className="px-3 py-1 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-800 focus:outline-none"
+              className="px-3 py-1 rounded-xl text-xs font-medium bg-surface border border-line text-fg"
             >
               {LANGUAGES.map((l) => (
                 <option key={l.code} value={l.code}>
@@ -741,7 +730,7 @@ export function QuillBotAiStudio({
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-800">
+            <span className="text-xs font-medium text-fg">
               {activeToolMeta.title}
             </span>
           </div>
@@ -750,12 +739,12 @@ export function QuillBotAiStudio({
         {/* Upgraded Right Slide Section (Contextual Sliders for Paraphraser, AI Detector, Summarizer, etc.) */}
         {currentTool === 'paraphrasing-tool' ? (
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
-              <Sliders className="w-3.5 h-3.5 text-[#499557]" />
+            <div className="flex items-center gap-1.5 text-xs font-medium text-fg">
+              <Sliders className="w-3.5 h-3.5 text-accent" />
               <span>Synonyms:</span>
             </div>
-            <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-xl border border-slate-200/90 shadow-2xs">
-              <span className="text-[10.5px] font-semibold text-slate-400">Fewer</span>
+            <div className="flex items-center gap-2 bg-surface px-3 py-1 rounded-xl border border-line">
+              <span className="text-xs font-medium text-muted">Fewer</span>
               <input
                 type="range"
                 min="0"
@@ -767,22 +756,22 @@ export function QuillBotAiStudio({
                   const val = Number(e.target.value);
                   setSynonymLevel(val === 0 ? 'low' : val === 1 ? 'medium' : 'high');
                 }}
-                className="w-20 sm:w-28 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#499557]"
+                className="w-20 sm:w-28 h-1.5 bg-line rounded-lg appearance-none cursor-pointer accent-accent"
               />
-              <span className="text-[10.5px] font-semibold text-slate-400">More</span>
-              <span className="px-2 py-0.5 text-[10px] font-black uppercase rounded-md bg-[#edf7ee] text-[#499557] border border-[#499557]/30">
+              <span className="text-xs font-medium text-muted">More</span>
+              <span className="px-2 py-0.5 text-xs font-semibold uppercase rounded-md bg-accent-soft text-accent border border-accent/30">
                 {synonymLevel}
               </span>
             </div>
           </div>
         ) : currentTool === 'ai-detector' ? (
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
-              <Gauge className="w-3.5 h-3.5 text-[#499557]" />
+            <div className="flex items-center gap-1.5 text-xs font-medium text-fg">
+              <Gauge className="w-3.5 h-3.5 text-accent" />
               <span>Sensitivity:</span>
             </div>
-            <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-xl border border-slate-200/90 shadow-2xs">
-              <span className="text-[10.5px] font-semibold text-slate-400">Standard</span>
+            <div className="flex items-center gap-2 bg-surface px-3 py-1 rounded-xl border border-line">
+              <span className="text-xs font-medium text-muted">Standard</span>
               <input
                 type="range"
                 min="0"
@@ -794,22 +783,22 @@ export function QuillBotAiStudio({
                   const val = Number(e.target.value);
                   setSliderSensitivity(val === 0 ? 'standard' : val === 1 ? 'balanced' : 'strict');
                 }}
-                className="w-16 sm:w-24 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#499557]"
+                className="w-16 sm:w-24 h-1.5 bg-line rounded-lg appearance-none cursor-pointer accent-accent"
               />
-              <span className="text-[10.5px] font-semibold text-slate-400">Strict</span>
-              <span className="px-2 py-0.5 text-[10px] font-black uppercase rounded-md bg-[#edf7ee] text-[#499557] border border-[#499557]/30">
+              <span className="text-xs font-medium text-muted">Strict</span>
+              <span className="px-2 py-0.5 text-xs font-semibold uppercase rounded-md bg-accent-soft text-accent border border-accent/30">
                 {sliderSensitivity}
               </span>
             </div>
           </div>
         ) : currentTool === 'summarizer' ? (
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
-              <Sliders className="w-3.5 h-3.5 text-[#499557]" />
+            <div className="flex items-center gap-1.5 text-xs font-medium text-fg">
+              <Sliders className="w-3.5 h-3.5 text-accent" />
               <span>Length:</span>
             </div>
-            <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-xl border border-slate-200/90 shadow-2xs">
-              <span className="text-[10.5px] font-semibold text-slate-400">Short</span>
+            <div className="flex items-center gap-2 bg-surface px-3 py-1 rounded-xl border border-line">
+              <span className="text-xs font-medium text-muted">Short</span>
               <input
                 type="range"
                 min="0"
@@ -821,36 +810,36 @@ export function QuillBotAiStudio({
                   const val = Number(e.target.value);
                   setSummaryLength(val === 0 ? 'short' : val === 1 ? 'medium' : 'long');
                 }}
-                className="w-16 sm:w-24 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#499557]"
+                className="w-16 sm:w-24 h-1.5 bg-line rounded-lg appearance-none cursor-pointer accent-accent"
               />
-              <span className="text-[10.5px] font-semibold text-slate-400">Long</span>
-              <span className="px-2 py-0.5 text-[10px] font-black uppercase rounded-md bg-[#edf7ee] text-[#499557] border border-[#499557]/30">
+              <span className="text-xs font-medium text-muted">Long</span>
+              <span className="px-2 py-0.5 text-xs font-semibold uppercase rounded-md bg-accent-soft text-accent border border-accent/30">
                 {summaryLength}
               </span>
             </div>
           </div>
         ) : currentTool === 'ai-humanizer' ? (
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-            <span className="text-slate-700 font-bold hidden sm:inline">Bypass Model:</span>
-            <span className="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-800 border border-teal-200 text-xs font-bold">
+          <div className="flex items-center gap-2 text-xs font-medium text-muted">
+            <span className="text-fg font-medium hidden sm:inline">Bypass Model:</span>
+            <span className="px-2.5 py-1 rounded-lg bg-accent-soft text-accent border border-accent/30 text-xs font-medium">
               Undetectable Neural 4.0
             </span>
           </div>
         ) : (
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-            <span>Press <kbd className="px-1.5 py-0.5 rounded bg-slate-200 text-slate-800 font-mono text-[10px]">Ctrl+Enter</kbd> to run</span>
+          <div className="flex items-center gap-2 text-xs font-medium text-muted">
+            <span>Press <kbd className="px-1.5 py-0.5 rounded bg-line text-fg font-mono text-xs">Ctrl+Enter</kbd> to run</span>
           </div>
         )}
       </div>
 
       {/* Error notification */}
       {errorMessage && (
-        <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center justify-between gap-2 shadow-2xs">
+        <div className="p-3.5 rounded-2xl bg-danger-soft border border-danger/30 text-danger text-xs flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            <span className="font-semibold">{errorMessage}</span>
+            <span className="font-medium">{errorMessage}</span>
           </div>
-          <button type="button" onClick={() => setErrorMessage(null)} className="text-red-400 hover:text-red-700">
+          <button type="button" onClick={() => setErrorMessage(null)} className="text-danger hover:text-danger" aria-label="Close">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -869,19 +858,19 @@ export function QuillBotAiStudio({
             }}
             onDragLeave={() => setIsDragOver(false)}
             onDrop={handleFileDrop}
-            className={`bg-white rounded-2xl border transition-all shadow-2xs flex flex-col justify-between min-h-[480px] overflow-hidden ${
+            className={`bg-surface rounded-2xl border transition-all flex flex-col justify-between min-h-[480px] overflow-hidden ${
               isDragOver
-                ? 'border-[#499557] ring-2 ring-emerald-200 bg-[#edf7ee]/30'
-                : 'border-slate-200/80'
+                ? 'border-accent ring-2 ring-accent/30 bg-accent-soft'
+                : 'border-line'
             }`}
           >
             {/* Input Toolbar */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={handlePasteFromClipboard}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold transition"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium transition"
                 >
                   <ClipboardPaste className="w-3.5 h-3.5" />
                   <span>Paste Text</span>
@@ -889,7 +878,7 @@ export function QuillBotAiStudio({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold transition"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium transition"
                 >
                   <UploadCloud className="w-3.5 h-3.5" />
                   <span>Upload Doc</span>
@@ -897,7 +886,7 @@ export function QuillBotAiStudio({
                 <button
                   type="button"
                   onClick={() => handleInsertSample('paraphrasing-tool')}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[#499557] hover:bg-[#edf7ee] font-bold transition"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-accent hover:bg-accent-soft font-medium transition"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Sample</span>
@@ -908,7 +897,7 @@ export function QuillBotAiStudio({
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="text-slate-400 hover:text-slate-600 font-semibold text-xs"
+                  className="text-muted hover:text-muted font-medium text-xs"
                 >
                   Clear
                 </button>
@@ -922,13 +911,13 @@ export function QuillBotAiStudio({
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Enter or paste text here to rephrase into clear, polished sentences, or drag & drop your document..."
-                className="w-full h-full bg-transparent border-none text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed"
+                className="w-full h-full bg-transparent border-none text-fg placeholder:text-muted resize-none font-serif text-lg leading-relaxed placeholder:font-sans placeholder:text-base"
               />
             </div>
 
             {/* Bottom Input Action Bar */}
-            <div className="flex items-center justify-between p-3.5 border-t border-slate-100 bg-slate-50/50">
-              <span className="text-xs font-medium text-slate-500">
+            <div className="flex items-center justify-between p-3.5 border-t border-line bg-sunken/50">
+              <span className="text-xs font-medium text-muted">
                 {wordCount} words • {charCount} chars
               </span>
 
@@ -936,7 +925,7 @@ export function QuillBotAiStudio({
                 type="button"
                 onClick={handleParaphrase}
                 disabled={isLoading || !inputText.trim()}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-extrabold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent hover:bg-accent text-on-accent font-semibold text-xs transition-all disabled:opacity-50"
               >
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
                 <span>Paraphrase</span>
@@ -945,24 +934,24 @@ export function QuillBotAiStudio({
           </div>
 
           {/* Right Output Pane */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[500px] overflow-hidden">
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[500px] overflow-hidden">
             {/* Header: Title + Mode Toggle + Action buttons */}
-            <div className="flex flex-wrap items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs gap-2">
+            <div className="flex flex-wrap items-center justify-between px-4 py-2.5 border-b border-line text-xs gap-2">
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-[#499557] flex items-center gap-1.5">
+                <span className="font-semibold text-accent flex items-center gap-1.5">
                   <CheckCheck className="w-4 h-4" />
                   <span>Paraphrased Text</span>
                 </span>
 
                 {outputText && (
-                  <div className="inline-flex rounded-lg bg-slate-100 p-0.5 ml-2 border border-slate-200/70">
+                  <div className="inline-flex rounded-lg bg-sunken p-0.5 ml-2 border border-line">
                     <button
                       type="button"
                       onClick={() => setDiffViewMode('clean')}
-                      className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all ${
+                      className={`px-2.5 py-0.5 rounded-md text-xs font-medium transition-all ${
                         diffViewMode === 'clean'
-                          ? 'bg-white text-slate-900 shadow-2xs'
-                          : 'text-slate-500 hover:text-slate-800'
+                          ? 'bg-surface text-fg'
+                          : 'text-muted hover:text-fg'
                       }`}
                     >
                       Clean View
@@ -970,12 +959,12 @@ export function QuillBotAiStudio({
                     <button
                       type="button"
                       onClick={() => setDiffViewMode('diff')}
-                      className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all ${
+                      className={`px-2.5 py-0.5 rounded-md text-xs font-medium transition-all ${
                         diffViewMode === 'diff'
-                          ? 'bg-[#499557] text-white shadow-2xs'
-                          : 'text-slate-500 hover:text-slate-800'
+                          ? 'bg-accent text-on-accent'
+                          : 'text-muted hover:text-fg'
                       }`}
-                      title="Highlight words rephrased by Playzy AI"
+                      title="Highlight words rephrased by Playzy AI" aria-label="Highlight words rephrased by Playzy AI"
                     >
                       Changes Diff
                     </button>
@@ -988,16 +977,16 @@ export function QuillBotAiStudio({
                   type="button"
                   onClick={() => handleCopy(outputText)}
                   disabled={!outputText}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold disabled:opacity-40 transition"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium disabled:opacity-40 transition"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied ? <Check className="w-3.5 h-3.5 text-accent" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copied ? 'Copied' : 'Copy'}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDownload(outputText, `playzy_paraphrased_${Date.now()}.txt`)}
                   disabled={!outputText}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold disabled:opacity-40 transition"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium disabled:opacity-40 transition"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download</span>
@@ -1007,23 +996,23 @@ export function QuillBotAiStudio({
 
             <div className="flex-1 p-5 overflow-y-auto max-h-[460px]">
               {outputText ? (
-                <div className="space-y-4 animate-fadeIn">
-                  <div className="text-sm text-slate-900 leading-relaxed whitespace-pre-wrap selection:bg-emerald-100">
+                <div className="space-y-4 animate-enter">
+                  <div className="prose-reading whitespace-pre-wrap">
                     {diffViewMode === 'diff'
                       ? renderParaphraseDiff(inputText, outputText)
                       : outputText}
                   </div>
 
                   {/* 1-Click Forward Actions underneath output */}
-                  <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[11px] font-bold text-slate-500">
+                  <div className="pt-4 border-t border-line flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-muted">
                       Next Step:
                     </span>
                     <div className="flex flex-wrap items-center gap-1.5">
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('ai-detector', outputText, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#499557] font-bold text-xs border border-emerald-200/80 transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-accent-soft hover:bg-accent-soft text-accent font-medium text-xs border border-accent/80 transition"
                       >
                         <ShieldAlert className="w-3.5 h-3.5" />
                         <span>Check AI Score</span>
@@ -1031,7 +1020,7 @@ export function QuillBotAiStudio({
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('ai-humanizer', outputText, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-700 font-bold text-xs border border-teal-200/80 transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-accent-soft hover:bg-accent-soft text-accent font-medium text-xs border border-accent/80 transition"
                       >
                         <UserCheck className="w-3.5 h-3.5" />
                         <span>Humanize</span>
@@ -1039,7 +1028,7 @@ export function QuillBotAiStudio({
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('grammar-checker', outputText, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sunken hover:bg-line text-fg font-medium text-xs transition"
                       >
                         <CheckCheck className="w-3.5 h-3.5" />
                         <span>Proofread</span>
@@ -1048,30 +1037,30 @@ export function QuillBotAiStudio({
                   </div>
                 </div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-slate-400 my-auto">
-                  <div className="w-16 h-16 rounded-full bg-slate-50 border border-slate-200/90 flex items-center justify-center text-slate-400 mb-3.5 shadow-2xs">
+                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-muted my-auto">
+                  <div className="w-16 h-16 rounded-full bg-sunken border border-line flex items-center justify-center text-muted mb-3.5">
                     <RefreshCw className="w-8 h-8 stroke-[1.6]" />
                   </div>
-                  <p className="text-base font-extrabold text-slate-800">Rephrased content appears here</p>
-                  <p className="text-xs text-slate-400 mt-1 max-w-sm leading-relaxed">
+                  <p className="text-base font-semibold text-fg">Rephrased content appears here</p>
+                  <p className="text-xs text-muted mt-1 max-w-sm leading-relaxed">
                     Select your preferred mode above and click &ldquo;Paraphrase&rdquo; to rewrite with natural fluency.
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="flex items-center justify-between p-3.5 border-t border-slate-100 bg-slate-50/50 text-xs text-slate-500">
+            <div className="flex items-center justify-between p-3.5 border-t border-line bg-sunken/50 text-xs text-muted">
               <span>
                 {outputText ? outputText.trim().split(/\s+/).filter(Boolean).length : 0} words
                 {outputText && inputText && (
-                  <span className="text-slate-400 ml-1.5">
+                  <span className="text-muted ml-1.5">
                     ({outputText.trim().split(/\s+/).filter(Boolean).length - inputText.trim().split(/\s+/).filter(Boolean).length >= 0 ? '+' : ''}
                     {outputText.trim().split(/\s+/).filter(Boolean).length - inputText.trim().split(/\s+/).filter(Boolean).length} words)
                   </span>
                 )}
               </span>
               {outputText && (
-                <span className="text-[#499557] font-bold">✓ Paraphrase complete • Mode: {paraphraseMode}</span>
+                <span className="text-accent font-medium">✓ Paraphrase complete • Mode: {paraphraseMode}</span>
               )}
             </div>
           </div>
@@ -1091,19 +1080,19 @@ export function QuillBotAiStudio({
             }}
             onDragLeave={() => setIsDragOver(false)}
             onDrop={handleFileDrop}
-            className={`bg-white rounded-2xl border transition-all shadow-2xs flex flex-col justify-between min-h-[480px] overflow-hidden ${
+            className={`bg-surface rounded-2xl border transition-all flex flex-col justify-between min-h-[480px] overflow-hidden ${
               isDragOver
-                ? 'border-[#499557] ring-2 ring-emerald-200 bg-[#edf7ee]/30'
-                : 'border-slate-200/80'
+                ? 'border-accent ring-2 ring-accent/30 bg-accent-soft'
+                : 'border-line'
             }`}
           >
             {/* Input Toolbar with Quick Sample Buttons */}
-            <div className="flex flex-wrap items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs gap-2">
+            <div className="flex flex-wrap items-center justify-between px-4 py-2.5 border-b border-line text-xs gap-2">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={handlePasteFromClipboard}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold transition"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium transition"
                 >
                   <ClipboardPaste className="w-3.5 h-3.5" />
                   <span>Paste Text</span>
@@ -1111,7 +1100,7 @@ export function QuillBotAiStudio({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold transition"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium transition"
                 >
                   <UploadCloud className="w-3.5 h-3.5" />
                   <span>Upload Doc</span>
@@ -1122,16 +1111,16 @@ export function QuillBotAiStudio({
                 <button
                   type="button"
                   onClick={() => handleInsertSample('ai-detector-ai')}
-                  className="px-2.5 py-1 rounded-lg text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition"
-                  title="Load AI-generated sample text"
+                  className="px-2.5 py-1 rounded-lg text-xs font-medium text-danger bg-danger-soft hover:bg-danger-soft border border-danger/30 transition"
+                  title="Load AI-generated sample text" aria-label="Load AI-generated sample text"
                 >
                   Test AI Sample
                 </button>
                 <button
                   type="button"
                   onClick={() => handleInsertSample('ai-detector-human')}
-                  className="px-2.5 py-1 rounded-lg text-xs font-bold text-[#499557] bg-[#edf7ee] hover:bg-emerald-100 border border-[#499557]/30 transition"
-                  title="Load human-written sample text"
+                  className="px-2.5 py-1 rounded-lg text-xs font-medium text-accent bg-accent-soft hover:bg-accent-soft border border-accent/30 transition"
+                  title="Load human-written sample text" aria-label="Load human-written sample text"
                 >
                   Test Human Sample
                 </button>
@@ -1139,7 +1128,7 @@ export function QuillBotAiStudio({
                   <button
                     type="button"
                     onClick={handleClear}
-                    className="text-slate-400 hover:text-slate-600 font-semibold text-xs ml-1"
+                    className="text-muted hover:text-muted font-medium text-xs ml-1"
                   >
                     Clear
                   </button>
@@ -1153,12 +1142,12 @@ export function QuillBotAiStudio({
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Paste your essay, article, or document here to check for AI content and receive an authentic score out of 100..."
-                className="w-full h-full bg-transparent border-none text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed"
+                className="w-full h-full bg-transparent border-none text-fg placeholder:text-muted resize-none font-serif text-lg leading-relaxed placeholder:font-sans placeholder:text-base"
               />
             </div>
 
-            <div className="flex items-center justify-between p-3.5 border-t border-slate-100 bg-slate-50/50">
-              <span className="text-xs font-medium text-slate-500">
+            <div className="flex items-center justify-between p-3.5 border-t border-line bg-sunken/50">
+              <span className="text-xs font-medium text-muted">
                 {wordCount} words • {charCount} chars
               </span>
 
@@ -1166,7 +1155,7 @@ export function QuillBotAiStudio({
                 type="button"
                 onClick={handleAiDetector}
                 disabled={isLoading || !inputText.trim()}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-extrabold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent hover:bg-accent text-on-accent font-semibold text-xs transition-all disabled:opacity-50"
               >
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldAlert className="w-4 h-4" />}
                 <span>Scan for AI</span>
@@ -1175,23 +1164,23 @@ export function QuillBotAiStudio({
           </div>
 
           {/* Right Output / Detection Results Studio */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[500px] overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
-              <span className="font-extrabold text-slate-800 flex items-center gap-1.5">
-                <Gauge className="w-4 h-4 text-[#499557]" />
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[500px] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
+              <span className="font-semibold text-fg flex items-center gap-1.5">
+                <Gauge className="w-4 h-4 text-accent" />
                 <span>AI Detection Report</span>
               </span>
               {detectorResult ? (
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-bold text-slate-500">
+                  <span className="text-xs font-medium text-muted">
                     Scanned {detectorResult.total_words} words
                   </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-accent-soft text-accent border border-accent/30">
                     Confidence: 99.4%
                   </span>
                 </div>
               ) : (
-                <span className="text-[11px] text-slate-400 font-medium">
+                <span className="text-xs text-muted font-medium">
                   Ready to scan
                 </span>
               )}
@@ -1199,16 +1188,16 @@ export function QuillBotAiStudio({
 
             <div className="flex-1 p-5 overflow-y-auto max-h-[520px]">
               {detectorResult ? (
-                <div className="space-y-5 animate-fadeIn">
+                <div className="space-y-5 animate-enter">
                   {/* Big Score Radial Card */}
-                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-5">
+                  <div className="p-5 rounded-2xl bg-sunken border border-line flex flex-col sm:flex-row items-center justify-between gap-5">
                     {/* Radial Gauge Visual */}
                     <div className="flex items-center gap-4">
                       <div className="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
                         {/* Background circle */}
                         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                           <path
-                            className="text-slate-200"
+                            className="text-muted"
                             strokeWidth="3.8"
                             stroke="currentColor"
                             fill="none"
@@ -1218,10 +1207,10 @@ export function QuillBotAiStudio({
                           <path
                             className={
                               detectorResult.ai_score >= 66
-                                ? 'text-rose-600'
+                                ? 'text-danger'
                                 : detectorResult.ai_score >= 25
-                                ? 'text-amber-500'
-                                : 'text-[#499557]'
+                                ? 'text-warning'
+                                : 'text-accent'
                             }
                             strokeDasharray={`${detectorResult.ai_score}, 100`}
                             strokeWidth="3.8"
@@ -1232,10 +1221,10 @@ export function QuillBotAiStudio({
                           />
                         </svg>
                         <div className="absolute flex flex-col items-center justify-center">
-                          <span className="text-2xl font-black text-slate-900 leading-none">
+                          <span className="text-2xl font-semibold text-fg leading-none">
                             {detectorResult.ai_score}%
                           </span>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">
+                          <span className="text-xs font-medium text-muted uppercase mt-0.5">
                             AI Score
                           </span>
                         </div>
@@ -1244,53 +1233,53 @@ export function QuillBotAiStudio({
                       <div>
                         <div className="flex items-center gap-2">
                           <span
-                            className={`px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider ${
+                            className={`px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
                               detectorResult.ai_score >= 66
-                                ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                                ? 'bg-danger-soft text-danger border border-danger/30'
                                 : detectorResult.ai_score >= 25
-                                ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                                : 'bg-[#edf7ee] text-[#499557] border border-[#499557]/40'
+                                ? 'bg-warning-soft text-warning border border-warning/30'
+                                : 'bg-accent-soft text-accent border border-accent/40'
                             }`}
                           >
                             {detectorResult.verdict}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-600 mt-2 font-medium max-w-sm leading-relaxed">
+                        <p className="text-xs text-muted mt-2 font-medium max-w-sm leading-relaxed">
                           {detectorResult.analysis_summary}
                         </p>
                       </div>
                     </div>
 
                     {/* Breakdown pills */}
-                    <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto text-center sm:text-right border-t sm:border-t-0 sm:border-l border-slate-200 pt-3 sm:pt-0 sm:pl-5">
+                    <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto text-center sm:text-right border-t sm:border-t-0 sm:border-l border-line pt-3 sm:pt-0 sm:pl-5">
                       <div>
-                        <span className="text-xs text-slate-500 block font-medium">AI Probability</span>
-                        <span className="text-base font-black text-rose-600">{detectorResult.ai_score} / 100</span>
+                        <span className="text-xs text-muted block font-medium">AI Probability</span>
+                        <span className="text-base font-semibold text-danger">{detectorResult.ai_score} / 100</span>
                       </div>
                       <div>
-                        <span className="text-xs text-slate-500 block font-medium">Human Written</span>
-                        <span className="text-base font-black text-[#499557]">{detectorResult.human_score} / 100</span>
+                        <span className="text-xs text-muted block font-medium">Human Written</span>
+                        <span className="text-base font-semibold text-accent">{detectorResult.human_score} / 100</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Interactive Sentence-by-Sentence Breakdown with Filter Tabs */}
                   <div className="space-y-2.5">
-                    <div className="flex flex-wrap items-center justify-between text-xs font-bold text-slate-700 gap-2">
+                    <div className="flex flex-wrap items-center justify-between text-xs font-medium text-fg gap-2">
                       <span className="flex items-center gap-1.5">
-                        <Filter className="w-3.5 h-3.5 text-slate-400" />
+                        <Filter className="w-3.5 h-3.5 text-muted" />
                         <span>Filter Sentences:</span>
                       </span>
 
                       {/* Filter Pills */}
-                      <div className="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200/70 text-[11px]">
+                      <div className="inline-flex rounded-xl bg-sunken p-0.5 border border-line text-xs">
                         <button
                           type="button"
                           onClick={() => setSentenceFilter('all')}
-                          className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                          className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
                             sentenceFilter === 'all'
-                              ? 'bg-white text-slate-900 shadow-2xs'
-                              : 'text-slate-500 hover:text-slate-800'
+                              ? 'bg-surface text-fg'
+                              : 'text-muted hover:text-fg'
                           }`}
                         >
                           All ({detectorResult.sentences?.length || 0})
@@ -1298,10 +1287,10 @@ export function QuillBotAiStudio({
                         <button
                           type="button"
                           onClick={() => setSentenceFilter('ai')}
-                          className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                          className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
                             sentenceFilter === 'ai'
-                              ? 'bg-rose-500 text-white shadow-2xs'
-                              : 'text-rose-700 hover:bg-rose-50'
+                              ? 'bg-danger text-on-accent'
+                              : 'text-danger hover:bg-danger-soft'
                           }`}
                         >
                           Likely AI ({detectorResult.sentences?.filter((s) => s.classification === 'ai' || s.ai_probability >= 66).length || 0})
@@ -1309,10 +1298,10 @@ export function QuillBotAiStudio({
                         <button
                           type="button"
                           onClick={() => setSentenceFilter('mixed')}
-                          className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                          className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
                             sentenceFilter === 'mixed'
-                              ? 'bg-amber-500 text-white shadow-2xs'
-                              : 'text-amber-700 hover:bg-amber-50'
+                              ? 'bg-warning text-on-accent'
+                              : 'text-warning hover:bg-warning-soft'
                           }`}
                         >
                           Mixed ({detectorResult.sentences?.filter((s) => s.classification === 'mixed' || (s.ai_probability >= 25 && s.ai_probability < 66)).length || 0})
@@ -1320,10 +1309,10 @@ export function QuillBotAiStudio({
                         <button
                           type="button"
                           onClick={() => setSentenceFilter('human')}
-                          className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                          className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
                             sentenceFilter === 'human'
-                              ? 'bg-[#499557] text-white shadow-2xs'
-                              : 'text-[#499557] hover:bg-emerald-50'
+                              ? 'bg-accent text-on-accent'
+                              : 'text-accent hover:bg-accent-soft'
                           }`}
                         >
                           Human ({detectorResult.sentences?.filter((s) => s.classification === 'human' || s.ai_probability < 25).length || 0})
@@ -1331,7 +1320,7 @@ export function QuillBotAiStudio({
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-xl border border-slate-200 bg-white leading-relaxed text-sm text-slate-800 space-y-1.5 min-h-[120px]">
+                    <div className="p-4 rounded-xl border border-line bg-surface leading-relaxed text-sm text-fg space-y-1.5 min-h-[120px]">
                       {detectorResult.sentences && detectorResult.sentences.length > 0 ? (
                         detectorResult.sentences
                           .filter((stn) => {
@@ -1355,10 +1344,10 @@ export function QuillBotAiStudio({
                                 onMouseLeave={() => setHoveredSentenceIndex(null)}
                                 className={`relative inline cursor-pointer transition-colors px-1 py-0.5 rounded text-xs sm:text-sm ${
                                   isAi
-                                    ? 'bg-rose-100 text-rose-950 border-b-2 border-rose-400 hover:bg-rose-200'
+                                    ? 'bg-danger-soft text-danger border-b-2 border-danger hover:bg-danger-soft'
                                     : isMixed
-                                    ? 'bg-amber-100 text-amber-950 border-b-2 border-amber-400 hover:bg-amber-200'
-                                    : 'bg-emerald-50 text-slate-900 hover:bg-emerald-100'
+                                    ? 'bg-warning-soft text-warning border-b-2 border-warning hover:bg-warning-soft'
+                                    : 'bg-accent-soft text-fg hover:bg-accent-soft'
                                 }`}
                                 title={`AI Probability: ${stn.ai_probability}%${stn.reason ? ` • ${stn.reason}` : ''}`}
                               >
@@ -1373,15 +1362,15 @@ export function QuillBotAiStudio({
 
                     {/* Hover Sentence Tooltip Bar */}
                     {hoveredSentenceIndex !== null && detectorResult.sentences[hoveredSentenceIndex] && (
-                      <div className="p-3 rounded-xl bg-slate-900 text-white text-xs flex items-center justify-between animate-fadeIn shadow-lg">
-                        <span className="font-semibold text-slate-300 truncate max-w-[70%]">
+                      <div className="p-3 rounded-xl bg-surface text-fg text-xs flex items-center justify-between animate-enter">
+                        <span className="font-medium text-muted truncate max-w-[70%]">
                           &ldquo;{detectorResult.sentences[hoveredSentenceIndex].text}&rdquo;
                         </span>
                         <div className="flex items-center gap-2">
-                          <span className="text-[10.5px] text-slate-400">
+                          <span className="text-xs text-muted">
                             {detectorResult.sentences[hoveredSentenceIndex].reason || 'Neural token pattern'}
                           </span>
-                          <span className="font-black px-2 py-0.5 rounded bg-rose-500 text-white text-[11px]">
+                          <span className="font-semibold px-2 py-0.5 rounded bg-danger text-on-accent text-xs">
                             {detectorResult.sentences[hoveredSentenceIndex].ai_probability}% AI
                           </span>
                         </div>
@@ -1390,17 +1379,17 @@ export function QuillBotAiStudio({
                   </div>
 
                   {/* Pro 1-Click Action Shortcuts Directly from Results */}
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2.5">
+                  <div className="p-3.5 rounded-2xl bg-sunken border border-line flex flex-wrap items-center justify-between gap-2.5">
                     <div>
-                      <h5 className="text-xs font-bold text-slate-800">Next Action:</h5>
-                      <p className="text-[11px] text-slate-500">Make this text 100% human-like or rewrite flagged lines</p>
+                      <h5 className="text-xs font-medium text-fg">Next Action:</h5>
+                      <p className="text-xs text-muted">Make this text 100% human-like or rewrite flagged lines</p>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('ai-humanizer', inputText, true)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-xs transition active:scale-95"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-on-accent text-xs font-medium transition"
                       >
                         <UserCheck className="w-3.5 h-3.5" />
                         <span>Humanize with Playzy AI</span>
@@ -1415,16 +1404,16 @@ export function QuillBotAiStudio({
                             .join(' ') || inputText;
                           handleTransferToTool('paraphrasing-tool', aiText, true);
                         }}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-bold shadow-2xs transition active:scale-95"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-surface hover:bg-sunken text-fg border border-line text-xs font-medium transition"
                       >
-                        <RefreshCw className="w-3.5 h-3.5 text-[#499557]" />
+                        <RefreshCw className="w-3.5 h-3.5 text-accent" />
                         <span>Paraphrase Flagged</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => handleCopy(inputText)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface hover:bg-sunken text-fg border border-line text-xs font-medium transition"
                       >
                         <Copy className="w-3.5 h-3.5" />
                         <span>{copied ? 'Copied' : 'Copy Text'}</span>
@@ -1433,20 +1422,20 @@ export function QuillBotAiStudio({
                   </div>
                 </div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-slate-400 my-auto">
-                  <div className="w-16 h-16 rounded-full bg-slate-50 border border-slate-200/90 flex items-center justify-center text-slate-400 mb-3.5 shadow-2xs">
+                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-muted my-auto">
+                  <div className="w-16 h-16 rounded-full bg-sunken border border-line flex items-center justify-center text-muted mb-3.5">
                     <ShieldAlert className="w-8 h-8 stroke-[1.6]" />
                   </div>
-                  <p className="text-base font-extrabold text-slate-800">No text scanned yet</p>
-                  <p className="text-xs text-slate-400 max-w-sm mt-1.5 leading-relaxed">
+                  <p className="text-base font-semibold text-fg">No text scanned yet</p>
+                  <p className="text-xs text-muted max-w-sm mt-1.5 leading-relaxed">
                     Paste any text on the left and click &ldquo;Scan for AI&rdquo; to compute the 0-100 probability score.
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="flex flex-wrap items-center justify-between p-3.5 border-t border-slate-100 bg-slate-50/50 text-xs text-slate-500 gap-2">
-              <span className="font-medium text-slate-600">
+            <div className="flex flex-wrap items-center justify-between p-3.5 border-t border-line bg-sunken/50 text-xs text-muted gap-2">
+              <span className="font-medium text-muted">
                 Detection Model: High-Precision Token Distribution
               </span>
               {detectorResult && (
@@ -1454,18 +1443,18 @@ export function QuillBotAiStudio({
                   <button
                     type="button"
                     onClick={() => handleCopy(JSON.stringify(detectorResult, null, 2))}
-                    className="text-[#499557] font-bold hover:underline"
+                    className="text-accent font-medium hover:underline"
                   >
                     Copy Full JSON Report
                   </button>
-                  <span className="text-slate-300">•</span>
+                  <span className="text-muted">•</span>
                   <button
                     type="button"
                     onClick={() => {
                       const reportText = `PLAYZY AI DETECTION REPORT\n=========================\nOverall AI Probability: ${detectorResult.ai_score}%\nHuman Score: ${detectorResult.human_score}%\nVerdict: ${detectorResult.verdict}\n\nSummary:\n${detectorResult.analysis_summary}\n\nSentence Breakdown:\n${detectorResult.sentences?.map((s, i) => `[${i + 1}] (${s.ai_probability}% AI - ${s.classification.toUpperCase()}): ${s.text}`).join('\n')}\n`;
                       handleDownload(reportText, `playzy_ai_detection_report_${Date.now()}.txt`);
                     }}
-                    className="text-slate-700 font-bold hover:text-slate-900 hover:underline"
+                    className="text-fg font-medium hover:text-fg hover:underline"
                   >
                     Download Report (.txt)
                   </button>
@@ -1481,19 +1470,19 @@ export function QuillBotAiStudio({
       {/* ======================================================== */}
       {currentTool === 'grammar-checker' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[480px] overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
-              <span className="font-bold text-slate-700">Source Text</span>
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[480px] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
+              <span className="font-medium text-fg">Source Text</span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => handleInsertSample('grammar-checker')}
-                  className="text-xs text-[#499557] font-bold hover:bg-[#edf7ee] px-2 py-1 rounded transition"
+                  className="text-xs text-accent font-medium hover:bg-accent-soft px-2 py-1 rounded transition"
                 >
                   Sample
                 </button>
                 {inputText && (
-                  <button type="button" onClick={handleClear} className="text-slate-400 hover:text-slate-600 font-semibold">
+                  <button type="button" onClick={handleClear} className="text-muted hover:text-muted font-medium">
                     Clear
                   </button>
                 )}
@@ -1505,16 +1494,16 @@ export function QuillBotAiStudio({
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Enter or paste text here to detect spelling, grammar, and punctuation mistakes..."
-                className="w-full h-full bg-transparent border-none text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed"
+                className="w-full h-full bg-transparent border-none text-fg placeholder:text-muted resize-none font-serif text-lg leading-relaxed placeholder:font-sans placeholder:text-base"
               />
             </div>
-            <div className="flex items-center justify-between p-3.5 border-t border-slate-100 bg-slate-50/50">
-              <span className="text-xs text-slate-500">{wordCount} words</span>
+            <div className="flex items-center justify-between p-3.5 border-t border-line bg-sunken/50">
+              <span className="text-xs text-muted">{wordCount} words</span>
               <button
                 type="button"
                 onClick={handleGrammarCheck}
                 disabled={isLoading || !inputText.trim()}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-extrabold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent hover:bg-accent text-on-accent font-semibold text-xs transition-all disabled:opacity-50"
               >
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCheck className="w-4 h-4" />}
                 <span>Check Grammar</span>
@@ -1523,13 +1512,13 @@ export function QuillBotAiStudio({
           </div>
 
           {/* Right Fixed / Proofread Output Pane */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[500px] overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
-              <span className="font-extrabold text-[#499557] flex items-center gap-1.5">
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[500px] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
+              <span className="font-semibold text-accent flex items-center gap-1.5">
                 <CheckCheck className="w-4 h-4" />
                 <span>Fixed Result</span>
                 {outputText && (
-                  <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-accent-soft text-accent border border-accent/30">
                     {grammarErrors.length === 0 ? '0 Errors • Perfect' : `${grammarErrors.length} Fixed`}
                   </span>
                 )}
@@ -1540,15 +1529,15 @@ export function QuillBotAiStudio({
                   <button
                     type="button"
                     onClick={() => handleCopy(outputText)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold text-xs transition"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium text-xs transition"
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? <Check className="w-3.5 h-3.5 text-accent" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copied ? 'Copied' : 'Copy'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDownload(outputText, `playzy_grammar_fixed_${Date.now()}.txt`)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold text-xs transition"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium text-xs transition"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download</span>
@@ -1559,18 +1548,18 @@ export function QuillBotAiStudio({
 
             <div className="flex-1 p-5 space-y-4 overflow-y-auto max-h-[520px]">
               {outputText ? (
-                <div className="space-y-4 animate-fadeIn">
-                  <div className="text-sm text-slate-900 leading-relaxed whitespace-pre-wrap selection:bg-emerald-100">
+                <div className="space-y-4 animate-enter">
+                  <div className="prose-reading whitespace-pre-wrap">
                     {outputText}
                   </div>
 
                   {grammarErrors.length > 0 && (
-                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
-                      <div className="flex items-center justify-between pb-1 border-b border-slate-200/70">
-                        <span className="text-xs font-extrabold text-slate-800">
+                    <div className="p-4 rounded-xl bg-sunken border border-line space-y-2.5">
+                      <div className="flex items-center justify-between pb-1 border-b border-line">
+                        <span className="text-xs font-semibold text-fg">
                           {grammarErrors.length} Issue{grammarErrors.length > 1 ? 's' : ''} Detected &amp; Corrected:
                         </span>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                        <span className="text-xs font-medium text-accent bg-accent-soft px-2 py-0.5 rounded border border-accent/30">
                           Auto-Applied
                         </span>
                       </div>
@@ -1579,18 +1568,18 @@ export function QuillBotAiStudio({
                         {grammarErrors.map((err, idx) => (
                           <div
                             key={idx}
-                            className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200/80 text-xs shadow-2xs"
+                            className="flex items-center justify-between p-2 rounded-lg bg-surface border border-line text-xs"
                           >
                             <div className="flex items-center gap-2">
-                              <span className="line-through text-rose-600 font-mono text-[11px] font-medium bg-rose-50 px-1.5 py-0.5 rounded">
+                              <span className="line-through text-danger font-mono text-xs font-medium bg-danger-soft px-1.5 py-0.5 rounded">
                                 {err.original}
                               </span>
-                              <ArrowRight className="w-3 h-3 text-slate-400" />
-                              <span className="text-emerald-700 font-bold font-mono text-[11px] bg-emerald-50 px-1.5 py-0.5 rounded">
+                              <ArrowRight className="w-3 h-3 text-muted" />
+                              <span className="text-accent font-medium font-mono text-xs bg-accent-soft px-1.5 py-0.5 rounded">
                                 {err.suggestion}
                               </span>
                             </div>
-                            <span className="text-[10px] uppercase font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                            <span className="text-xs uppercase font-medium text-muted bg-sunken px-2 py-0.5 rounded">
                               {err.type || 'Grammar'}
                             </span>
                           </div>
@@ -1600,15 +1589,15 @@ export function QuillBotAiStudio({
                   )}
 
                   {/* Pro 1-Click Action Shortcuts */}
-                  <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[11px] font-bold text-slate-500">
+                  <div className="pt-3 border-t border-line flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-muted">
                       Next Step:
                     </span>
                     <div className="flex flex-wrap items-center gap-1.5">
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('ai-detector', outputText, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#499557] font-bold text-xs border border-emerald-200/80 transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-accent-soft hover:bg-accent-soft text-accent font-medium text-xs border border-accent/80 transition"
                       >
                         <ShieldAlert className="w-3.5 h-3.5" />
                         <span>Check AI Score</span>
@@ -1616,31 +1605,31 @@ export function QuillBotAiStudio({
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('paraphrasing-tool', outputText, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sunken hover:bg-line text-fg font-medium text-xs transition"
                       >
-                        <RefreshCw className="w-3.5 h-3.5 text-[#499557]" />
+                        <RefreshCw className="w-3.5 h-3.5 text-accent" />
                         <span>Paraphrase</span>
                       </button>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-slate-400 my-auto">
-                  <div className="w-16 h-16 rounded-full bg-slate-50 border border-slate-200/90 flex items-center justify-center text-slate-400 mb-3.5 shadow-2xs">
+                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-muted my-auto">
+                  <div className="w-16 h-16 rounded-full bg-sunken border border-line flex items-center justify-center text-muted mb-3.5">
                     <CheckCheck className="w-8 h-8 stroke-[1.6]" />
                   </div>
-                  <p className="text-base font-extrabold text-slate-800">No grammar errors checked</p>
-                  <p className="text-xs text-slate-400 mt-1 max-w-sm leading-relaxed">
+                  <p className="text-base font-semibold text-fg">No grammar errors checked</p>
+                  <p className="text-xs text-muted mt-1 max-w-sm leading-relaxed">
                     Paste text on the left and click &ldquo;Check Grammar&rdquo; to catch spelling mistakes, typos, and syntax errors.
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="p-3.5 border-t border-slate-100 bg-slate-50/50 text-xs text-slate-500 flex items-center justify-between">
+            <div className="p-3.5 border-t border-line bg-sunken/50 text-xs text-muted flex items-center justify-between">
               <span>{outputText ? `${grammarErrors.length} corrections applied` : 'Ready to proofread'}</span>
               {outputText && (
-                <span className="text-[#499557] font-bold">✓ 100% Error-Free Guaranteed</span>
+                <span className="text-accent font-medium">✓ 100% Error-Free Guaranteed</span>
               )}
             </div>
           </div>
@@ -1652,13 +1641,13 @@ export function QuillBotAiStudio({
       {/* ======================================================== */}
       {currentTool === 'ai-humanizer' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[500px] overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
-              <span className="font-bold text-slate-700">AI Text to Humanize</span>
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[500px] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
+              <span className="font-medium text-fg">AI Text to Humanize</span>
               <button
                 type="button"
                 onClick={() => handleInsertSample('ai-humanizer')}
-                className="text-xs text-[#499557] font-bold hover:bg-[#edf7ee] px-2 py-1 rounded transition"
+                className="text-xs text-accent font-medium hover:bg-accent-soft px-2 py-1 rounded transition"
               >
                 Sample
               </button>
@@ -1669,16 +1658,16 @@ export function QuillBotAiStudio({
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Paste AI-generated text from ChatGPT, Claude, or Gemini to make it sound authentically human..."
-                className="w-full h-full bg-transparent border-none text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed"
+                className="w-full h-full bg-transparent border-none text-fg placeholder:text-muted resize-none font-serif text-lg leading-relaxed placeholder:font-sans placeholder:text-base"
               />
             </div>
-            <div className="flex items-center justify-between p-3.5 border-t border-slate-100 bg-slate-50/50">
-              <span className="text-xs font-medium text-slate-500">{wordCount} words</span>
+            <div className="flex items-center justify-between p-3.5 border-t border-line bg-sunken/50">
+              <span className="text-xs font-medium text-muted">{wordCount} words</span>
               <button
                 type="button"
                 onClick={handleHumanize}
                 disabled={isLoading || !inputText.trim()}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-extrabold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent hover:bg-accent text-on-accent font-semibold text-xs transition-all disabled:opacity-50"
               >
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserCheck className="w-4 h-4" />}
                 <span>Humanize Text</span>
@@ -1686,12 +1675,12 @@ export function QuillBotAiStudio({
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[500px] overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
-              <span className="font-extrabold text-[#499557] flex items-center gap-1.5">
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[500px] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
+              <span className="font-semibold text-accent flex items-center gap-1.5">
                 <UserCheck className="w-4 h-4" />
                 <span>Humanized Version</span>
-                <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200">
+                <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-accent-soft text-accent border border-accent/30">
                   Bypasses AI Detectors
                 </span>
               </span>
@@ -1700,15 +1689,15 @@ export function QuillBotAiStudio({
                   <button
                     type="button"
                     onClick={() => handleCopy(outputText)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold text-xs transition"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium text-xs transition"
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? <Check className="w-3.5 h-3.5 text-accent" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copied ? 'Copied' : 'Copy'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDownload(outputText, `playzy_humanized_${Date.now()}.txt`)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold text-xs transition"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium text-xs transition"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download</span>
@@ -1719,49 +1708,49 @@ export function QuillBotAiStudio({
 
             <div className="flex-1 p-5 space-y-4 overflow-y-auto max-h-[520px]">
               {outputText ? (
-                <div className="space-y-4 animate-fadeIn">
+                <div className="space-y-4 animate-enter">
                   {/* Before / After AI Score Comparison Badge */}
-                  <div className="p-3.5 rounded-xl bg-gradient-to-r from-teal-50 via-emerald-50 to-teal-50 border border-teal-200 flex flex-wrap items-center justify-between gap-3">
+                  <div className="p-3.5 rounded-xl bg-accent-soft border border-accent/30 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center font-bold text-xs">
+                      <div className="w-8 h-8 rounded-lg bg-accent text-on-accent flex items-center justify-center font-medium text-xs">
                         ✓
                       </div>
                       <div>
-                        <span className="text-xs font-extrabold text-teal-900 block">AI Score Dropped to {aiScore !== null ? aiScore : 2}%</span>
-                        <span className="text-[11px] text-teal-700">98% Human Score • 100% Natural Vocabulary</span>
+                        <span className="text-xs font-semibold text-accent block">AI Score Dropped to {aiScore !== null ? aiScore : 2}%</span>
+                        <span className="text-xs text-accent">98% Human Score • 100% Natural Vocabulary</span>
                       </div>
                     </div>
 
                     <button
                       type="button"
                       onClick={() => handleTransferToTool('ai-detector', outputText, true)}
-                      className="px-3 py-1.5 rounded-lg bg-white hover:bg-teal-100 text-teal-900 border border-teal-300 text-xs font-extrabold shadow-2xs transition"
+                      className="px-3 py-1.5 rounded-lg bg-surface hover:bg-accent-soft text-accent border border-accent/30 text-xs font-semibold transition"
                     >
                       Verify with AI Detector
                     </button>
                   </div>
 
-                  <div className="text-sm text-slate-900 leading-relaxed whitespace-pre-wrap selection:bg-teal-100">
+                  <div className="prose-reading whitespace-pre-wrap">
                     {outputText}
                   </div>
                 </div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-slate-400 my-auto">
-                  <div className="w-16 h-16 rounded-full bg-slate-50 border border-slate-200/90 flex items-center justify-center text-slate-400 mb-3.5 shadow-2xs">
+                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-muted my-auto">
+                  <div className="w-16 h-16 rounded-full bg-sunken border border-line flex items-center justify-center text-muted mb-3.5">
                     <UserCheck className="w-8 h-8 stroke-[1.6]" />
                   </div>
-                  <p className="text-base font-extrabold text-slate-800">Humanized text appears here</p>
-                  <p className="text-xs text-slate-400 mt-1 max-w-sm leading-relaxed">
+                  <p className="text-base font-semibold text-fg">Humanized text appears here</p>
+                  <p className="text-xs text-muted mt-1 max-w-sm leading-relaxed">
                     Removes robotic cadence and generic filler clichés to pass Turnitin, GPTZero, and CopyLeaks.
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="p-3.5 border-t border-slate-100 bg-slate-50/50 text-xs text-slate-500 flex items-center justify-between">
+            <div className="p-3.5 border-t border-line bg-sunken/50 text-xs text-muted flex items-center justify-between">
               <span>{outputText ? `${outputText.trim().split(/\s+/).filter(Boolean).length} words` : 'Ready to humanize'}</span>
               {outputText && (
-                <span className="text-teal-700 font-bold">✓ Natural Human Cadence</span>
+                <span className="text-accent font-medium">✓ Natural Human Cadence</span>
               )}
             </div>
           </div>
@@ -1773,13 +1762,13 @@ export function QuillBotAiStudio({
       {/* ======================================================== */}
       {currentTool === 'summarizer' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[480px] overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
-              <span className="font-bold text-slate-700">Source Document</span>
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[480px] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
+              <span className="font-medium text-fg">Source Document</span>
               <button
                 type="button"
                 onClick={() => handleInsertSample('summarizer')}
-                className="text-xs text-[#499557] font-bold hover:bg-[#edf7ee] px-2 py-1 rounded transition"
+                className="text-xs text-accent font-medium hover:bg-accent-soft px-2 py-1 rounded transition"
               >
                 Sample
               </button>
@@ -1790,16 +1779,16 @@ export function QuillBotAiStudio({
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Paste research papers, articles, transcripts, or notes to summarize..."
-                className="w-full h-full bg-transparent border-none text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed"
+                className="w-full h-full bg-transparent border-none text-fg placeholder:text-muted resize-none font-serif text-lg leading-relaxed placeholder:font-sans placeholder:text-base"
               />
             </div>
-            <div className="flex items-center justify-between p-3.5 border-t border-slate-100 bg-slate-50/50">
-              <span className="text-xs text-slate-500">{wordCount} words</span>
+            <div className="flex items-center justify-between p-3.5 border-t border-line bg-sunken/50">
+              <span className="text-xs text-muted">{wordCount} words</span>
               <button
                 type="button"
                 onClick={handleSummarize}
                 disabled={isLoading || !inputText.trim()}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-extrabold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent hover:bg-accent text-on-accent font-semibold text-xs transition-all disabled:opacity-50"
               >
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <AlignLeft className="w-4 h-4" />}
                 <span>Summarize</span>
@@ -1807,13 +1796,13 @@ export function QuillBotAiStudio({
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[500px] overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
-              <span className="font-extrabold text-[#499557] flex items-center gap-1.5">
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[500px] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
+              <span className="font-semibold text-accent flex items-center gap-1.5">
                 <AlignLeft className="w-4 h-4" />
                 <span>Summary Output</span>
                 {summaryStats && (
-                  <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-sunken text-muted border border-line">
                     {summaryStats.red}% Shorter
                   </span>
                 )}
@@ -1824,15 +1813,15 @@ export function QuillBotAiStudio({
                   <button
                     type="button"
                     onClick={() => handleCopy(outputText)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold text-xs transition"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium text-xs transition"
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? <Check className="w-3.5 h-3.5 text-accent" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copied ? 'Copied' : 'Copy'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDownload(outputText, `playzy_summary_${Date.now()}.txt`)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold text-xs transition"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium text-xs transition"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download</span>
@@ -1843,32 +1832,32 @@ export function QuillBotAiStudio({
 
             <div className="flex-1 p-5 space-y-4 overflow-y-auto max-h-[520px]">
               {outputText ? (
-                <div className="space-y-4 animate-fadeIn">
+                <div className="space-y-4 animate-enter">
                   {/* Reading Time Saved Metric Chip */}
-                  <div className="p-3 rounded-xl bg-purple-50/70 border border-purple-200 flex items-center justify-between text-xs">
-                    <span className="font-extrabold text-purple-900 flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                  <div className="p-3 rounded-xl bg-sunken border border-line flex items-center justify-between text-xs">
+                    <span className="font-semibold text-muted flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-muted" />
                       <span>Reading Time: ~35 seconds</span>
                     </span>
-                    <span className="font-bold text-purple-700">
+                    <span className="font-medium text-muted">
                       Saved ~{summaryStats ? Math.max(1, Math.round((summaryStats.orig - summaryStats.sum) / 130)) : 2} mins
                     </span>
                   </div>
 
-                  <div className="text-sm text-slate-900 leading-relaxed whitespace-pre-wrap selection:bg-purple-100">
+                  <div className="prose-reading whitespace-pre-wrap">
                     {outputText}
                   </div>
 
                   {/* 1-Click Pro Actions */}
-                  <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[11px] font-bold text-slate-500">
+                  <div className="pt-3 border-t border-line flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-muted">
                       Next Step:
                     </span>
                     <div className="flex flex-wrap items-center gap-1.5">
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('paraphrasing-tool', outputText, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#499557] font-bold text-xs border border-emerald-200/80 transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-accent-soft hover:bg-accent-soft text-accent font-medium text-xs border border-accent/80 transition"
                       >
                         <RefreshCw className="w-3.5 h-3.5" />
                         <span>Paraphrase Summary</span>
@@ -1876,33 +1865,33 @@ export function QuillBotAiStudio({
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('ai-detector', outputText, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sunken hover:bg-line text-fg font-medium text-xs transition"
                       >
-                        <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
+                        <ShieldAlert className="w-3.5 h-3.5 text-warning" />
                         <span>Check AI Score</span>
                       </button>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-slate-400 my-auto">
-                  <div className="w-16 h-16 rounded-full bg-slate-50 border border-slate-200/90 flex items-center justify-center text-slate-400 mb-3.5 shadow-2xs">
+                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-muted my-auto">
+                  <div className="w-16 h-16 rounded-full bg-sunken border border-line flex items-center justify-center text-muted mb-3.5">
                     <AlignLeft className="w-8 h-8 stroke-[1.6]" />
                   </div>
-                  <p className="text-base font-extrabold text-slate-800">No summary generated yet</p>
-                  <p className="text-xs text-slate-400 mt-1 max-w-sm leading-relaxed">
+                  <p className="text-base font-semibold text-fg">No summary generated yet</p>
+                  <p className="text-xs text-muted mt-1 max-w-sm leading-relaxed">
                     Paste research papers, articles, transcripts, or notes to create concise summaries or bullet-point takeaways.
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="p-3.5 border-t border-slate-100 bg-slate-50/50 text-xs text-slate-500 flex items-center justify-between">
+            <div className="p-3.5 border-t border-line bg-sunken/50 text-xs text-muted flex items-center justify-between">
               <span>
                 {summaryStats ? `${summaryStats.sum} words (reduced from ${summaryStats.orig} words)` : 'Ready to summarize'}
               </span>
               {summaryStats && (
-                <span className="text-purple-700 font-bold">✓ {summaryStats.red}% Content Condensation</span>
+                <span className="text-muted font-medium">✓ {summaryStats.red}% Content Condensation</span>
               )}
             </div>
           </div>
@@ -1914,13 +1903,13 @@ export function QuillBotAiStudio({
       {/* ======================================================== */}
       {currentTool === 'translator' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[480px] overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
-              <span className="font-bold text-slate-700">Source Text</span>
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[480px] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
+              <span className="font-medium text-fg">Source Text</span>
               <button
                 type="button"
                 onClick={() => handleInsertSample('translator')}
-                className="text-xs text-[#499557] font-bold hover:bg-[#edf7ee] px-2 py-1 rounded transition"
+                className="text-xs text-accent font-medium hover:bg-accent-soft px-2 py-1 rounded transition"
               >
                 Sample
               </button>
@@ -1931,16 +1920,16 @@ export function QuillBotAiStudio({
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Enter text to translate into Spanish, French, German, Arabic, Japanese, etc..."
-                className="w-full h-full bg-transparent border-none text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed"
+                className="w-full h-full bg-transparent border-none text-fg placeholder:text-muted resize-none font-serif text-lg leading-relaxed placeholder:font-sans placeholder:text-base"
               />
             </div>
-            <div className="flex items-center justify-between p-3.5 border-t border-slate-100 bg-slate-50/50">
-              <span className="text-xs text-slate-500">{wordCount} words</span>
+            <div className="flex items-center justify-between p-3.5 border-t border-line bg-sunken/50">
+              <span className="text-xs text-muted">{wordCount} words</span>
               <button
                 type="button"
                 onClick={handleTranslate}
                 disabled={isLoading || !inputText.trim()}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-extrabold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent hover:bg-accent text-on-accent font-semibold text-xs transition-all disabled:opacity-50"
               >
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
                 <span>Translate</span>
@@ -1948,12 +1937,12 @@ export function QuillBotAiStudio({
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[500px] overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
-              <span className="font-extrabold text-slate-800 flex items-center gap-1.5">
-                <Languages className="w-4 h-4 text-[#499557]" />
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[500px] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
+              <span className="font-semibold text-fg flex items-center gap-1.5">
+                <Languages className="w-4 h-4 text-accent" />
                 <span>Translated Text</span>
-                <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+                <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-sunken text-fg">
                   {LANGUAGES.find((l) => l.code === targetLang)?.label || targetLang}
                 </span>
               </span>
@@ -1962,15 +1951,15 @@ export function QuillBotAiStudio({
                   <button
                     type="button"
                     onClick={() => handleCopy(outputText)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold text-xs transition"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium text-xs transition"
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? <Check className="w-3.5 h-3.5 text-accent" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copied ? 'Copied' : 'Copy'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDownload(outputText, `playzy_translation_${targetLang}_${Date.now()}.txt`)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold text-xs transition"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium text-xs transition"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download</span>
@@ -1980,16 +1969,16 @@ export function QuillBotAiStudio({
             </div>
             <div className="flex-1 p-5 overflow-y-auto max-h-[520px]">
               {outputText ? (
-                <div className="space-y-4 animate-fadeIn">
-                  <div className="text-sm text-slate-900 leading-relaxed whitespace-pre-wrap selection:bg-emerald-100">{outputText}</div>
+                <div className="space-y-4 animate-enter">
+                  <div className="prose-reading whitespace-pre-wrap">{outputText}</div>
 
-                  <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[11px] font-bold text-slate-500">Next Step:</span>
+                  <div className="pt-3 border-t border-line flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-muted">Next Step:</span>
                     <div className="flex flex-wrap items-center gap-1.5">
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('paraphrasing-tool', outputText, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#499557] font-bold text-xs border border-emerald-200/80 transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-accent-soft hover:bg-accent-soft text-accent font-medium text-xs border border-accent/80 transition"
                       >
                         <RefreshCw className="w-3.5 h-3.5" />
                         <span>Paraphrase Translation</span>
@@ -1997,30 +1986,30 @@ export function QuillBotAiStudio({
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('ai-detector', outputText, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sunken hover:bg-line text-fg font-medium text-xs transition"
                       >
-                        <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
+                        <ShieldAlert className="w-3.5 h-3.5 text-warning" />
                         <span>Check AI Score</span>
                       </button>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-slate-400 my-auto">
-                  <div className="w-16 h-16 rounded-full bg-slate-50 border border-slate-200/90 flex items-center justify-center text-slate-400 mb-3.5 shadow-2xs">
+                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-muted my-auto">
+                  <div className="w-16 h-16 rounded-full bg-sunken border border-line flex items-center justify-center text-muted mb-3.5">
                     <Languages className="w-8 h-8 stroke-[1.6]" />
                   </div>
-                  <p className="text-base font-extrabold text-slate-800">Translation appears here</p>
-                  <p className="text-xs text-slate-400 mt-1 max-w-sm leading-relaxed">
+                  <p className="text-base font-semibold text-fg">Translation appears here</p>
+                  <p className="text-xs text-muted mt-1 max-w-sm leading-relaxed">
                     Select target language above and click Translate to convert text while preserving context and nuance.
                   </p>
                 </div>
               )}
             </div>
-            <div className="p-3.5 border-t border-slate-100 bg-slate-50/50 text-xs text-slate-500 flex items-center justify-between">
+            <div className="p-3.5 border-t border-line bg-sunken/50 text-xs text-muted flex items-center justify-between">
               <span>{outputText ? `${outputText.trim().split(/\s+/).filter(Boolean).length} words translated` : 'Ready to translate'}</span>
               {outputText && (
-                <span className="text-[#499557] font-bold">✓ High Accuracy Neural Translation</span>
+                <span className="text-accent font-medium">✓ High Accuracy Neural Translation</span>
               )}
             </div>
           </div>
@@ -2032,13 +2021,13 @@ export function QuillBotAiStudio({
       {/* ======================================================== */}
       {currentTool === 'plagiarism-checker' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[480px] overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
-              <span className="font-bold text-slate-700">Document to Check</span>
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[480px] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
+              <span className="font-medium text-fg">Document to Check</span>
               <button
                 type="button"
                 onClick={() => handleInsertSample('plagiarism-checker')}
-                className="text-xs text-[#499557] font-bold hover:bg-[#edf7ee] px-2 py-1 rounded transition"
+                className="text-xs text-accent font-medium hover:bg-accent-soft px-2 py-1 rounded transition"
               >
                 Sample
               </button>
@@ -2049,16 +2038,16 @@ export function QuillBotAiStudio({
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Paste an essay or article to scan for unoriginal content across published web sources..."
-                className="w-full h-full bg-transparent border-none text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed"
+                className="w-full h-full bg-transparent border-none text-fg placeholder:text-muted resize-none font-serif text-lg leading-relaxed placeholder:font-sans placeholder:text-base"
               />
             </div>
-            <div className="flex items-center justify-between p-3.5 border-t border-slate-100 bg-slate-50/50">
-              <span className="text-xs text-slate-500">{wordCount} words</span>
+            <div className="flex items-center justify-between p-3.5 border-t border-line bg-sunken/50">
+              <span className="text-xs text-muted">{wordCount} words</span>
               <button
                 type="button"
                 onClick={handlePlagiarismCheck}
                 disabled={isLoading || !inputText.trim()}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-extrabold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent hover:bg-accent text-on-accent font-semibold text-xs transition-all disabled:opacity-50"
               >
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileSearch className="w-4 h-4" />}
                 <span>Scan Plagiarism</span>
@@ -2066,10 +2055,10 @@ export function QuillBotAiStudio({
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between min-h-[500px] overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 text-xs">
-              <span className="font-extrabold text-slate-800 flex items-center gap-1.5">
-                <FileSearch className="w-4 h-4 text-[#499557]" />
+          <div className="bg-surface rounded-2xl border border-line flex flex-col justify-between min-h-[500px] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-line text-xs">
+              <span className="font-semibold text-fg flex items-center gap-1.5">
+                <FileSearch className="w-4 h-4 text-accent" />
                 <span>Originality Report</span>
               </span>
               {plagReport && (
@@ -2077,15 +2066,15 @@ export function QuillBotAiStudio({
                   <button
                     type="button"
                     onClick={() => handleCopy(JSON.stringify(plagReport, null, 2))}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold text-xs transition"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium text-xs transition"
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? <Check className="w-3.5 h-3.5 text-accent" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copied ? 'Copied' : 'Copy'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDownload(`PLAYZY ORIGINALITY REPORT\nOriginality: ${plagReport.originality_percent}%\nMatched: ${plagReport.matched_percent}%\nSummary: ${plagReport.summary}`, `playzy_originality_${Date.now()}.txt`)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold text-xs transition"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-muted hover:text-fg hover:bg-sunken font-medium text-xs transition"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download</span>
@@ -2095,29 +2084,29 @@ export function QuillBotAiStudio({
             </div>
             <div className="flex-1 p-5 overflow-y-auto max-h-[520px]">
               {plagReport ? (
-                <div className="space-y-4 animate-fadeIn">
-                  <div className="p-4 rounded-2xl bg-[#edf7ee]/60 border border-[#499557]/30 flex items-center justify-around text-center">
+                <div className="space-y-4 animate-enter">
+                  <div className="p-4 rounded-2xl bg-accent-soft border border-accent/30 flex items-center justify-around text-center">
                     <div>
-                      <span className="text-3xl font-black text-[#499557]">{plagReport.originality_percent}%</span>
-                      <p className="text-[11px] font-bold text-slate-600 uppercase mt-1">Original Text</p>
+                      <span className="text-3xl font-semibold text-accent">{plagReport.originality_percent}%</span>
+                      <p className="text-xs font-medium text-muted uppercase mt-1">Original Text</p>
                     </div>
-                    <div className="h-10 w-px bg-slate-300" />
+                    <div className="h-10 w-px bg-line" />
                     <div>
-                      <span className="text-3xl font-black text-amber-600">{plagReport.matched_percent}%</span>
-                      <p className="text-[11px] font-bold text-slate-600 uppercase mt-1">Matched Content</p>
+                      <span className="text-3xl font-semibold text-warning">{plagReport.matched_percent}%</span>
+                      <p className="text-xs font-medium text-muted uppercase mt-1">Matched Content</p>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-700 leading-relaxed font-medium bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                  <p className="text-xs text-fg leading-relaxed font-medium bg-sunken p-3.5 rounded-xl border border-line">
                     {plagReport.summary}
                   </p>
 
-                  <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[11px] font-bold text-slate-500">Next Step:</span>
+                  <div className="pt-3 border-t border-line flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-muted">Next Step:</span>
                     <div className="flex flex-wrap items-center gap-1.5">
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('paraphrasing-tool', inputText, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#499557] font-bold text-xs border border-emerald-200/80 transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-accent-soft hover:bg-accent-soft text-accent font-medium text-xs border border-accent/80 transition"
                       >
                         <RefreshCw className="w-3.5 h-3.5" />
                         <span>Paraphrase Matched Lines</span>
@@ -2125,7 +2114,7 @@ export function QuillBotAiStudio({
                       <button
                         type="button"
                         onClick={() => handleTransferToTool('ai-humanizer', inputText, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-700 font-bold text-xs border border-teal-200/80 transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-accent-soft hover:bg-accent-soft text-accent font-medium text-xs border border-accent/80 transition"
                       >
                         <UserCheck className="w-3.5 h-3.5" />
                         <span>Humanize</span>
@@ -2134,21 +2123,21 @@ export function QuillBotAiStudio({
                   </div>
                 </div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-slate-400 my-auto">
-                  <div className="w-16 h-16 rounded-full bg-slate-50 border border-slate-200/90 flex items-center justify-center text-slate-400 mb-3.5 shadow-2xs">
+                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-muted my-auto">
+                  <div className="w-16 h-16 rounded-full bg-sunken border border-line flex items-center justify-center text-muted mb-3.5">
                     <FileSearch className="w-8 h-8 stroke-[1.6]" />
                   </div>
-                  <p className="text-base font-extrabold text-slate-800">No report generated</p>
-                  <p className="text-xs text-slate-400 mt-1 max-w-sm leading-relaxed">
+                  <p className="text-base font-semibold text-fg">No report generated</p>
+                  <p className="text-xs text-muted mt-1 max-w-sm leading-relaxed">
                     Paste an essay, article, or thesis to inspect uniqueness, web matches, and citation integrity.
                   </p>
                 </div>
               )}
             </div>
-            <div className="p-3.5 border-t border-slate-100 bg-slate-50/50 text-xs text-slate-500 flex items-center justify-between">
+            <div className="p-3.5 border-t border-line bg-sunken/50 text-xs text-muted flex items-center justify-between">
               <span>{plagReport ? `Scanned ${plagReport.scanned_sources || 150} academic & web sources` : 'Ready to scan'}</span>
               {plagReport && (
-                <span className="text-[#499557] font-bold">✓ Deep Search Completed</span>
+                <span className="text-accent font-medium">✓ Deep Search Completed</span>
               )}
             </div>
           </div>
@@ -2159,8 +2148,8 @@ export function QuillBotAiStudio({
       {/* WORKSPACE 8: AI CHAT                                     */}
       {/* ======================================================== */}
       {currentTool === 'ai-chat' && (
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col h-[580px] overflow-hidden">
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-slate-50/30">
+        <div className="bg-surface rounded-2xl border border-line flex flex-col h-[580px] overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-sunken/30">
             {chatMessages.map((m, idx) => (
               <div
                 key={idx}
@@ -2169,8 +2158,8 @@ export function QuillBotAiStudio({
                 }`}
               >
                 <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-white ${
-                    m.role === 'user' ? 'bg-slate-800' : 'bg-[#499557]'
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-fg ${
+                    m.role === 'user' ? 'bg-surface' : 'bg-accent'
                   }`}
                 >
                   {m.role === 'user' ? <UserCheck className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
@@ -2178,8 +2167,8 @@ export function QuillBotAiStudio({
                 <div
                   className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                     m.role === 'user'
-                      ? 'bg-slate-900 text-white rounded-tr-none'
-                      : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-xs whitespace-pre-wrap'
+                      ? 'bg-surface text-fg rounded-tr-none'
+                      : 'bg-surface border border-line text-fg rounded-tl-none whitespace-pre-wrap'
                   }`}
                 >
                   {m.content}
@@ -2187,26 +2176,26 @@ export function QuillBotAiStudio({
               </div>
             ))}
             {isLoading && (
-              <div className="flex items-center gap-2 text-xs text-slate-400">
-                <Loader2 className="w-4 h-4 animate-spin text-[#499557]" />
+              <div className="flex items-center gap-2 text-xs text-muted">
+                <Loader2 className="w-4 h-4 animate-spin text-accent" />
                 <span>Playzy AI is thinking...</span>
               </div>
             )}
           </div>
 
-          <form onSubmit={handleSendChat} className="p-3 sm:p-4 bg-white border-t border-slate-200">
-            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-1.5 focus-within:border-[#499557] focus-within:ring-2 focus-within:ring-emerald-100 transition-all">
+          <form onSubmit={handleSendChat} className="p-3 sm:p-4 bg-surface border-t border-line">
+            <div className="flex items-center gap-2 bg-sunken border border-line rounded-2xl p-1.5 focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/30 transition-all">
               <input
                 type="text"
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Ask Playzy AI anything, or drop a document above to analyze..."
-                className="flex-1 bg-transparent px-3 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none"
+                className="flex-1 bg-transparent px-3 py-2 text-xs sm:text-sm text-fg"
               />
               <button
                 type="submit"
                 disabled={isLoading || !chatInput.trim()}
-                className="px-5 py-2.5 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-bold text-xs shadow-md transition-all disabled:opacity-50 flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded-xl bg-accent hover:bg-accent text-on-accent font-medium text-xs transition-all disabled:opacity-50 flex items-center gap-1.5"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Send</span>

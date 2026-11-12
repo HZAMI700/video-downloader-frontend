@@ -1,8 +1,31 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
+import { Instrument_Sans, Newsreader, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { faqs } from '../lib/faqs';
 import { ThemeProvider } from '../components/ThemeContext';
+
+const fontSans = Instrument_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const fontSerif = Newsreader({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+});
+
+const fontMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-mono',
+  display: 'swap',
+});
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://playzy.me').replace(/\/+$/, '');
 
@@ -12,8 +35,8 @@ export const viewport: Viewport = {
   maximumScale: 5,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#0F131A' },
+    { media: '(prefers-color-scheme: light)', color: '#F6F8F7' },
+    { media: '(prefers-color-scheme: dark)', color: '#0D1312' },
   ],
 };
 
@@ -149,13 +172,6 @@ export default function RootLayout({
       price: '0',
       priceCurrency: 'USD',
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.95',
-      reviewCount: '24890',
-      bestRating: '5',
-      worstRating: '1',
-    },
     featureList: [
       'AI Paraphrasing & Rewriter Tool',
       'AI Content Detector with 0-100% Probability Score',
@@ -208,10 +224,15 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`dark scroll-smooth ${fontSans.variable} ${fontSerif.variable} ${fontMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {/* Anti-FOUC Theme Initialization Script */}
         <script
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
@@ -231,17 +252,10 @@ export default function RootLayout({
           }}
         />
 
-        {/* Google Fonts - Outfit & Plus Jakarta Sans for Skywork Design */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-
         {/* Google AdSense */}
         <script
           async
+          suppressHydrationWarning
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1227503577553311"
           crossOrigin="anonymous"
         />
@@ -260,7 +274,11 @@ export default function RootLayout({
             gtag('config', 'G-MPCP5JE7E9');
           `}
         </Script>
+      </head>
+      <body className="bg-bg text-fg antialiased min-h-screen flex flex-col font-sans">
+        <ThemeProvider>{children}</ThemeProvider>
 
+        {/* Structured data lives in <body> so third-party scripts that inject into <head> cannot shift it during hydration. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
@@ -277,9 +295,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }}
         />
-      </head>
-      <body className="bg-[#F8FAFC] dark:bg-[#0F131A] text-slate-900 dark:text-slate-100 antialiased min-h-screen flex flex-col font-sans selection:bg-[#00c9a7] selection:text-black transition-colors duration-200">
-        <ThemeProvider>{children}</ThemeProvider>
+
       </body>
     </html>
   );

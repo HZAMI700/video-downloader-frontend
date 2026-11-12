@@ -18,21 +18,21 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTabChange,
 }) => {
   return (
-    <header className="w-full bg-white/75 dark:bg-gray-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 dark:border-white/10 transition-colors">
+    <header className="w-full bg-surface/75 sticky top-0 z-50 border-b border-line transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
         {/* Brand Logo: Playzy */}
         <div className="flex items-center gap-2">
           <a href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-2xl bg-[#499557] flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-200">
+            <div className="w-10 h-10 rounded-2xl bg-accent flex items-center justify-center text-on-accent transition-transform duration-200">
               <Play className="w-5 h-5 fill-current ml-0.5" />
             </div>
-            <span className="text-2xl sm:text-3xl font-black tracking-tight text-[#499557]">
+            <span className="text-2xl sm:text-3xl font-semibold tracking-tight text-accent">
               Playzy
             </span>
           </a>
           {capabilities && (
-            <span className="ml-2 hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#edf7ee] text-[#499557] border border-[#499557]/30 shadow-2xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#499557] animate-pulse" />
+            <span className="ml-2 hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-soft text-accent border border-accent/30">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
               API Ready
             </span>
           )}
@@ -40,14 +40,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Center Mode Switcher Tabs */}
         {onTabChange && (
-          <div className="flex p-1 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl shadow-inner">
+          <div className="flex p-1 bg-sunken border border-line rounded-2xl">
             <button
               type="button"
               onClick={() => onTabChange('downloader')}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${
                 activeTab === 'downloader'
-                  ? 'bg-white dark:bg-white/15 text-purple-600 dark:text-white shadow-sm'
-                  : 'text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-surface text-muted'
+                  : 'text-muted hover:text-fg'
               }`}
             >
               <DownloadCloud className="w-4 h-4" />
@@ -56,15 +56,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => onTabChange('transcriber')}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${
                 activeTab === 'transcriber'
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-black shadow-md shadow-emerald-500/20'
-                  : 'text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
+                  ? ' bg-accent text-on-accent'
+                  : 'text-muted hover:text-fg'
               }`}
             >
               <FileAudio className="w-4 h-4" />
               <span>AI Transcriber</span>
-              <span className="hidden sm:inline-block px-1.5 py-0.2 rounded text-[10px] uppercase font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+              <span className="hidden sm:inline-block px-1.5 py-0.2 rounded text-xs uppercase font-medium bg-accent/20 text-accent">
                 New
               </span>
             </button>
@@ -73,14 +73,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right CTA / Links */}
         <div className="flex items-center gap-3">
-          <nav className="hidden lg:flex items-center gap-6 text-xs font-semibold text-slate-600 dark:text-gray-400">
-            <a href="#how-it-works" className="hover:text-purple-600 transition-colors">
+          <nav className="hidden lg:flex items-center gap-6 text-xs font-medium text-muted">
+            <a href="#how-it-works" className="hover:text-muted transition-colors">
               How It Works
             </a>
-            <a href="#features" className="hover:text-purple-600 transition-colors">
+            <a href="#features" className="hover:text-muted transition-colors">
               Features
             </a>
-            <a href="#faq" className="hover:text-purple-600 transition-colors">
+            <a href="#faq" className="hover:text-muted transition-colors">
               FAQ
             </a>
           </nav>
@@ -92,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onTabChange(activeTab === 'downloader' ? 'transcriber' : 'downloader');
               }
             }}
-            className="px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-[#499557] hover:bg-[#3d7d49] shadow-md transition-all transform active:scale-95 flex items-center gap-1.5"
+            className="px-4 py-2 rounded-xl font-medium text-xs sm:text-sm text-on-accent bg-accent hover:bg-accent transition-all transform flex items-center gap-1.5"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>{activeTab === 'downloader' ? 'Transcribe AI' : 'Download Video'}</span>

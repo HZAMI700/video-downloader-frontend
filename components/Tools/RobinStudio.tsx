@@ -519,7 +519,7 @@ function renderInlineFormatted(text: string): React.ReactNode {
         if (part.startsWith('**') && part.endsWith('**')) {
           const inner = part.slice(2, -2).replace(/[*#`_]/g, '').trim();
           return (
-            <strong key={index} className="font-extrabold text-slate-900 dark:text-white">
+            <strong key={index} className="font-semibold text-fg">
               {inner}
             </strong>
           );
@@ -529,7 +529,7 @@ function renderInlineFormatted(text: string): React.ReactNode {
           return (
             <span
               key={index}
-              className="inline-block px-1.5 py-0.5 mx-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-[#00c9a7] font-mono text-xs font-bold border border-emerald-500/20"
+              className="inline-block px-1.5 py-0.5 mx-0.5 rounded-md bg-accent/10 text-accent font-mono text-xs font-medium border border-accent/20"
             >
               {inner}
             </span>
@@ -538,7 +538,7 @@ function renderInlineFormatted(text: string): React.ReactNode {
         if (part.startsWith('*') && part.endsWith('*')) {
           const inner = part.slice(1, -1).replace(/[*#`_]/g, '').trim();
           return (
-            <em key={index} className="italic text-slate-800 dark:text-slate-200">
+            <em key={index} className="italic text-fg">
               {inner}
             </em>
           );
@@ -735,16 +735,16 @@ function CleanFormattedText({ text, className = '' }: { text: string; className?
           return (
             <h4
               key={idx}
-              className="text-sm sm:text-base font-black text-slate-900 dark:text-white pt-2 pb-1 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800"
+              className="text-sm sm:text-base font-semibold text-fg pt-2 pb-1 flex items-center gap-2 border-b border-line"
             >
-              <span className="w-2 h-2 rounded-full bg-[#00c9a7]" />
+              <span className="w-2 h-2 rounded-full bg-accent" />
               <span>{cleanHeading}</span>
             </h4>
           );
         }
 
         if (line === '---' || line === '***' || line === '___') {
-          return <div key={idx} className="my-3 border-b border-slate-200 dark:border-[#263241]" />;
+          return <div key={idx} className="my-3 border-b border-line" />;
         }
 
         const numMatch = line.match(/^(\d+)\.\s+(.*)$/);
@@ -754,12 +754,12 @@ function CleanFormattedText({ text, className = '' }: { text: string; className?
           return (
             <div
               key={idx}
-              className="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241]"
+              className="flex items-start gap-3 p-3 rounded-2xl bg-sunken border border-line"
             >
-              <span className="w-6 h-6 rounded-xl bg-[#00c9a7]/15 text-[#00c9a7] text-xs font-black flex items-center justify-center shrink-0 mt-0.5">
+              <span className="w-6 h-6 rounded-xl bg-accent/15 text-accent text-xs font-semibold flex items-center justify-center shrink-0 mt-0.5">
                 {num}
               </span>
-              <div className="flex-1 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+              <div className="flex-1 text-xs sm:text-sm text-fg">
                 {renderInlineFormatted(rest)}
               </div>
             </div>
@@ -770,8 +770,8 @@ function CleanFormattedText({ text, className = '' }: { text: string; className?
           const rest = line.replace(/^[-*]\s+/, '');
           return (
             <div key={idx} className="flex items-start gap-2.5 my-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00c9a7] mt-2 shrink-0 shadow-[0_0_6px_#00c9a7]" />
-              <div className="flex-1 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
+              <div className="flex-1 text-xs sm:text-sm text-fg">
                 {renderInlineFormatted(rest)}
               </div>
             </div>
@@ -779,7 +779,7 @@ function CleanFormattedText({ text, className = '' }: { text: string; className?
         }
 
         return (
-          <p key={idx} className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+          <p key={idx} className="text-xs sm:text-sm text-fg">
             {renderInlineFormatted(line)}
           </p>
         );
@@ -815,38 +815,38 @@ function ExecutiveThreatDossier({
 
   const severityStyle = {
     CRITICAL: {
-      badge: 'bg-rose-500/15 text-rose-500 border-rose-500/30 shadow-[0_0_12px_rgba(244,63,94,0.3)]',
-      meter: 'bg-rose-500 w-[95%]',
+      badge: 'bg-danger/15 text-danger border-danger/30',
+      meter: 'bg-danger w-[95%]',
       score: '96%',
     },
     'HIGH - CRITICAL': {
-      badge: 'bg-orange-500/15 text-orange-500 border-orange-500/30 shadow-[0_0_12px_rgba(249,115,22,0.3)]',
-      meter: 'bg-orange-500 w-[90%]',
+      badge: 'bg-warning/15 text-warning border-warning/30',
+      meter: 'bg-warning w-[90%]',
       score: '92%',
     },
     HIGH: {
-      badge: 'bg-amber-500/15 text-amber-500 border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.3)]',
-      meter: 'bg-amber-500 w-[85%]',
+      badge: 'bg-warning/15 text-warning border-warning/30',
+      meter: 'bg-warning w-[85%]',
       score: '88%',
     },
     'MEDIUM - HIGH': {
-      badge: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
-      meter: 'bg-amber-400 w-[75%]',
+      badge: 'bg-warning/15 text-warning border-warning/30',
+      meter: 'bg-warning w-[75%]',
       score: '82%',
     },
     MEDIUM: {
-      badge: 'bg-yellow-500/15 text-yellow-500 border-yellow-500/30',
-      meter: 'bg-yellow-400 w-[60%]',
+      badge: 'bg-warning/15 text-warning border-warning/30',
+      meter: 'bg-warning w-[60%]',
       score: '68%',
     },
     LOW: {
-      badge: 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30',
-      meter: 'bg-emerald-500 w-[35%]',
+      badge: 'bg-accent/15 text-accent border-accent/30',
+      meter: 'bg-accent w-[35%]',
       score: '35%',
     },
   }[threatLevel] || {
-    badge: 'bg-amber-500/15 text-amber-500 border-amber-500/30',
-    meter: 'bg-amber-500 w-[80%]',
+    badge: 'bg-warning/15 text-warning border-warning/30',
+    meter: 'bg-warning w-[80%]',
     score: '85%',
   };
 
@@ -869,8 +869,8 @@ function ExecutiveThreatDossier({
           : lang === 'ru'
           ? 'Проверенное резюме'
           : 'Verified Intelligence',
-      badgeClass: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
-      icon: <FileText className="w-4 h-4 text-[#00c9a7]" />,
+      badgeClass: 'bg-accent/10 text-accent border-accent/20',
+      icon: <FileText className="w-4 h-4 text-accent" />,
     },
     findings: {
       badge:
@@ -881,8 +881,8 @@ function ExecutiveThreatDossier({
           : lang === 'ru'
           ? 'Активные индикаторы (IOCs)'
           : 'Active IOC Indicators',
-      badgeClass: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
-      icon: <AlertOctagon className="w-4 h-4 text-amber-500" />,
+      badgeClass: 'bg-warning/10 text-warning border-warning/20',
+      icon: <AlertOctagon className="w-4 h-4 text-warning" />,
     },
     severity: {
       badge:
@@ -893,8 +893,8 @@ function ExecutiveThreatDossier({
           : lang === 'ru'
           ? 'Оценка рисков и угрозы'
           : 'Risk Evaluation',
-      badgeClass: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
-      icon: <Activity className="w-4 h-4 text-rose-500" />,
+      badgeClass: 'bg-danger/10 text-danger border-danger/20',
+      icon: <Activity className="w-4 h-4 text-danger" />,
     },
     recommendations: {
       badge:
@@ -905,37 +905,36 @@ function ExecutiveThreatDossier({
           : lang === 'ru'
           ? 'Меры нейтрализации'
           : 'Remediation Protocols',
-      badgeClass: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20',
-      icon: <CheckCircle2 className="w-4 h-4 text-teal-500" />,
+      badgeClass: 'bg-accent/10 text-accent border-accent/20',
+      icon: <CheckCircle2 className="w-4 h-4 text-accent" />,
     },
     general: {
       badge: 'Verified OSINT',
-      badgeClass: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20',
-      icon: <Shield className="w-4 h-4 text-[#00c9a7]" />,
+      badgeClass: 'bg-muted/10 text-muted border-line-strong/20',
+      icon: <Shield className="w-4 h-4 text-accent" />,
     },
   };
 
   return (
     <div className="space-y-6">
       {/* 1. Executive Banner & Threat Criticality Gauge */}
-      <div className="bg-gradient-to-br from-slate-900 via-[#12171F] to-[#0D1117] rounded-3xl border border-slate-700/50 p-5 sm:p-7 text-white shadow-xl space-y-5 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#00c9a7]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className=" bg-surface rounded-3xl border border-line/50 p-5 sm:p-7 text-fg space-y-5 relative overflow-hidden">
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10 pb-4 border-b border-slate-800">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10 pb-4 border-b border-line">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#00c9a7]/20 border border-[#00c9a7]/40 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(0,201,167,0.3)]">
-              <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-[#00c9a7]" />
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-accent/20 border border-accent/40 flex items-center justify-center shrink-0">
+              <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[11px] sm:text-xs uppercase font-extrabold tracking-widest text-[#00c9a7]">
+                <span className="text-xs sm:text-xs uppercase font-semibold tracking-widest text-accent">
                   {i18n.tabReport}
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                <span className="text-xs font-mono px-2 py-0.5 rounded bg-surface text-muted border border-line">
                   {caseId}
                 </span>
               </div>
-              <h3 className="text-base sm:text-xl font-black text-white mt-1 break-words">
+              <h3 className="text-base sm:text-xl font-semibold text-fg mt-1 break-words">
                 {i18n.activeTarget}: {query}
               </h3>
             </div>
@@ -943,7 +942,7 @@ function ExecutiveThreatDossier({
 
           <div className="flex items-center gap-2 shrink-0">
             <div
-              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl border text-[11px] sm:text-xs font-black tracking-wider uppercase flex items-center gap-1.5 ${severityStyle.badge}`}
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl border text-xs sm:text-xs font-semibold tracking-wider uppercase flex items-center gap-1.5 ${severityStyle.badge}`}
             >
               <AlertOctagon className="w-4 h-4" />
               <span>{threatLevel} SEVERITY</span>
@@ -953,9 +952,9 @@ function ExecutiveThreatDossier({
 
         {/* Severity Risk Meter */}
         <div className="space-y-2 relative z-10">
-          <div className="flex items-center justify-between text-xs font-bold text-slate-300">
+          <div className="flex items-center justify-between text-xs font-medium text-muted">
             <span className="flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5 text-[#00c9a7]" />
+              <Activity className="w-3.5 h-3.5 text-accent" />
               {lang === 'ar'
                 ? 'مؤشر خطورة التعرض في الدارك نت (Darknet Surface Exposure)'
                 : lang === 'es'
@@ -964,42 +963,42 @@ function ExecutiveThreatDossier({
                 ? 'Индекс уязвимости и видимости в Darknet'
                 : 'Darknet Threat Surface Exposure Score'}
             </span>
-            <span className="font-mono text-[#00c9a7]">{severityStyle.score} Risk</span>
+            <span className="font-mono text-accent">{severityStyle.score} Risk</span>
           </div>
-          <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden p-0.5">
+          <div className="h-2 w-full bg-surface rounded-full overflow-hidden p-0.5">
             <div className={`h-full rounded-full transition-all duration-1000 ${severityStyle.meter}`} />
           </div>
         </div>
 
         {/* Investigation Parameters Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-1 relative z-10">
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">{i18n.classificationLabel}</span>
-            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+          <div className="p-3 rounded-2xl bg-sunken border border-line space-y-1">
+            <span className="text-xs uppercase font-medium text-muted block">{i18n.classificationLabel}</span>
+            <span className="text-xs font-medium text-accent flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" />
               {i18n.authOsint}
             </span>
           </div>
 
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">{i18n.clearanceLabel}</span>
-            <span className="text-xs font-bold text-slate-200 flex items-center gap-1">
-              <Lock className="w-3.5 h-3.5 text-amber-400" />
+          <div className="p-3 rounded-2xl bg-sunken border border-line space-y-1">
+            <span className="text-xs uppercase font-medium text-muted block">{i18n.clearanceLabel}</span>
+            <span className="text-xs font-medium text-muted flex items-center gap-1">
+              <Lock className="w-3.5 h-3.5 text-warning" />
               {i18n.compartmented}
             </span>
           </div>
 
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">{i18n.routingLabel}</span>
-            <span className="text-xs font-bold text-[#00c9a7] flex items-center gap-1 truncate">
+          <div className="p-3 rounded-2xl bg-sunken border border-line space-y-1">
+            <span className="text-xs uppercase font-medium text-muted block">{i18n.routingLabel}</span>
+            <span className="text-xs font-medium text-accent flex items-center gap-1 truncate">
               <Globe className="w-3.5 h-3.5 shrink-0" />
               Tor SOCKS5 Onion v3
             </span>
           </div>
 
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">{i18n.indexedLabel}</span>
-            <span className="text-xs font-bold text-purple-400 flex items-center gap-1">
+          <div className="p-3 rounded-2xl bg-sunken border border-line space-y-1">
+            <span className="text-xs uppercase font-medium text-muted block">{i18n.indexedLabel}</span>
+            <span className="text-xs font-medium text-muted flex items-center gap-1">
               <Database className="w-3.5 h-3.5 shrink-0" />
               {sourcesCount} Hidden Services
             </span>
@@ -1016,17 +1015,17 @@ function ExecutiveThreatDossier({
             return (
               <div
                 key={sIdx}
-                className="bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] shadow-sm p-5 sm:p-7 space-y-4 transition-all"
+                className="bg-surface rounded-3xl border border-line p-5 sm:p-7 space-y-4 transition-all"
               >
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#212932] gap-2">
+                <div className="flex items-center justify-between pb-3 border-b border-line gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-sunken border border-line flex items-center justify-center shrink-0">
                       {conf.icon}
                     </div>
-                    <h4 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">{sec.title}</h4>
+                    <h4 className="text-sm sm:text-base font-semibold text-fg">{sec.title}</h4>
                   </div>
                   <span
-                    className={`text-[10px] sm:text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${conf.badgeClass} shrink-0`}
+                    className={`text-xs sm:text-xs font-medium px-2.5 py-0.5 rounded-full border ${conf.badgeClass} shrink-0`}
                   >
                     {conf.badge}
                   </span>
@@ -1040,22 +1039,22 @@ function ExecutiveThreatDossier({
                         return (
                           <div
                             key={iIdx}
-                            className="p-4 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] space-y-1.5 hover:border-[#00c9a7]/40 transition"
+                            className="p-4 rounded-2xl bg-sunken border border-line space-y-1.5 hover:border-accent/40 transition"
                           >
-                            <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                            <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-warning">
                               <Radio className="w-3.5 h-3.5 shrink-0" />
                               <span>{item.label}</span>
                             </div>
-                            <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
+                            <p className="text-xs sm:text-sm text-fg font-medium leading-relaxed">
                               {renderInlineFormatted(item.value || '')}
                             </p>
                           </div>
                         );
                       }
                       return (
-                        <div key={iIdx} className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-[#12171F]">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0" />
-                          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                        <div key={iIdx} className="flex items-start gap-2.5 p-3 rounded-xl bg-sunken">
+                          <span className="w-1.5 h-1.5 rounded-full bg-warning mt-2 shrink-0" />
+                          <p className="text-xs sm:text-sm text-fg">
                             {renderInlineFormatted(item.text || '')}
                           </p>
                         </div>
@@ -1067,18 +1066,18 @@ function ExecutiveThreatDossier({
                     {sec.items.map((item, iIdx) => (
                       <div
                         key={iIdx}
-                        className="p-4 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] flex items-start gap-3.5 hover:border-[#00c9a7]/40 transition"
+                        className="p-4 rounded-2xl bg-sunken border border-line flex items-start gap-3.5 hover:border-accent/40 transition"
                       >
-                        <span className="w-7 h-7 rounded-xl bg-[#00c9a7]/15 text-[#00c9a7] text-xs font-black flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                        <span className="w-7 h-7 rounded-xl bg-accent/15 text-accent text-xs font-semibold flex items-center justify-center shrink-0 mt-0.5">
                           {item.num || iIdx + 1}
                         </span>
                         <div className="space-y-1 flex-1">
                           {item.title && (
-                            <h5 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                            <h5 className="text-xs sm:text-sm font-medium text-fg">
                               {item.title}
                             </h5>
                           )}
-                          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                          <p className="text-xs sm:text-sm text-fg leading-relaxed">
                             {renderInlineFormatted(item.text || '')}
                           </p>
                         </div>
@@ -1097,18 +1096,18 @@ function ExecutiveThreatDossier({
                         return (
                           <div
                             key={iIdx}
-                            className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                            className="p-3.5 sm:p-4 rounded-2xl bg-sunken border border-line flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                           >
-                            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                            <span className="text-xs font-medium text-muted">
                               {item.label}:
                             </span>
                             {isThreatLevel ? (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black uppercase bg-amber-500/15 text-amber-500 border border-amber-500/30">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold uppercase bg-warning/15 text-warning border border-warning/30">
                                 <AlertOctagon className="w-3.5 h-3.5" />
                                 {item.value}
                               </span>
                             ) : (
-                              <span className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
+                              <span className="text-xs sm:text-sm font-medium text-fg">
                                 {renderInlineFormatted(item.value || '')}
                               </span>
                             )}
@@ -1117,8 +1116,8 @@ function ExecutiveThreatDossier({
                       }
                       return (
                         <div key={iIdx} className="flex items-start gap-3">
-                          <span className="w-2 h-2 rounded-full bg-[#00c9a7] mt-2 shrink-0 shadow-[0_0_8px_#00c9a7]" />
-                          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed flex-1">
+                          <span className="w-2 h-2 rounded-full bg-accent mt-2 shrink-0" />
+                          <p className="text-xs sm:text-sm text-fg leading-relaxed flex-1">
                             {renderInlineFormatted(item.text || '')}
                           </p>
                         </div>
@@ -1131,22 +1130,22 @@ function ExecutiveThreatDossier({
           })}
         </div>
       ) : (
-        <div className="bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] shadow-sm p-6 sm:p-8 space-y-6">
+        <div className="bg-surface rounded-3xl border border-line p-6 sm:p-8 space-y-6">
           <CleanFormattedText text={summary} />
         </div>
       )}
 
       {/* 3. Cryptographic Chain-of-Custody Verification Footer */}
-      <div className="bg-white dark:bg-[#181D24] rounded-2xl border border-slate-200 dark:border-[#263241] p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+      <div className="bg-surface rounded-2xl border border-line p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-muted">
         <div className="flex items-center gap-2 font-mono min-w-0">
-          <Key className="w-3.5 h-3.5 text-[#00c9a7] shrink-0" />
+          <Key className="w-3.5 h-3.5 text-accent shrink-0" />
           <span className="shrink-0">{i18n.sha256Ledger}</span>
-          <span className="text-slate-700 dark:text-slate-300 truncate max-w-[200px] sm:max-w-[320px]">
+          <span className="text-fg truncate max-w-[200px] sm:max-w-[320px]">
             {sha256Fingerprint}
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold shrink-0">
+        <div className="flex items-center gap-1.5 text-xs text-accent font-medium shrink-0">
           <CheckCircle2 className="w-3.5 h-3.5" />
           <span>{i18n.nistCompliant}</span>
         </div>
@@ -1449,57 +1448,25 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
 
   return (
     <div
-      className="w-full max-w-6xl mx-auto space-y-5 animate-apple-in pb-12 select-text"
+      className="w-full max-w-6xl mx-auto space-y-5 animate-enter pb-12 select-text"
       dir={lang === 'ar' ? 'rtl' : 'ltr'}
     >
-      {/* Breadcrumbs Navigation */}
-      <div className="flex items-center justify-between text-xs py-1">
-        <div className="flex items-center gap-1.5 font-medium">
-          <span className="text-slate-400">&lt;</span>
-          <button
-            type="button"
-            onClick={() => onBackToCategory?.()}
-            className="text-slate-500 hover:text-slate-800 transition cursor-pointer"
-          >
-            Home
-          </button>
-          <span className="text-slate-300">/</span>
-          <button
-            type="button"
-            onClick={() => onBackToCategory?.()}
-            className="text-slate-500 hover:text-slate-800 transition cursor-pointer"
-          >
-            AI Section
-          </button>
-          <span className="text-slate-300">/</span>
-          <span className="text-[#009688] font-bold">Robin Threat Intel</span>
-        </div>
-        <button
-          type="button"
-          onClick={() => onBackToCategory?.()}
-          className="w-6 h-6 rounded-md flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
-          title="Close"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-
       {/* Top Banner / Studio Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-1">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#0B1118] border border-slate-800 p-2 shadow-sm flex items-center justify-center shrink-0">
-            <ShieldAlert className="w-6 h-6 text-[#00c9a7]" />
+          <div className="w-12 h-12 rounded-2xl bg-bg border border-line p-2 flex items-center justify-center shrink-0">
+            <ShieldAlert className="w-6 h-6 text-accent" />
           </div>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-semibold text-fg tracking-tight">
                 Robin Threat Intelligence Studio
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#E6FCF5] text-[#009688] border border-[#B2F5EA]">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-medium uppercase tracking-wider bg-accent-soft text-accent border border-accent/30">
                 TOR + OPENCODE
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5 font-normal">
+            <p className="text-xs text-muted mt-0.5 font-normal">
               Legal Dark Web OSINT &amp; Cyber Threat Intelligence Suite • Powered by OpenCode Zen API &amp; Tor SOCKS5
             </p>
           </div>
@@ -1508,17 +1475,17 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
         {/* Right Status Indicator & 4-Language Selector */}
         <div className="flex items-center gap-3 flex-wrap">
           {/* Tor Indicator */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 text-xs font-semibold text-slate-700 shadow-2xs">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface border border-line text-xs font-medium text-fg">
             <span
               className={`w-2 h-2 rounded-full ${
-                healthInfo?.tor?.status === 'connected' ? 'bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]' : 'bg-emerald-400'
+                healthInfo?.tor?.status === 'connected' ? 'bg-accent' : 'bg-accent'
               }`}
             />
             <span>Tor Proxy: SOCKS5 v3</span>
           </div>
 
           {/* 4-Language Selector Pill */}
-          <div className="flex items-center p-1 rounded-full bg-[#F1F5F9]/80 border border-slate-200/80 gap-1">
+          <div className="flex items-center p-1 rounded-full bg-sunken/80 border border-line gap-1">
             {[
               { id: 'en' as RobinLang, code: 'us', label: 'EN' },
               { id: 'ar' as RobinLang, code: 'sa', label: 'عربي' },
@@ -1531,11 +1498,11 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                 onClick={() => setLang(item.id)}
                 className={`px-2.5 py-1 rounded-full text-xs transition cursor-pointer flex items-center gap-1 ${
                   lang === item.id
-                    ? 'bg-white text-slate-900 font-extrabold shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-900 font-medium'
+                    ? 'bg-surface text-fg font-semibold'
+                    : 'text-muted hover:text-fg font-medium'
                 }`}
               >
-                <span className="text-[10px] lowercase text-slate-400 font-bold">{item.code}</span>
+                <span className="text-xs lowercase text-muted font-medium">{item.code}</span>
                 <span>{item.label}</span>
               </button>
             ))}
@@ -1544,26 +1511,26 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
       </div>
 
       {/* Mandatory Legal Warning & Consent */}
-      <div className="bg-[#FEF9EE] border border-[#FDE8BB] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start gap-3.5 shadow-2xs">
-        <AlertTriangle className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
+      <div className="bg-warning-soft border border-warning/30 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start gap-3.5">
+        <AlertTriangle className="w-6 h-6 text-warning shrink-0 mt-0.5" />
         <div className="space-y-1.5 flex-1">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs sm:text-sm font-bold text-[#8A4B08] flex items-center gap-1.5">
+            <h3 className="text-xs sm:text-sm font-medium text-warning flex items-center gap-1.5">
               <span>⚠️</span> Mandatory Legal &amp; Educational Compliance Notice
             </h3>
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#FAE8C8] text-[#935207] border border-[#F6D8A2]">
+            <span className="text-xs font-medium uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-warning-soft text-warning border border-warning/30">
               LEGAL OSINT ONLY
             </span>
           </div>
-          <p className="text-[11px] sm:text-xs text-[#78430B] leading-relaxed">
+          <p className="text-xs sm:text-xs text-warning leading-relaxed">
             This module is strictly intended for educational research, compliance auditing, cyber threat intelligence (CTI), and officially authorized legal investigations. Unlawful exploitation is strictly prohibited. Operational telemetry is audited for compliance.
           </p>
-          <label className="inline-flex items-center gap-2 text-xs font-semibold text-[#6E3C04] cursor-pointer pt-1">
+          <label className="inline-flex items-center gap-2 text-xs font-medium text-warning cursor-pointer pt-1">
             <input
               type="checkbox"
               checked={legalAgreed}
               onChange={(e) => setLegalAgreed(e.target.checked)}
-              className="rounded text-[#00c9a7] focus:ring-[#00c9a7] border-amber-300 w-3.5 h-3.5"
+              className="rounded text-accent focus:ring-accent border-warning/30 w-3.5 h-3.5"
             />
             <span>I hereby certify that my investigation query is for authorized defensive, legal, or educational research purposes only.</span>
           </label>
@@ -1571,13 +1538,13 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
       </div>
 
       {/* Investigation Command Center */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-5 sm:p-7 space-y-6">
+      <div className="bg-surface rounded-3xl border border-line p-5 sm:p-7 space-y-6">
         {/* Presets Row */}
         <div>
-          <label className="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-2.5">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-2.5">
             INVESTIGATION THREAT CATEGORY
           </label>
-          <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
             {PRESETS.map((p) => {
               const active = preset === p.id;
               return (
@@ -1585,26 +1552,26 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                   key={p.id}
                   type="button"
                   onClick={() => setPreset(p.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 shrink-0 transition cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 shrink-0 transition cursor-pointer ${
                     active
-                      ? 'bg-[#EEF2F6] border border-[#CBD5E1] text-[#0F172A] shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent font-medium'
+                      ? 'bg-sunken border border-line text-fg'
+                      : 'text-muted hover:text-fg hover:bg-sunken border border-transparent font-medium'
                   }`}
                 >
                   {p.iconType === 'shield' && (
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0 inline-block mr-0.5" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-info shrink-0 inline-block mr-0.5" />
                   )}
                   {p.iconType === 'lock' && (
-                    <span className="text-amber-500 text-xs">🔒</span>
+                    <span className="text-warning text-xs">🔒</span>
                   )}
                   {p.iconType === 'key' && (
-                    <span className="text-amber-500 text-xs">🔑</span>
+                    <span className="text-warning text-xs">🔑</span>
                   )}
                   {p.iconType === 'zap' && (
-                    <span className="text-amber-500 text-xs">⚡</span>
+                    <span className="text-warning text-xs">⚡</span>
                   )}
                   {p.iconType === 'store' && (
-                    <span className="text-slate-400 text-xs">🏪</span>
+                    <span className="text-muted text-xs">🏪</span>
                   )}
                   <span>{p.labels[lang] || p.labels.en}</span>
                 </button>
@@ -1615,11 +1582,11 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
 
         {/* Search Input Box */}
         <div className="space-y-2.5">
-          <label className="block text-[11px] font-black uppercase tracking-wider text-slate-500">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-muted">
             INVESTIGATION TARGET (DOMAIN, CVE, BREACH ENTITY, HANDLE, HASH)
           </label>
-          <div className="relative flex items-center bg-[#F8FAFC] border border-slate-200/90 rounded-full pl-4 pr-1.5 py-1.5 focus-within:border-[#00c9a7] focus-within:bg-white transition-all shadow-inner">
-            <Search className="w-4 h-4 text-slate-400 shrink-0 mr-2.5 pointer-events-none" />
+          <div className="relative flex items-center bg-bg border border-line rounded-full pl-4 pr-1.5 py-1.5 focus-within:border-accent focus-within:bg-surface transition-all">
+            <Search className="w-4 h-4 text-muted shrink-0 mr-2.5 pointer-events-none" />
             <input
               type="text"
               value={query}
@@ -1628,16 +1595,16 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                 if (e.key === 'Enter') handleExecuteSearch();
               }}
               placeholder="Enter investigation target (e.g. paypal accounts, LockBit victims, CVE-2024-3094, corporate domain)..."
-              className="w-full bg-transparent py-1 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none"
+              className="w-full bg-transparent py-1 text-xs sm:text-sm text-fg placeholder-muted"
             />
             <button
               type="button"
               onClick={() => handleExecuteSearch()}
               disabled={isSearching || !query.trim()}
-              className={`px-4 sm:px-5 py-2 rounded-full text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shrink-0 ${
+              className={`px-4 sm:px-5 py-2 rounded-full text-xs font-medium flex items-center gap-1.5 transition cursor-pointer shrink-0 ${
                 query.trim() && !isSearching
-                  ? 'bg-[#00c9a7] text-slate-950 shadow-sm hover:scale-[1.02] active:scale-95'
-                  : 'bg-[#E2E8F0]/80 hover:bg-[#CBD5E1] text-slate-500'
+                  ? 'bg-accent text-on-accent'
+                  : 'bg-line/80 hover:bg-line text-muted'
               }`}
             >
               {isSearching ? (
@@ -1647,7 +1614,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                 </>
               ) : (
                 <>
-                  <Search className="w-3.5 h-3.5 text-slate-500" />
+                  <Search className="w-3.5 h-3.5 text-muted" />
                   <span>Investigate</span>
                 </>
               )}
@@ -1656,7 +1623,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
 
           {/* Example Quick Prompts */}
           <div className="flex items-center gap-1.5 flex-wrap pt-1">
-            <span className="text-[11px] font-medium text-slate-400">Quick examples:</span>
+            <span className="text-xs font-medium text-muted">Quick examples:</span>
             {[
               'paypal accounts',
               'LockBit ransomware victims',
@@ -1671,7 +1638,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                   setQuery(ex);
                   handleExecuteSearch(ex);
                 }}
-                className="text-[11px] font-medium px-3 py-1 rounded-full bg-[#F1F5F9] hover:bg-slate-200 text-slate-600 border border-slate-200/60 transition cursor-pointer"
+                className="text-xs font-medium px-3 py-1 rounded-full bg-sunken hover:bg-line text-muted border border-line transition cursor-pointer"
               >
                 {ex}
               </button>
@@ -1680,44 +1647,44 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
         </div>
 
         {/* Collapsible Advanced Controls */}
-        <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600 flex-wrap gap-4">
+        <div className="pt-3 border-t border-line flex items-center justify-between text-xs text-muted flex-wrap gap-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-slate-700">Max Results:</span>
+              <span className="font-medium text-fg">Max Results:</span>
               <div className="relative">
                 <select
                   value={maxResults}
                   onChange={(e) => setMaxResults(Number(e.target.value))}
-                  className="appearance-none bg-[#F8FAFC] border border-slate-200 rounded-full pl-3 pr-7 py-1 text-xs text-slate-700 font-semibold focus:outline-none cursor-pointer"
+                  className="appearance-none bg-bg border border-line rounded-full pl-3 pr-7 py-1 text-xs text-fg font-medium cursor-pointer"
                 >
                   <option value={15}>15</option>
                   <option value={25}>25 (Recommended)</option>
                   <option value={30}>30</option>
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <ChevronDown className="w-3.5 h-3.5 text-muted absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-slate-700">Max Scrape:</span>
+              <span className="font-medium text-fg">Max Scrape:</span>
               <div className="relative">
                 <select
                   value={maxScrape}
                   onChange={(e) => setMaxScrape(Number(e.target.value))}
-                  className="appearance-none bg-[#F8FAFC] border border-slate-200 rounded-full pl-3 pr-7 py-1 text-xs text-slate-700 font-semibold focus:outline-none cursor-pointer"
+                  className="appearance-none bg-bg border border-line rounded-full pl-3 pr-7 py-1 text-xs text-fg font-medium cursor-pointer"
                 >
                   <option value={3}>3 pages</option>
                   <option value={5}>5 pages</option>
                   <option value={10}>10 pages</option>
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <ChevronDown className="w-3.5 h-3.5 text-muted absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 text-[#00c9a7]">
-            <Radio className="w-3.5 h-3.5 text-[#00c9a7]" />
-            <span className="text-xs font-semibold text-[#00c9a7]">OpenCode AI Query Refinement &amp; Synthesis</span>
+          <div className="flex items-center gap-1.5 text-accent">
+            <Radio className="w-3.5 h-3.5 text-accent" />
+            <span className="text-xs font-medium text-accent">OpenCode AI Query Refinement &amp; Synthesis</span>
           </div>
         </div>
       </div>
@@ -1725,7 +1692,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
 
       {/* Error Message */}
       {error && (
-        <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-4 text-xs font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-3">
+        <div className="bg-danger/10 border border-danger/30 rounded-2xl p-4 text-xs font-medium text-danger flex items-center gap-3">
           <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
@@ -1733,44 +1700,43 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
 
       {/* High-Tech Realistic Investigation Radar & Telemetry Console */}
       {isSearching && (
-        <div className="bg-[#0B0F15] rounded-3xl border border-slate-800 p-6 sm:p-8 space-y-6 shadow-2xl text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-[#00c9a7]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="bg-bg rounded-3xl border border-line p-6 sm:p-8 space-y-6 text-fg relative overflow-hidden">
 
           {/* Top Status & Progress Bar */}
           <div className="space-y-3 relative z-10">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="relative w-10 h-10 rounded-2xl bg-[#00c9a7]/15 border border-[#00c9a7]/40 flex items-center justify-center shrink-0">
-                  <RefreshCw className="w-5 h-5 text-[#00c9a7] animate-spin" />
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#00c9a7] animate-ping" />
+                <div className="relative w-10 h-10 rounded-2xl bg-accent/15 border border-accent/40 flex items-center justify-center shrink-0">
+                  <RefreshCw className="w-5 h-5 text-accent animate-spin" />
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-accent" />
                 </div>
                 <div>
-                  <h4 className="text-sm sm:text-base font-black text-white flex items-center gap-2">
+                  <h4 className="text-sm sm:text-base font-semibold text-fg flex items-center gap-2">
                     <span>{searchStage}</span>
                   </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">{searchSubtext}</p>
+                  <p className="text-xs text-muted mt-0.5">{searchSubtext}</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
-                <span className="font-mono text-xl sm:text-2xl font-black text-[#00c9a7]">{searchProgress}%</span>
-                <span className="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                <span className="font-mono text-xl sm:text-2xl font-semibold text-accent">{searchProgress}%</span>
+                <span className="text-xs font-mono px-2 py-1 rounded bg-surface text-muted border border-line">
                   ANALYSIS ACTIVE
                 </span>
               </div>
             </div>
 
             {/* Glowing Gradient Progress Bar */}
-            <div className="h-2 w-full bg-slate-800/80 rounded-full overflow-hidden p-0.5 border border-slate-700/50">
+            <div className="h-2 w-full bg-surface/80 rounded-full overflow-hidden p-0.5 border border-line/50">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 via-[#00c9a7] to-teal-300 rounded-full transition-all duration-150 shadow-[0_0_10px_#00c9a7]"
+                className="h-full bg-accent rounded-full transition-all duration-150"
                 style={{ width: `${searchProgress}%` }}
               />
             </div>
           </div>
 
           {/* 5-Stage Stepper Pills */}
-          <div className="grid grid-cols-5 gap-2 pt-1 relative z-10 text-[10px] sm:text-xs font-bold text-center">
+          <div className="grid grid-cols-5 gap-2 pt-1 relative z-10 text-xs sm:text-xs font-medium text-center">
             {[
               { label: 'Tor SOCKS5', threshold: 20 },
               { label: 'AI Lexicon', threshold: 45 },
@@ -1782,10 +1748,10 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                 key={idx}
                 className={`py-1.5 px-1 rounded-xl border transition-all ${
                   searchProgress >= step.threshold
-                    ? 'bg-[#00c9a7]/15 border-[#00c9a7]/40 text-[#00c9a7]'
+                    ? 'bg-accent/15 border-accent/40 text-accent'
                     : searchProgress >= step.threshold - 20
-                    ? 'bg-slate-800/80 border-slate-700 text-slate-200 animate-pulse'
-                    : 'bg-slate-900/50 border-slate-800 text-slate-600'
+                    ? 'bg-surface/80 border-line text-muted animate-pulse'
+                    : 'bg-surface/50 border-line text-muted'
                 }`}
               >
                 {step.label}
@@ -1794,18 +1760,18 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
           </div>
 
           {/* Live High-Tech OSINT Audit Terminal Log */}
-          <div className="bg-[#070A0E] rounded-2xl border border-slate-800 p-4 font-mono text-[11px] sm:text-xs text-slate-300 space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar relative z-10 shadow-inner">
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/80 text-[10px] text-slate-500 uppercase tracking-wider">
+          <div className="bg-bg rounded-2xl border border-line p-4 font-mono text-xs sm:text-xs text-muted space-y-1.5 max-h-48 overflow-y-auto relative z-10">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-line text-xs text-muted uppercase tracking-wider">
               <span className="flex items-center gap-1.5">
-                <Terminal className="w-3.5 h-3.5 text-[#00c9a7]" />
+                <Terminal className="w-3.5 h-3.5 text-accent" />
                 Live Subterranean Telemetry Feed ({lang.toUpperCase()})
               </span>
-              <span className="text-[#00c9a7] animate-pulse">● LIVE STREAM</span>
+              <span className="text-accent animate-pulse">● LIVE STREAM</span>
             </div>
             {telemetryLogs.map((log, index) => (
               <div key={index} className="flex items-start gap-2">
-                <span className="text-[#00c9a7] shrink-0">›</span>
-                <span className={log.includes('SUCCESS') || log.includes('VERIFIED') ? 'text-emerald-400 font-bold' : ''}>
+                <span className="text-accent shrink-0">›</span>
+                <span className={log.includes('SUCCESS') || log.includes('VERIFIED') ? 'text-accent font-medium' : ''}>
                   {log}
                 </span>
               </div>
@@ -1819,23 +1785,23 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
       {result && (
         <div ref={resultsEndRef} className="space-y-6">
           {/* Top Result Header Card */}
-          <div className="bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] shadow-sm p-6 space-y-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-[#212932]">
+          <div className="bg-surface rounded-3xl border border-line p-6 space-y-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-line">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#00c9a7] shadow-[0_0_8px_#00c9a7]" />
-                  <span className="text-xs uppercase font-extrabold tracking-wider text-slate-400 dark:text-slate-500">
+                  <span className="w-2.5 h-2.5 rounded-full bg-accent" />
+                  <span className="text-xs uppercase font-semibold tracking-wider text-muted">
                     {i18n.activeTarget}
                   </span>
                 </div>
-                <h2 className="text-xl font-black text-slate-900 dark:text-white mt-1">{result.query}</h2>
+                <h2 className="text-xl font-semibold text-fg mt-1">{result.query}</h2>
               </div>
 
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30">
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-sunken text-muted border border-line">
                   {i18n.refinedLabel} {result.refined_query}
                 </span>
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent border border-accent/30 flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   {result.sources.length} {i18n.sourcesCountLabel} (Verified Online)
                 </span>
@@ -1848,26 +1814,26 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                 <button
                   type="button"
                   onClick={() => setActiveTab('report')}
-                  className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2 shrink-0 transition cursor-pointer ${
+                  className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 shrink-0 transition cursor-pointer ${
                     activeTab === 'report'
-                      ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      ? 'bg-sunken text-fg border border-line'
+                      : 'text-muted hover:text-fg'
                   }`}
                 >
-                  <FileText className="w-4 h-4 text-emerald-500" />
+                  <FileText className="w-4 h-4 text-accent" />
                   <span>{i18n.tabReport}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveTab('sources')}
-                  className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2 shrink-0 transition cursor-pointer ${
+                  className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 shrink-0 transition cursor-pointer ${
                     activeTab === 'sources'
-                      ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      ? 'bg-sunken text-fg border border-line'
+                      : 'text-muted hover:text-fg'
                   }`}
                 >
-                  <Globe className="w-4 h-4 text-blue-500" />
+                  <Globe className="w-4 h-4 text-info" />
                   <span>
                     {i18n.tabSources} ({result.sources.length})
                   </span>
@@ -1876,13 +1842,13 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                 <button
                   type="button"
                   onClick={() => setActiveTab('pivots')}
-                  className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2 shrink-0 transition cursor-pointer ${
+                  className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 shrink-0 transition cursor-pointer ${
                     activeTab === 'pivots'
-                      ? 'bg-slate-100 dark:bg-[#242C37] text-slate-900 dark:text-white border border-slate-300 dark:border-[#3A4656] shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      ? 'bg-sunken text-fg border border-line'
+                      : 'text-muted hover:text-fg'
                   }`}
                 >
-                  <Sparkles className="w-4 h-4 text-purple-500" />
+                  <Sparkles className="w-4 h-4 text-muted" />
                   <span>{i18n.tabPivots}</span>
                 </button>
               </div>
@@ -1892,16 +1858,16 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                 <button
                   type="button"
                   onClick={handleCopyReport}
-                  className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-[#263241] bg-white hover:bg-slate-100 dark:bg-[#141A22] dark:hover:bg-[#1E252F] text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 transition cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl border border-line bg-surface hover:bg-sunken text-xs font-medium text-fg flex items-center gap-1.5 transition cursor-pointer"
                 >
-                  {copiedReport ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedReport ? <Check className="w-3.5 h-3.5 text-accent" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedReport ? i18n.copied : i18n.copyReport}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleDownloadMarkdown}
-                  className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-[#263241] bg-white hover:bg-slate-100 dark:bg-[#141A22] dark:hover:bg-[#1E252F] text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 transition cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl border border-line bg-surface hover:bg-sunken text-xs font-medium text-fg flex items-center gap-1.5 transition cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>{i18n.downloadMd}</span>
@@ -1926,47 +1892,47 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
           {activeTab === 'sources' && (
             <div className="space-y-4">
               {/* Active Verification Shield Banner */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-slate-800 dark:text-slate-200">
+              <div className="p-4 sm:p-5 rounded-2xl bg-accent/10 border border-accent/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-fg">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
-                    <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                  <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-5 h-5 text-accent" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                      <h4 className="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400">
+                      <span className="w-2 h-2 rounded-full bg-accent" />
+                      <h4 className="text-xs sm:text-sm font-semibold text-accent">
                         {i18n.verifiedBannerTitle}
                       </h4>
                     </div>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs text-muted mt-0.5">
                       {i18n.verifiedBannerSub}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[10px] font-mono px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30">
+                  <span className="text-xs font-mono px-2.5 py-1 rounded-lg bg-accent/15 text-accent font-medium border border-accent/30">
                     100% ONLINE AUDITED
                   </span>
                 </div>
               </div>
 
               {/* Filter and Category Bar */}
-              <div className="bg-white dark:bg-[#181D24] rounded-2xl border border-slate-200 dark:border-[#263241] p-4 space-y-3">
+              <div className="bg-surface rounded-2xl border border-line p-4 space-y-3">
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                   <div className="relative flex-1">
-                    <Search className="w-4 h-4 text-slate-400 absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <Search className="w-4 h-4 text-muted absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="text"
                       value={sourceSearchFilter}
                       onChange={(e) => setSourceSearchFilter(e.target.value)}
                       placeholder={i18n.filterSourcesPlaceholder}
-                      className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#00c9a7]"
+                      className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2 text-xs rounded-xl bg-sunken border border-line text-fg placeholder-muted focus:border-accent"
                     />
                   </div>
 
-                  <div className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5 shrink-0">
-                    <Filter className="w-3.5 h-3.5 text-[#00c9a7]" />
+                  <div className="text-xs font-medium text-muted flex items-center gap-1.5 shrink-0">
+                    <Filter className="w-3.5 h-3.5 text-accent" />
                     <span>
                       {i18n.showingSources} {filteredSources.length} {i18n.ofText} {result.sources.length}{' '}
                       {i18n.sourcesWord}
@@ -1980,10 +1946,10 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                     <button
                       type="button"
                       onClick={() => setSelectedSourceCategory('all')}
-                      className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition cursor-pointer ${
+                      className={`text-xs font-medium px-2.5 py-1 rounded-lg transition cursor-pointer ${
                         selectedSourceCategory === 'all'
-                          ? 'bg-[#00c9a7] text-slate-950 shadow-xs'
-                          : 'bg-slate-100 dark:bg-[#141A22] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                          ? 'bg-accent text-on-accent'
+                          : 'bg-sunken text-muted hover:text-fg'
                       }`}
                     >
                       {i18n.allCategories}
@@ -1993,10 +1959,10 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                         key={idx}
                         type="button"
                         onClick={() => setSelectedSourceCategory(cat)}
-                        className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition cursor-pointer shrink-0 ${
+                        className={`text-xs font-medium px-2.5 py-1 rounded-lg transition cursor-pointer shrink-0 ${
                           selectedSourceCategory === cat
-                            ? 'bg-[#00c9a7] text-slate-950 shadow-xs'
-                            : 'bg-slate-100 dark:bg-[#141A22] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                            ? 'bg-accent text-on-accent'
+                            : 'bg-sunken text-muted hover:text-fg'
                         }`}
                       >
                         {cat}
@@ -2016,20 +1982,20 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                   return (
                     <div
                       key={idx}
-                      className="bg-white dark:bg-[#181D24] rounded-2xl border border-slate-200 dark:border-[#263241] p-5 space-y-3 shadow-2xs hover:border-[#00c9a7]/40 transition relative overflow-hidden"
+                      className="bg-surface rounded-2xl border border-line p-5 space-y-3 hover:border-accent/40 transition relative overflow-hidden"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-slate-100 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-slate-600 dark:text-slate-400">
+                          <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-sunken border border-line text-muted">
                             {s.engine}
                           </span>
                           {(s as any).category && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                            <span className="text-xs font-medium px-2 py-0.5 rounded bg-sunken text-muted border border-line">
                               {(s as any).category}
                             </span>
                           )}
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/25 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                             {i18n.onlineWorking}
                           </span>
                         </div>
@@ -2040,22 +2006,22 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                             type="button"
                             onClick={() => handleTestLiveLink(s.link, `link-${idx}`)}
                             disabled={isTestingThis}
-                            className="px-2 py-1 rounded-lg border border-slate-200 dark:border-[#2B3542] hover:bg-slate-100 dark:hover:bg-[#1A222C] text-[11px] font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1 cursor-pointer transition"
-                            title="Test reachability in real-time"
+                            className="px-2 py-1 rounded-lg border border-line hover:bg-sunken text-xs font-medium text-muted flex items-center gap-1 cursor-pointer transition"
+                            title="Test reachability in real-time" aria-label="Test reachability in real-time"
                           >
                             {isTestingThis ? (
                               <>
-                                <RefreshCw className="w-3 h-3 animate-spin text-[#00c9a7]" />
+                                <RefreshCw className="w-3 h-3 animate-spin text-accent" />
                                 <span>{i18n.testing}</span>
                               </>
                             ) : live ? (
                               <>
-                                <Check className="w-3 h-3 text-emerald-500" />
-                                <span className="text-emerald-500">{i18n.reverified}</span>
+                                <Check className="w-3 h-3 text-accent" />
+                                <span className="text-accent">{i18n.reverified}</span>
                               </>
                             ) : (
                               <>
-                                <Zap className="w-3 h-3 text-amber-500" />
+                                <Zap className="w-3 h-3 text-warning" />
                                 <span>{i18n.testLive}</span>
                               </>
                             )}
@@ -2064,10 +2030,10 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                           <button
                             type="button"
                             onClick={() => handleCopy(s.link, `link-${idx}`)}
-                            className="px-2 py-1 rounded-lg border border-slate-200 dark:border-[#2B3542] hover:bg-slate-100 dark:hover:bg-[#1A222C] text-[11px] font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center gap-1 cursor-pointer transition"
+                            className="px-2 py-1 rounded-lg border border-line hover:bg-sunken text-xs font-medium text-muted hover:text-fg flex items-center gap-1 cursor-pointer transition"
                           >
                             {copiedLink === `link-${idx}` ? (
-                              <Check className="w-3 h-3 text-emerald-500" />
+                              <Check className="w-3 h-3 text-accent" />
                             ) : (
                               <Copy className="w-3 h-3" />
                             )}
@@ -2076,22 +2042,22 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                         </div>
                       </div>
 
-                      <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2">{s.title}</h4>
+                      <h4 className="text-sm font-medium text-fg line-clamp-2">{s.title}</h4>
 
-                      <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
+                      <p className="text-xs text-muted line-clamp-3 leading-relaxed">
                         {s.snippet}
                       </p>
 
-                      <div className="pt-2 border-t border-slate-100 dark:border-[#212932] flex items-center justify-between text-[11px] text-slate-400 gap-2">
-                        <span className="font-mono truncate min-w-0 flex-1 max-w-[170px] sm:max-w-[240px] text-slate-500 dark:text-slate-400">
+                      <div className="pt-2 border-t border-line flex items-center justify-between text-xs text-muted gap-2">
+                        <span className="font-mono truncate min-w-0 flex-1 max-w-[170px] sm:max-w-[240px] text-muted">
                           {s.link}
                         </span>
 
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">
+                          <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium border border-accent/20">
                             ⚡ {latency}ms
                           </span>
-                          <span className="text-emerald-500 font-bold flex items-center gap-1">
+                          <span className="text-accent font-medium flex items-center gap-1">
                             <ShieldCheck className="w-3.5 h-3.5" />
                             Verified v3
                           </span>
@@ -2106,10 +2072,10 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
 
           {/* TAB 3: SUGGESTED PIVOTS */}
           {activeTab === 'pivots' && (
-            <div className="bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] shadow-sm p-6 sm:p-7 space-y-4">
+            <div className="bg-surface rounded-3xl border border-line p-6 sm:p-7 space-y-4">
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">{i18n.pivotsTitle}</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{i18n.pivotsSubtitle}</p>
+                <h3 className="text-base font-medium text-fg">{i18n.pivotsTitle}</h3>
+                <p className="text-xs text-muted mt-1">{i18n.pivotsSubtitle}</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
@@ -2121,15 +2087,15 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                       setQuery(pivot);
                       handleExecuteSearch(pivot);
                     }}
-                    className="p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-[#141A22] dark:hover:bg-[#1E252F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 text-left rtl:text-right flex items-center justify-between group transition cursor-pointer"
+                    className="p-4 rounded-2xl bg-sunken hover:bg-sunken border border-line hover:border-accent/50 text-left rtl:text-right flex items-center justify-between group transition cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
-                      <CornerDownRight className="w-4 h-4 text-[#00c9a7] shrink-0" />
-                      <span className="text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-[#00c9a7] transition-colors">
+                      <CornerDownRight className="w-4 h-4 text-accent shrink-0" />
+                      <span className="text-sm font-medium text-fg group-hover:text-accent transition-colors">
                         {pivot}
                       </span>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="w-4 h-4 text-muted group-hover:text-fg transition-transform group-hover:translate-x-1" />
                   </button>
                 ))}
               </div>
@@ -2137,14 +2103,14 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
           )}
 
           {/* INTERACTIVE FOLLOW-UP CONSOLE */}
-          <div className="bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] shadow-sm p-6 sm:p-7 space-y-5">
+          <div className="bg-surface rounded-3xl border border-line p-6 sm:p-7 space-y-5">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-purple-500/15 flex items-center justify-center text-purple-600 dark:text-purple-400">
+              <div className="w-9 h-9 rounded-xl bg-sunken flex items-center justify-center text-muted">
                 <MessageSquare className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">{i18n.followupTitle}</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{i18n.followupSubtitle}</p>
+                <h3 className="text-base font-medium text-fg">{i18n.followupTitle}</h3>
+                <p className="text-xs text-muted">{i18n.followupSubtitle}</p>
               </div>
             </div>
 
@@ -2154,12 +2120,12 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                 {followupHistory.map((item, idx) => (
                   <div key={idx} className="space-y-2">
                     <div className="flex justify-end">
-                      <div className="bg-emerald-50 dark:bg-[#1C232C] border border-emerald-200/80 dark:border-[#2C3847] text-slate-900 dark:text-slate-100 px-4 py-2.5 rounded-2xl text-xs sm:text-sm max-w-[85%] font-medium">
+                      <div className="bg-accent-soft border border-accent/80 text-fg px-4 py-2.5 rounded-2xl text-xs sm:text-sm max-w-[85%] font-medium">
                         {item.q}
                       </div>
                     </div>
                     <div className="flex justify-start">
-                      <div className="bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-slate-800 dark:text-slate-200 px-5 py-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed max-w-[95%]">
+                      <div className="bg-sunken border border-line text-fg px-5 py-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed max-w-[95%]">
                         <CleanFormattedText text={item.a} />
                       </div>
                     </div>
@@ -2178,7 +2144,7 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                   if (e.key === 'Enter') handleSendFollowup();
                 }}
                 placeholder={i18n.followupPlaceholder}
-                className="w-full pl-4 pr-12 rtl:pl-12 rtl:pr-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#00c9a7]"
+                className="w-full pl-4 pr-12 rtl:pl-12 rtl:pr-4 py-3 rounded-2xl bg-sunken border border-line text-xs sm:text-sm text-fg placeholder-muted focus:border-accent"
               />
               <button
                 type="button"
@@ -2186,10 +2152,10 @@ export function RobinStudio({ initialQuery = '', onBackToCategory }: RobinStudio
                 disabled={isFollowupLoading || !followupQuestion.trim()}
                 className={`absolute right-2 rtl:right-auto rtl:left-2 p-2 rounded-xl transition cursor-pointer ${
                   followupQuestion.trim() && !isFollowupLoading
-                    ? 'bg-[#00c9a7] text-slate-950 font-bold hover:scale-105'
-                    : 'bg-slate-200 dark:bg-[#202732] text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                    ? 'bg-accent text-on-accent font-medium'
+                    : 'bg-line text-muted cursor-not-allowed'
                 }`}
-              >
+               aria-label="Refresh">
                 {isFollowupLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </button>
             </div>

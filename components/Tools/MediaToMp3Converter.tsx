@@ -166,10 +166,10 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
           subtitle: 'Convert YouTube videos and shorts into 320kbps MP3 audio instantly. Fast, free, and no sign-up required.',
           placeholder: 'Paste YouTube URL (e.g. https://www.youtube.com/watch?v=...)',
           badgeText: 'YouTube MP3 320kbps',
-          themeColor: 'from-red-600 to-rose-600',
-          accentText: 'text-red-600',
-          badgeBorder: 'border-red-200 bg-red-50 text-red-700',
-          icon: <Youtube className="w-5 h-5 text-red-600" />,
+          themeColor: 'bg-danger',
+          accentText: 'text-danger',
+          badgeBorder: 'border-danger/30 bg-danger-soft text-danger',
+          icon: <Youtube className="w-5 h-5 text-danger" />,
         };
       case 'youtube-to-mp4':
         return {
@@ -177,10 +177,10 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
           subtitle: 'Download and convert YouTube videos to 1080p Full HD MP4 instantly. Fast, free, no limits.',
           placeholder: 'Paste YouTube URL (e.g. https://www.youtube.com/watch?v=...)',
           badgeText: 'YouTube MP4 1080p Full HD',
-          themeColor: 'from-blue-600 to-indigo-600',
-          accentText: 'text-blue-600',
-          badgeBorder: 'border-blue-200 bg-blue-50 text-blue-700',
-          icon: <FileVideo className="w-5 h-5 text-blue-600" />,
+          themeColor: 'bg-info',
+          accentText: 'text-info',
+          badgeBorder: 'border-info/30 bg-info-soft text-info',
+          icon: <FileVideo className="w-5 h-5 text-info" />,
         };
       case 'tiktok-to-mp3':
         return {
@@ -188,10 +188,10 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
           subtitle: 'No watermark, no account needed. Turn TikTok videos and sounds into high-quality MP3 in seconds.',
           placeholder: 'Paste TikTok video link (e.g. https://www.tiktok.com/@user/video/...)',
           badgeText: 'TikTok Clean Audio',
-          themeColor: 'from-cyan-500 via-pink-500 to-purple-600',
-          accentText: 'text-pink-600',
-          badgeBorder: 'border-pink-200 bg-pink-50 text-pink-700',
-          icon: <Music2 className="w-5 h-5 text-pink-600" />,
+          themeColor: 'bg-info',
+          accentText: 'text-muted',
+          badgeBorder: 'border-line bg-sunken text-muted',
+          icon: <Music2 className="w-5 h-5 text-muted" />,
         };
       case 'youtube-to-wav':
         return {
@@ -199,10 +199,10 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
           subtitle: 'Extract uncompressed, bit-perfect WAV audio from any YouTube video with zero frequency loss.',
           placeholder: 'Paste YouTube link for WAV conversion...',
           badgeText: 'Lossless WAV 24-bit',
-          themeColor: 'from-amber-500 to-orange-600',
-          accentText: 'text-amber-600',
-          badgeBorder: 'border-amber-200 bg-amber-50 text-amber-700',
-          icon: <Volume2 className="w-5 h-5 text-amber-600" />,
+          themeColor: 'bg-warning',
+          accentText: 'text-warning',
+          badgeBorder: 'border-warning/30 bg-warning-soft text-warning',
+          icon: <Volume2 className="w-5 h-5 text-warning" />,
         };
       case 'video-to-mp3':
       case 'mp4-to-mp3':
@@ -211,10 +211,10 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
           subtitle: 'Extract pristine MP3 audio from any MP4, MOV, MKV, or online video stream with studio clarity.',
           placeholder: 'Paste video link or drop your video file below',
           badgeText: 'MP4 to 320kbps MP3',
-          themeColor: 'from-purple-600 to-indigo-600',
-          accentText: 'text-purple-600',
-          badgeBorder: 'border-purple-200 bg-purple-50 text-purple-700',
-          icon: <FileVideo className="w-5 h-5 text-purple-600" />,
+          themeColor: 'bg-accent',
+          accentText: 'text-muted',
+          badgeBorder: 'border-line bg-sunken text-muted',
+          icon: <FileVideo className="w-5 h-5 text-muted" />,
         };
       case 'extract-audio':
       default:
@@ -223,10 +223,10 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
           subtitle: 'Strip the video track and save pure MP3 or WAV audio stream with maximum fidelity.',
           placeholder: 'Paste video link or drop video to extract audio...',
           badgeText: 'Audio Extraction',
-          themeColor: 'from-indigo-600 to-blue-600',
-          accentText: 'text-indigo-600',
-          badgeBorder: 'border-indigo-200 bg-indigo-50 text-indigo-700',
-          icon: <Scissors className="w-5 h-5 text-indigo-600" />,
+          themeColor: 'bg-accent',
+          accentText: 'text-muted',
+          badgeBorder: 'border-line bg-sunken text-muted',
+          icon: <Scissors className="w-5 h-5 text-muted" />,
         };
     }
   };
@@ -323,51 +323,33 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6 animate-apple-in">
-      {/* Top Apple Navigation Bar */}
-      {onBackToCategory && (
-        <div className="flex items-center gap-2 pb-1 border-b border-slate-200 dark:border-[#212932]">
-          <button
-            type="button"
-            onClick={onBackToCategory}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-[#181D24] dark:hover:bg-[#202732] border border-slate-200 dark:border-[#263241] text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 shadow-2xs"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" />
-            <span>Back to Audio Tools</span>
-          </button>
-          <span className="text-slate-300 dark:text-slate-600">/</span>
-          <span className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#499557] animate-pulse" />
-            {config.title}
-          </span>
-        </div>
-      )}
+    <div className="w-full max-w-4xl mx-auto space-y-6 animate-enter">
       {/* Tool Header */}
       <div className="text-center space-y-3 pt-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border border-[#499557]/30 bg-[#edf7ee] dark:bg-emerald-950/40 text-[#499557] dark:text-emerald-400 shadow-2xs">
-          <span className="w-2 h-2 rounded-full bg-[#499557] animate-pulse" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border border-accent/30 bg-accent-soft text-accent">
+          <span className="w-2 h-2 rounded-full bg-accent" />
           <span>{config.badgeText}</span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+        <h1 className="font-serif text-3xl sm:text-4xl font-medium text-fg">
           {config.title}
         </h1>
-        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-sm sm:text-base text-muted max-w-2xl mx-auto leading-relaxed">
           {config.subtitle}
         </p>
 
         {/* Feature Badges */}
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2 text-xs font-medium text-muted">
           <span className="inline-flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-[#499557]" />
+            <ShieldCheck className="w-4 h-4 text-accent" />
             <span>100% Free & No Sign-up</span>
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <Zap className="w-4 h-4 text-[#499557]" />
+            <Zap className="w-4 h-4 text-accent" />
             <span>Fast 320kbps Bitrate</span>
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-[#499557]" />
+            <CheckCircle2 className="w-4 h-4 text-accent" />
             <span>No Watermark</span>
           </span>
         </div>
@@ -390,26 +372,26 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
         }}
         onDragLeave={() => setIsDragOver(false)}
         onDrop={handleDrop}
-        className={`bg-white dark:bg-[#181D24] rounded-2xl sm:rounded-[22px] border border-slate-200 dark:border-[#263241] shadow-2xs p-6 sm:p-8 space-y-6 transition-all ${
+        className={`bg-surface rounded-card border border-line p-6 sm:p-8 space-y-6 transition-all ${
           isDragOver
-            ? 'border-[#499557] ring-4 ring-emerald-100 dark:ring-emerald-950 bg-[#edf7ee]/20 dark:bg-emerald-950/20'
-            : 'border-slate-200 dark:border-[#263241]'
+            ? 'border-accent ring-4 ring-accent/30 bg-accent-soft'
+            : 'border-line'
         }`}
       >
         {/* Mode Switcher: Link vs File Drop (Hidden on YouTube / TikTok tools which are Link-Only) */}
         {!isLinkOnly && (
           <div className="flex justify-center pb-2">
-            <div className="inline-flex p-1 bg-slate-100 dark:bg-[#141A22] rounded-2xl border border-slate-200 dark:border-[#263241]">
+            <div className="inline-flex p-1 bg-sunken rounded-2xl border border-line">
               <button
                 type="button"
                 onClick={() => {
                   setInputMode('url');
                   setError(null);
                 }}
-                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${
                   inputMode === 'url'
-                    ? 'bg-[#499557] text-white shadow-2xs'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
+                    ? 'bg-accent text-on-accent'
+                    : 'text-muted hover:text-fg'
                 }`}
               >
                 <Link2 className="w-3.5 h-3.5" />
@@ -421,10 +403,10 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                   setInputMode('file');
                   setError(null);
                 }}
-                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${
                   inputMode === 'file'
-                    ? 'bg-[#499557] text-white shadow-2xs'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
+                    ? 'bg-accent text-on-accent'
+                    : 'text-muted hover:text-fg'
                 }`}
               >
                 <UploadCloud className="w-3.5 h-3.5" />
@@ -436,8 +418,8 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
 
         {isLinkOnly && (
           <div className="flex justify-center pb-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 text-amber-800 dark:text-amber-300 text-[11px] font-bold">
-              <Link2 className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning-soft border border-warning/30 text-warning text-xs font-medium">
+              <Link2 className="w-3 h-3 text-warning" />
               <span>Link-Only Extraction • Paste URL Below</span>
             </div>
           </div>
@@ -447,7 +429,7 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
         {inputMode === 'url' ? (
           <div className="space-y-3">
             <form onSubmit={handleFetch} className="space-y-3">
-              <div className="flex flex-col sm:flex-row items-stretch gap-2.5 p-1.5 rounded-2xl bg-slate-50 dark:bg-[#141A22] border border-slate-200/90 dark:border-[#263241] focus-within:border-[#499557] focus-within:ring-2 focus-within:ring-emerald-100 transition-all shadow-2xs">
+              <div className="flex flex-col sm:flex-row items-stretch gap-2.5 p-1.5 rounded-2xl bg-sunken border border-line focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/30 transition-all">
                 <div className="flex items-center gap-2 flex-1 px-3 py-1.5">
                   {config.icon}
                   <input
@@ -459,14 +441,14 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                     }}
                     placeholder={config.placeholder}
                     disabled={isLoading}
-                    className="w-full bg-transparent border-none text-xs sm:text-sm text-slate-900 dark:text-slate-100 focus:outline-none placeholder:text-slate-400 py-2"
+                    className="w-full bg-transparent border-none text-xs sm:text-sm text-fg placeholder:text-muted py-2"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isLoading || !url.trim()}
-                  className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-accent hover:bg-accent text-on-accent font-medium text-xs sm:text-sm transition-all disabled:opacity-50"
                 >
                   {isLoading ? (
                     <>
@@ -486,7 +468,7 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
             {/* Quick File Drop Hint */}
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="text-center py-2 cursor-pointer text-xs text-slate-400 hover:text-purple-600 font-medium transition-colors"
+              className="text-center py-2 cursor-pointer text-xs text-muted hover:text-muted font-medium transition-colors"
             >
               <span>Or drag & drop your video / audio file here to convert directly</span>
             </div>
@@ -499,36 +481,36 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                 onClick={() => fileInputRef.current?.click()}
                 className={`flex flex-col items-center justify-center text-center p-8 sm:p-10 rounded-2xl border-2 border-dashed cursor-pointer transition-all ${
                   isDragOver
-                    ? 'border-purple-500 bg-purple-50/50 dark:bg-purple-950/20'
-                    : 'border-slate-300 dark:border-slate-700 hover:border-purple-400 bg-slate-50/50 dark:bg-[#141A22]/50'
+                    ? 'border-line bg-sunken'
+                    : 'border-line hover:border-line bg-sunken/50'
                 }`}
               >
                 <div
-                  className={`w-14 h-14 rounded-2xl bg-gradient-to-tr ${config.themeColor} text-white flex items-center justify-center shadow-lg shadow-purple-500/20 mb-3`}
+                  className={`w-14 h-14 rounded-2xl ${config.themeColor} text-fg flex items-center justify-center mb-3`}
                 >
                   <UploadCloud className="w-7 h-7" />
                 </div>
-                <h3 className="text-base font-extrabold text-slate-800 dark:text-slate-200">
+                <h3 className="text-base font-semibold text-fg">
                   {isDragOver ? 'Release to drop media file!' : 'Drop your Video or Audio file here'}
                 </h3>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 max-w-sm">
+                <p className="text-xs text-muted mt-1 max-w-sm">
                   Drag and drop any MP4, MOV, MKV, AVI, WEBM, WAV, M4A or MP3 file, or click to browse
                 </p>
-                <div className="mt-4 px-4 py-2 rounded-xl bg-white dark:bg-[#181D24] border border-slate-200 dark:border-[#263241] text-xs font-bold text-slate-700 dark:text-slate-200 shadow-xs hover:bg-slate-50 dark:hover:bg-[#202732]">
+                <div className="mt-4 px-4 py-2 rounded-xl bg-surface border border-line text-xs font-medium text-fg hover:bg-sunken">
                   Browse Local Files (Up to 100 MB)
                 </div>
               </div>
             ) : (
               /* Selected Dropped File Card */
-              <div className="p-5 sm:p-6 rounded-2xl bg-slate-50/80 dark:bg-[#141A22] border border-slate-200 dark:border-[#263241] space-y-5 animate-fadeIn">
+              <div className="p-5 sm:p-6 rounded-2xl bg-sunken/80 border border-line space-y-5 animate-enter">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-xl bg-sunken text-muted flex items-center justify-center">
                       <FileAudio className="w-6 h-6" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-extrabold text-slate-900 dark:text-white break-all">{droppedFile.name}</h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <h4 className="text-sm font-semibold text-fg break-all">{droppedFile.name}</h4>
+                      <p className="text-xs text-muted">
                         {(droppedFile.size / (1024 * 1024)).toFixed(2)} MB • {droppedFile.type || 'Media File'}
                       </p>
                     </div>
@@ -540,31 +522,31 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                       setDroppedFile(null);
                       setConvertedBlobUrl(null);
                     }}
-                    className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
-                    title="Remove file"
+                    className="p-2 text-muted hover:text-muted transition"
+                    title="Remove file" aria-label="Remove file"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 {/* Target Format Options */}
-                <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-[#263241]">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Choose Target Format (Audio or Video):</span>
+                <div className="space-y-2 pt-2 border-t border-line">
+                  <span className="text-xs font-medium text-fg block">Choose Target Format (Audio or Video):</span>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     <button
                       type="button"
                       onClick={() => setFileTargetFormat('mp3')}
                       className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
                         fileTargetFormat === 'mp3'
-                          ? 'border-purple-600 bg-purple-50/60 dark:bg-purple-950/40 ring-2 ring-purple-100 dark:ring-purple-900'
-                          : 'border-slate-200 dark:border-[#263241] hover:border-purple-200 bg-white dark:bg-[#181D24]'
+                          ? 'border-line bg-sunken ring-2 ring-line'
+                          : 'border-line hover:border-line bg-surface'
                       }`}
                     >
                       <div>
-                        <span className="text-xs font-extrabold text-slate-900 dark:text-white block">MP3 Audio</span>
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400">320kbps Studio</span>
+                        <span className="text-xs font-semibold text-fg block">MP3 Audio</span>
+                        <span className="text-xs text-muted">320kbps Studio</span>
                       </div>
-                      <span className="px-2 py-0.5 text-[10px] font-bold bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 rounded-md">
+                      <span className="px-2 py-0.5 text-xs font-medium bg-sunken text-muted rounded-md">
                         Audio
                       </span>
                     </button>
@@ -574,15 +556,15 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                       onClick={() => setFileTargetFormat('mp4')}
                       className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
                         fileTargetFormat === 'mp4'
-                          ? 'border-purple-600 bg-purple-50/60 dark:bg-purple-950/40 ring-2 ring-purple-100 dark:ring-purple-900'
-                          : 'border-slate-200 dark:border-[#263241] hover:border-purple-200 bg-white dark:bg-[#181D24]'
+                          ? 'border-line bg-sunken ring-2 ring-line'
+                          : 'border-line hover:border-line bg-surface'
                       }`}
                     >
                       <div>
-                        <span className="text-xs font-extrabold text-slate-900 dark:text-white block">MP4 Video</span>
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400">Universal HD</span>
+                        <span className="text-xs font-semibold text-fg block">MP4 Video</span>
+                        <span className="text-xs text-muted">Universal HD</span>
                       </div>
-                      <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 rounded-md">
+                      <span className="px-2 py-0.5 text-xs font-medium bg-info-soft text-info rounded-md">
                         Video
                       </span>
                     </button>
@@ -592,15 +574,15 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                       onClick={() => setFileTargetFormat('wav')}
                       className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
                         fileTargetFormat === 'wav'
-                          ? 'border-purple-600 bg-purple-50/60 dark:bg-purple-950/40 ring-2 ring-purple-100 dark:ring-purple-900'
-                          : 'border-slate-200 dark:border-[#263241] hover:border-purple-200 bg-white dark:bg-[#181D24]'
+                          ? 'border-line bg-sunken ring-2 ring-line'
+                          : 'border-line hover:border-line bg-surface'
                       }`}
                     >
                       <div>
-                        <span className="text-xs font-extrabold text-slate-900 dark:text-white block">WAV Audio</span>
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400">Lossless PCM</span>
+                        <span className="text-xs font-semibold text-fg block">WAV Audio</span>
+                        <span className="text-xs text-muted">Lossless PCM</span>
                       </div>
-                      <span className="px-2 py-0.5 text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-md">
+                      <span className="px-2 py-0.5 text-xs font-medium bg-sunken text-fg rounded-md">
                         Studio
                       </span>
                     </button>
@@ -610,15 +592,15 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                       onClick={() => setFileTargetFormat('m4a')}
                       className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
                         fileTargetFormat === 'm4a'
-                          ? 'border-purple-600 bg-purple-50/60 dark:bg-purple-950/40 ring-2 ring-purple-100 dark:ring-purple-900'
-                          : 'border-slate-200 dark:border-[#263241] hover:border-purple-200 bg-white dark:bg-[#181D24]'
+                          ? 'border-line bg-sunken ring-2 ring-line'
+                          : 'border-line hover:border-line bg-surface'
                       }`}
                     >
                       <div>
-                        <span className="text-xs font-extrabold text-slate-900 dark:text-white block">M4A Audio</span>
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400">Apple AAC</span>
+                        <span className="text-xs font-semibold text-fg block">M4A Audio</span>
+                        <span className="text-xs text-muted">Apple AAC</span>
                       </div>
-                      <span className="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded-md">
+                      <span className="px-2 py-0.5 text-xs font-medium bg-accent-soft text-accent rounded-md">
                         AAC
                       </span>
                     </button>
@@ -630,7 +612,7 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                   type="button"
                   onClick={handleConvertDroppedFile}
                   disabled={isFileConverting}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all active:scale-[0.99] disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-accent hover:bg-accent-hover text-on-accent font-semibold text-xs sm:text-sm transition-all disabled:opacity-50"
                 >
                   {isFileConverting ? (
                     <>
@@ -647,9 +629,9 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
 
                 {/* Direct File Converted Result */}
                 {convertedBlobUrl && (
-                  <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-3 animate-fadeIn">
-                    <div className="flex items-center gap-2 text-xs font-bold text-emerald-800">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <div className="p-4 rounded-xl bg-accent-soft border border-accent/30 space-y-3 animate-enter">
+                    <div className="flex items-center gap-2 text-xs font-medium text-accent">
+                      <CheckCircle2 className="w-4 h-4 text-accent" />
                       <span>Conversion complete! Listen or download your {fileTargetFormat.toUpperCase()} below:</span>
                     </div>
 
@@ -657,7 +639,7 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                       <a
                         href={convertedBlobUrl}
                         download={convertedFileName}
-                        className="w-full sm:flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-all"
+                        className="w-full sm:flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-accent hover:bg-accent-hover text-on-accent font-medium text-xs transition-all"
                       >
                         <Download className="w-4 h-4" />
                         <span>Download {convertedFileName}</span>
@@ -679,25 +661,25 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
 
         {/* Error Alert */}
         {error && (
-          <div className="flex items-start gap-3 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-xs">
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-danger-soft border border-danger/30 text-danger text-xs">
             <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <p className="font-semibold">{error}</p>
+            <p className="font-medium">{error}</p>
           </div>
         )}
 
         {/* Video Metadata Preview & Format Selection */}
         {metadata && (
-          <div className="p-5 sm:p-6 rounded-2xl bg-slate-50/70 border border-slate-200 space-y-6 animate-fadeIn">
+          <div className="p-5 sm:p-6 rounded-2xl bg-sunken/70 border border-line space-y-6 animate-enter">
             <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
               {metadata.thumbnail && (
-                <div className="relative w-full sm:w-44 h-28 rounded-xl overflow-hidden bg-slate-200 flex-shrink-0 shadow-xs border border-slate-200">
+                <div className="relative w-full sm:w-44 h-28 rounded-xl overflow-hidden bg-line flex-shrink-0 border border-line">
                   <img
                     src={metadata.thumbnail}
                     alt={metadata.title}
                     className="w-full h-full object-cover"
                   />
                   {metadata.duration && (
-                    <span className="absolute bottom-1.5 right-1.5 px-2 py-0.5 bg-black/80 text-white text-[10px] font-bold rounded-md">
+                    <span className="absolute bottom-1.5 right-1.5 px-2 py-0.5 bg-black/80 text-white text-xs font-medium rounded-md">
                       {formatDuration(metadata.duration)}
                     </span>
                   )}
@@ -705,36 +687,36 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
               )}
 
               <div className="space-y-1.5 min-w-0 flex-1">
-                <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase bg-purple-100 text-purple-800 tracking-wider">
+                <span className="inline-block px-2.5 py-0.5 rounded-md text-xs font-semibold uppercase bg-sunken text-muted tracking-wider">
                   {metadata.platform}
                 </span>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug line-clamp-2">
+                <h3 className="text-base sm:text-lg font-medium text-fg leading-snug line-clamp-2">
                   {metadata.title}
                 </h3>
                 {metadata.uploader && (
-                  <p className="text-xs text-slate-500 font-medium">By {metadata.uploader}</p>
+                  <p className="text-xs text-muted font-medium">By {metadata.uploader}</p>
                 )}
               </div>
             </div>
 
             {/* Quick One-Click Download Action Cards for MP3 & MP4 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200/70">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-line">
               {/* Option 1: MP3 Audio */}
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-transparent border border-purple-200/80 flex flex-col justify-between space-y-3">
+              <div className="p-4 rounded-2xl bg-sunken border border-line flex flex-col justify-between space-y-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-xs">
+                  <div className="w-9 h-9 rounded-xl bg-accent text-on-accent flex items-center justify-center">
                     <Music2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-extrabold text-slate-900">Download MP3 Audio</h4>
-                    <p className="text-[11px] text-slate-500 font-medium">320kbps High-Bitrate Studio MP3</p>
+                    <h4 className="text-sm font-semibold text-fg">Download MP3 Audio</h4>
+                    <p className="text-xs text-muted font-medium">320kbps High-Bitrate Studio MP3</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleStartConversion('audio_mp3')}
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs shadow-md shadow-purple-500/20 transition-all active:scale-95 disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-accent hover:bg-accent-hover text-on-accent font-semibold text-xs transition-all disabled:opacity-50"
                 >
                   <Download className="w-4 h-4" />
                   <span>Download MP3 (320kbps)</span>
@@ -742,14 +724,14 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
               </div>
 
               {/* Option 2: MP4 Video */}
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/10 via-cyan-500/5 to-transparent border border-blue-200/80 flex flex-col justify-between space-y-3">
+              <div className="p-4 rounded-2xl bg-info/10 border border-info/80 flex flex-col justify-between space-y-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                  <div className="w-9 h-9 rounded-xl bg-info text-on-accent flex items-center justify-center">
                     <FileVideo className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-extrabold text-slate-900">Download MP4 Video</h4>
-                    <p className="text-[11px] text-slate-500 font-medium">1080p / 720p Full HD Video & Audio</p>
+                    <h4 className="text-sm font-semibold text-fg">Download MP4 Video</h4>
+                    <p className="text-xs text-muted font-medium">1080p / 720p Full HD Video & Audio</p>
                   </div>
                 </div>
                 <button
@@ -759,7 +741,7 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                     handleStartConversion(bestVid ? bestVid.format_id : 'video_1080p');
                   }}
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-info hover:bg-info text-on-accent font-semibold text-xs transition-all disabled:opacity-50"
                 >
                   <Download className="w-4 h-4" />
                   <span>Download MP4 Video</span>
@@ -768,8 +750,8 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
             </div>
 
             {/* Quality & Format Details */}
-            <div className="space-y-3 pt-2 border-t border-slate-200/70">
-              <span className="text-xs font-bold text-slate-700 block">All Available Format Options:</span>
+            <div className="space-y-3 pt-2 border-t border-line">
+              <span className="text-xs font-medium text-fg block">All Available Format Options:</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
                 {/* 320kbps MP3 */}
                 <button
@@ -777,15 +759,15 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                   onClick={() => setSelectedFormat('audio_mp3')}
                   className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
                     selectedFormat === 'audio_mp3'
-                      ? 'border-purple-600 bg-purple-50/60 ring-2 ring-purple-100'
-                      : 'border-slate-200 hover:border-purple-200 bg-white'
+                      ? 'border-line bg-sunken ring-2 ring-line'
+                      : 'border-line hover:border-line bg-surface'
                   }`}
                 >
                   <div>
-                    <span className="text-xs font-extrabold text-slate-900 block">MP3 Audio (320kbps)</span>
-                    <span className="text-[11px] text-slate-500">Highest Studio Bitrate</span>
+                    <span className="text-xs font-semibold text-fg block">MP3 Audio (320kbps)</span>
+                    <span className="text-xs text-muted">Highest Studio Bitrate</span>
                   </div>
-                  <span className="px-2 py-0.5 text-[10px] font-bold bg-purple-100 text-purple-700 rounded-md">
+                  <span className="px-2 py-0.5 text-xs font-medium bg-sunken text-muted rounded-md">
                     Audio
                   </span>
                 </button>
@@ -796,15 +778,15 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                   onClick={() => setSelectedFormat('audio_wav')}
                   className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
                     selectedFormat === 'audio_wav'
-                      ? 'border-purple-600 bg-purple-50/60 ring-2 ring-purple-100'
-                      : 'border-slate-200 hover:border-purple-200 bg-white'
+                      ? 'border-line bg-sunken ring-2 ring-line'
+                      : 'border-line hover:border-line bg-surface'
                   }`}
                 >
                   <div>
-                    <span className="text-xs font-extrabold text-slate-900 block">WAV Audio</span>
-                    <span className="text-[11px] text-slate-500">Uncompressed Lossless</span>
+                    <span className="text-xs font-semibold text-fg block">WAV Audio</span>
+                    <span className="text-xs text-muted">Uncompressed Lossless</span>
                   </div>
-                  <span className="px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-700 rounded-md">
+                  <span className="px-2 py-0.5 text-xs font-medium bg-sunken text-fg rounded-md">
                     PCM
                   </span>
                 </button>
@@ -819,15 +801,15 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                     }}
                     className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
                       selectedFormat !== 'audio_mp3' && selectedFormat !== 'audio_wav'
-                        ? 'border-purple-600 bg-purple-50/60 ring-2 ring-purple-100'
-                        : 'border-slate-200 hover:border-purple-200 bg-white'
+                        ? 'border-line bg-sunken ring-2 ring-line'
+                        : 'border-line hover:border-line bg-surface'
                     }`}
                   >
                     <div>
-                      <span className="text-xs font-extrabold text-slate-900 block">HD MP4 Video</span>
-                      <span className="text-[11px] text-slate-500">Full Video & Audio</span>
+                      <span className="text-xs font-semibold text-fg block">HD MP4 Video</span>
+                      <span className="text-xs text-muted">Full Video & Audio</span>
                     </div>
-                    <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-md">
+                    <span className="px-2 py-0.5 text-xs font-medium bg-info-soft text-info rounded-md">
                       Video
                     </span>
                   </button>
@@ -841,7 +823,7 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                 type="button"
                 onClick={() => handleStartConversion(selectedFormat)}
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 hover:from-black hover:to-slate-900 text-white font-extrabold text-sm shadow-md transition-all transform active:scale-[0.99] disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-fg hover:opacity-90 text-bg font-semibold text-sm transition-all transform disabled:opacity-50"
               >
                 {isLoading ? (
                   <>
@@ -861,13 +843,13 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
 
         {/* Download Job Progress / Download Ready */}
         {activeJob && (
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white space-y-5 animate-fadeIn">
+          <div className="p-6 rounded-2xl bg-surface text-fg space-y-5 animate-enter">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-bold text-purple-300 uppercase tracking-wider">
+                <span className="text-xs font-medium text-muted uppercase tracking-wider">
                   Conversion Status
                 </span>
-                <h4 className="text-base font-extrabold">
+                <h4 className="text-base font-semibold">
                   {activeJob.status === 'completed'
                     ? 'Conversion Complete! Your file is ready.'
                     : activeJob.status === 'failed'
@@ -877,7 +859,7 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
               </div>
 
               {activeJob.status === 'completed' && (
-                <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+                <div className="w-10 h-10 rounded-full bg-accent/20 text-accent flex items-center justify-center border border-accent/30">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
               )}
@@ -886,13 +868,13 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
             {/* Progress Bar */}
             {activeJob.status !== 'completed' && activeJob.status !== 'failed' && (
               <div className="space-y-2">
-                <div className="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                <div className="w-full bg-sunken rounded-full h-2.5 overflow-hidden">
                   <div
-                    className="bg-gradient-to-r from-purple-500 to-cyan-400 h-2.5 rounded-full transition-all duration-300"
+                    className=" bg-accent h-2.5 rounded-full transition-all duration-300"
                     style={{ width: `${Math.max(15, activeJob.progress_percent)}%` }}
                   />
                 </div>
-                <div className="flex justify-between text-[11px] text-slate-400 font-medium">
+                <div className="flex justify-between text-xs text-muted font-medium">
                   <span>Converting format...</span>
                   <span>{activeJob.progress_percent}%</span>
                 </div>
@@ -906,7 +888,7 @@ export function MediaToMp3Converter({ toolId, onBackToCategory }: MediaToMp3Prop
                   <a
                     href={buildFileDownloadUrl(activeJob.job_id)}
                     download
-                    className="w-full sm:flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-sm shadow-lg shadow-emerald-500/20 transition-all transform active:scale-95"
+                    className="w-full sm:flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl bg-accent hover:bg-accent-hover text-on-accent font-semibold text-sm transition-all transform"
                   >
                     <Download className="w-4 h-4" />
                     <span>Download Extracted Audio (MP3)</span>

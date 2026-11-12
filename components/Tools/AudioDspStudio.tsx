@@ -54,45 +54,45 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
           title: 'Free Volume Booster: Louder Audio Without Distortion',
           subtitle: 'Break through default volume limits and amplify sound up to 500% louder with zero clipping.',
           badge: 'Volume Booster 500%',
-          theme: 'from-amber-500 to-orange-600',
-          accent: 'text-amber-600',
-          icon: <Volume2 className="w-5 h-5 text-amber-600" />,
+          theme: 'bg-warning',
+          accent: 'text-warning',
+          icon: <Volume2 className="w-5 h-5 text-warning" />,
         };
       case 'ai-vocal-remover':
         return {
           title: 'Free AI Vocal Remover: Remove Vocals from Any Song',
           subtitle: 'Extract karaoke instrumental tracks or isolate pure acappella vocals with studio precision.',
           badge: 'AI Vocal & Karaoke Splitter',
-          theme: 'from-rose-500 to-red-600',
-          accent: 'text-rose-600',
-          icon: <Disc className="w-5 h-5 text-rose-600" />,
+          theme: 'bg-danger',
+          accent: 'text-danger',
+          icon: <Disc className="w-5 h-5 text-danger" />,
         };
       case 'ai-voice-cleaner':
         return {
           title: 'Free AI Voice Cleaner — Get Studio-Quality Audio',
           subtitle: 'Remove background noise, breath sounds, and mouth clicks with one click for crystal-clear voiceovers.',
           badge: 'Studio Voice Polish',
-          theme: 'from-emerald-500 to-teal-600',
-          accent: 'text-emerald-600',
-          icon: <Sparkles className="w-5 h-5 text-emerald-600" />,
+          theme: 'bg-accent',
+          accent: 'text-accent',
+          icon: <Sparkles className="w-5 h-5 text-accent" />,
         };
       case 'background-noise-remover':
         return {
           title: 'Online Background Noise Remover Free — Lossless Audio',
           subtitle: 'Eliminate traffic noise, wind, fan hum, and room echo while keeping original spoken speech intact.',
           badge: 'Spectral De-Noiser',
-          theme: 'from-blue-600 to-indigo-600',
-          accent: 'text-blue-600',
-          icon: <Radio className="w-5 h-5 text-blue-600" />,
+          theme: 'bg-info',
+          accent: 'text-info',
+          icon: <Radio className="w-5 h-5 text-info" />,
         };
       case 'background-music-remover':
         return {
           title: 'Online Background Music Remover — Free & Easy to Use',
           subtitle: 'Mute background soundtracks and music tracks in podcasts and videos to highlight dialogue.',
           badge: 'Dialogue Isolator',
-          theme: 'from-violet-600 to-purple-600',
-          accent: 'text-violet-600',
-          icon: <Music2 className="w-5 h-5 text-violet-600" />,
+          theme: 'bg-accent',
+          accent: 'text-muted',
+          icon: <Music2 className="w-5 h-5 text-muted" />,
         };
       case 'ai-voice-changer':
       default:
@@ -100,9 +100,9 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
           title: 'Free AI Voice Changer: Change Your Voice Instantly',
           subtitle: 'Transform your voice with natural pitch shifting, robotic effects, and character presets.',
           badge: 'Voice Changer FX',
-          theme: 'from-cyan-500 to-blue-600',
-          accent: 'text-cyan-600',
-          icon: <Wand2 className="w-5 h-5 text-cyan-600" />,
+          theme: 'bg-info',
+          accent: 'text-info',
+          icon: <Wand2 className="w-5 h-5 text-info" />,
         };
     }
   };
@@ -147,25 +147,7 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6 animate-apple-in">
-      {/* Top Apple Navigation Bar */}
-      {onBackToCategory && (
-        <div className="flex items-center gap-2 pb-1 border-b border-slate-200/70">
-          <button
-            type="button"
-            onClick={onBackToCategory}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 transition active:scale-95 shadow-2xs"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" />
-            <span>Back to Audio Tools</span>
-          </button>
-          <span className="text-slate-300">/</span>
-          <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#499557] animate-pulse" />
-            {meta.title}
-          </span>
-        </div>
-      )}
+    <div className="w-full max-w-4xl mx-auto space-y-6 animate-enter">
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -183,21 +165,21 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
 
       {/* Header */}
       <div className="text-center space-y-3 pt-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border shadow-xs bg-[#edf7ee] border-[#499557]/30 text-[#499557]">
-          <span className="w-2 h-2 rounded-full bg-[#499557] animate-pulse" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border bg-accent-soft border-accent/30 text-accent">
+          <span className="w-2 h-2 rounded-full bg-accent" />
           <span>{meta.badge}</span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+        <h1 className="font-serif text-3xl sm:text-4xl font-medium text-fg">
           {meta.title}
         </h1>
-        <p className="text-sm sm:text-base text-slate-500 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-sm sm:text-base text-muted max-w-2xl mx-auto leading-relaxed">
           {meta.subtitle}
         </p>
       </div>
 
       {/* Main Workspace Card */}
-      <div className="bg-white rounded-2xl sm:rounded-[22px] border border-slate-200/80 shadow-2xs p-6 sm:p-10 space-y-8">
+      <div className="bg-surface rounded-card border border-line p-6 sm:p-10 space-y-8">
         {/* File Ingest Drop Zone with Drag and Drop */}
         <div
           onClick={() => fileInputRef.current?.click()}
@@ -217,41 +199,41 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
           }}
           className={`flex flex-col items-center justify-center text-center p-8 rounded-2xl border-2 border-dashed cursor-pointer transition-all ${
             isDragOver
-              ? 'border-[#499557] bg-[#edf7ee]/60 scale-[1.01]'
+              ? 'border-accent bg-accent-soft scale-[1.01]'
               : selectedFile
-              ? 'border-[#499557] bg-[#edf7ee]/30'
-              : 'border-slate-300 hover:border-slate-400 bg-slate-50/50'
+              ? 'border-accent bg-accent-soft'
+              : 'border-line hover:border-line-strong bg-sunken/50'
           }`}
         >
           <div
-            className="w-14 h-14 rounded-2xl bg-[#edf7ee] text-[#499557] flex items-center justify-center shadow-2xs mb-3 border border-[#499557]/20"
+            className="w-14 h-14 rounded-2xl bg-accent-soft text-accent flex items-center justify-center mb-3 border border-accent/20"
           >
             {meta.icon}
           </div>
 
           {isDragOver ? (
             <div className="space-y-1">
-              <p className="text-sm font-extrabold text-[#499557]">
+              <p className="text-sm font-semibold text-accent">
                 Release file to drop into {meta.badge}!
               </p>
-              <p className="text-xs text-slate-500">Supports all standard audio & video formats</p>
+              <p className="text-xs text-muted">Supports all standard audio & video formats</p>
             </div>
           ) : selectedFile ? (
             <div className="space-y-1">
-              <span className="text-xs font-bold text-purple-700 uppercase tracking-wider block">
+              <span className="text-xs font-medium text-muted uppercase tracking-wider block">
                 Selected File
               </span>
-              <p className="text-sm font-extrabold text-slate-900">{selectedFile.name}</p>
-              <p className="text-xs text-slate-500">
+              <p className="text-sm font-semibold text-fg">{selectedFile.name}</p>
+              <p className="text-xs text-muted">
                 {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • Click or drop another file to change
               </p>
             </div>
           ) : (
             <div className="space-y-1">
-              <p className="text-sm font-extrabold text-slate-800">
+              <p className="text-sm font-semibold text-fg">
                 Click or drag & drop audio file to process
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted">
                 Supports MP3, WAV, AAC, M4A, FLAC, MP4 up to 100 MB
               </p>
             </div>
@@ -259,12 +241,12 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
         </div>
 
         {/* Dynamic Controls based on Tool */}
-        <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+        <div className="p-5 rounded-2xl bg-sunken border border-line space-y-4">
           {toolId === 'volume-booster' && (
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs font-bold">
-                <span className="text-slate-700">Volume Amplification Factor:</span>
-                <span className="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">
+              <div className="flex items-center justify-between text-xs font-medium">
+                <span className="text-fg">Volume Amplification Factor:</span>
+                <span className="px-2 py-0.5 rounded-md bg-warning-soft text-warning">
                   {boostPercent}% (+{(Math.log10(boostPercent / 100) * 20).toFixed(1)} dB)
                 </span>
               </div>
@@ -275,9 +257,9 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
                 step="25"
                 value={boostPercent}
                 onChange={(e) => setBoostPercent(Number(e.target.value))}
-                className="w-full accent-amber-600 cursor-pointer"
+                className="w-full accent-accent cursor-pointer"
               />
-              <div className="flex justify-between text-[11px] text-slate-400 font-semibold">
+              <div className="flex justify-between text-xs text-muted font-medium">
                 <span>100% (Original)</span>
                 <span>200% (+6dB)</span>
                 <span>300% (+9.5dB)</span>
@@ -288,21 +270,21 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
 
           {toolId === 'ai-vocal-remover' && (
             <div className="space-y-3">
-              <span className="text-xs font-bold text-slate-700 block">Separation Track Output:</span>
+              <span className="text-xs font-medium text-fg block">Separation Track Output:</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setVocalMode('instrumental')}
                   className={`p-3.5 rounded-xl border text-left transition-all ${
                     vocalMode === 'instrumental'
-                      ? 'border-rose-600 bg-rose-50/70 ring-2 ring-rose-100'
-                      : 'border-slate-200 hover:border-rose-200 bg-white'
+                      ? 'border-danger bg-danger-soft ring-2 ring-danger/30'
+                      : 'border-line hover:border-danger/30 bg-surface'
                   }`}
                 >
-                  <span className="text-xs font-bold text-slate-900 block">
+                  <span className="text-xs font-medium text-fg block">
                     Instrumental / Karaoke Track
                   </span>
-                  <span className="text-[11px] text-slate-500">
+                  <span className="text-xs text-muted">
                     Removes vocals and keeps drums, bass & melody
                   </span>
                 </button>
@@ -312,14 +294,14 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
                   onClick={() => setVocalMode('vocals')}
                   className={`p-3.5 rounded-xl border text-left transition-all ${
                     vocalMode === 'vocals'
-                      ? 'border-rose-600 bg-rose-50/70 ring-2 ring-rose-100'
-                      : 'border-slate-200 hover:border-rose-200 bg-white'
+                      ? 'border-danger bg-danger-soft ring-2 ring-danger/30'
+                      : 'border-line hover:border-danger/30 bg-surface'
                   }`}
                 >
-                  <span className="text-xs font-bold text-slate-900 block">
+                  <span className="text-xs font-medium text-fg block">
                     Vocals Only (Acappella)
                   </span>
-                  <span className="text-[11px] text-slate-500">
+                  <span className="text-xs text-muted">
                     Isolates lead and background singing voice
                   </span>
                 </button>
@@ -329,7 +311,7 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
 
           {toolId === 'ai-voice-changer' && (
             <div className="space-y-3">
-              <span className="text-xs font-bold text-slate-700 block">Select Voice Effect Preset:</span>
+              <span className="text-xs font-medium text-fg block">Select Voice Effect Preset:</span>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {[
                   { id: 'deep', label: 'Deep Male' },
@@ -341,10 +323,10 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
                     key={p.id}
                     type="button"
                     onClick={() => setVoicePreset(p.id)}
-                    className={`p-3 rounded-xl border text-xs font-bold text-center transition-all ${
+                    className={`p-3 rounded-xl border text-xs font-medium text-center transition-all ${
                       voicePreset === p.id
-                        ? 'border-cyan-600 bg-cyan-50/60 ring-2 ring-cyan-100 text-cyan-900'
-                        : 'border-slate-200 hover:border-cyan-200 bg-white text-slate-700'
+                        ? 'border-info bg-info-soft ring-2 ring-info/30 text-info'
+                        : 'border-line hover:border-info/30 bg-surface text-fg'
                     }`}
                   >
                     {p.label}
@@ -358,8 +340,8 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
             toolId === 'background-noise-remover' ||
             toolId === 'background-music-remover') && (
             <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-slate-700">Spectral De-Noising Filter:</span>
-              <span className="font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+              <span className="font-medium text-fg">Spectral De-Noising Filter:</span>
+              <span className="font-medium text-accent bg-accent-soft px-2.5 py-1 rounded-md border border-accent/30">
                 Studio Preset (80Hz Highpass + Dynamic Noise Gate)
               </span>
             </div>
@@ -371,7 +353,7 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
           type="button"
           onClick={handleProcess}
           disabled={isProcessing || !selectedFile}
-          className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-[#499557] hover:bg-[#3d7d49] text-white font-extrabold text-sm shadow-md transition-all transform active:scale-[0.99] disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-accent hover:bg-accent text-on-accent font-semibold text-sm transition-all transform disabled:opacity-50"
         >
           {isProcessing ? (
             <>
@@ -388,33 +370,33 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
 
         {/* Error Alert */}
         {errorMessage && (
-          <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs">
+          <div className="flex items-start gap-3 p-4 rounded-xl bg-danger-soft border border-danger/30 text-danger text-xs">
             <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <p className="font-semibold">{errorMessage}</p>
+            <p className="font-medium">{errorMessage}</p>
           </div>
         )}
 
         {/* Completed Output Card with ElevenLabs Pro Audio Visualizer */}
         {resultAudioUrl && (
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white space-y-4 animate-fadeIn shadow-2xl border border-slate-800">
+          <div className="p-6 rounded-2xl bg-bg text-fg space-y-4 animate-enter border border-line">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                <span className="text-xs font-medium text-accent uppercase tracking-wider">
                   Processing Complete
                 </span>
-                <h4 className="text-base font-extrabold">{meta.title} — Audio Ready</h4>
+                <h4 className="text-base font-semibold">{meta.title} — Audio Ready</h4>
               </div>
-              <div className="w-9 h-9 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+              <div className="w-9 h-9 rounded-full bg-accent/20 text-accent flex items-center justify-center border border-accent/30">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
             </div>
 
             {/* Visual Waveform Simulation */}
-            <div className="flex items-center justify-between gap-1 h-10 py-2 px-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <div className="flex items-center justify-between gap-1 h-10 py-2 px-3 rounded-xl bg-surface/90 border border-line">
               {Array.from({ length: 42 }).map((_, i) => (
                 <div
                   key={i}
-                  className="w-1 rounded-full bg-gradient-to-t from-purple-500 to-cyan-400"
+                  className="w-1 rounded-full bg-accent"
                   style={{
                     height: `${20 + Math.sin(i * 0.45) * 35 + ((i % 5) * 8)}%`,
                   }}
@@ -434,7 +416,7 @@ export function AudioDspStudio({ toolId, onBackToCategory }: AudioDspStudioProps
               <a
                 href={resultAudioUrl}
                 download={`processed_${toolId}_${Date.now()}.mp3`}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs shadow-md transition-all active:scale-95 whitespace-nowrap"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-accent hover:bg-accent-hover text-on-accent font-semibold text-xs transition-all whitespace-nowrap"
               >
                 <Download className="w-4 h-4" />
                 <span>Download Result (MP3)</span>

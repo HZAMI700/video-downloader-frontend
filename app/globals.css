@@ -2,151 +2,200 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ------------------------------------------------------------------
+   Playzy design tokens
+   Colors are stored as space-separated RGB channels so Tailwind can
+   apply opacity modifiers (bg-accent/10). Light is the base theme;
+   html.dark overrides the same names, so components never need dark:
+   variants.
+------------------------------------------------------------------- */
 :root {
-  --background: #F8FAFC;
-  --foreground: #0F172A;
-  font-family: 'Outfit', 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --c-bg: 246 248 247;            /* #F6F8F7 page */
+  --c-surface: 255 255 255;       /* #FFFFFF cards, inputs */
+  --c-sunken: 237 241 239;        /* #EDF1EF wells, hover fills */
+  --c-line: 217 224 221;          /* #D9E0DD hairlines */
+  --c-line-strong: 184 195 191;   /* #B8C3BF control borders */
+  --c-fg: 19 32 29;               /* #13201D text */
+  --c-muted: 82 97 92;            /* #52615C secondary text */
+  --c-accent: 0 117 106;          /* #00756A teal */
+  --c-accent-hover: 0 98 89;      /* #006259 */
+  --c-accent-soft: 224 242 238;   /* #E0F2EE tinted fill */
+  --c-on-accent: 255 255 255;     /* text on solid accent / status fills */
+
+  --c-success: 31 122 69;         /* #1F7A45 */
+  --c-success-soft: 227 243 233;
+  --c-warning: 143 92 10;         /* #8F5C0A */
+  --c-warning-soft: 250 240 220;
+  --c-danger: 186 50 50;          /* #BA3232 */
+  --c-danger-soft: 251 232 232;
+  --c-info: 38 103 168;           /* #2667A8 */
+  --c-info-soft: 228 239 250;
+
+  --radius-ctl: 6px;
+  --radius-card: 10px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+
+  color-scheme: light;
 }
 
 html.dark {
-  --background: #0F131A;
-  --foreground: #F8FAFC;
+  --c-bg: 13 19 18;               /* #0D1312 */
+  --c-surface: 20 27 26;          /* #141B1A */
+  --c-sunken: 27 36 35;           /* #1B2423 */
+  --c-line: 42 53 51;             /* #2A3533 */
+  --c-line-strong: 62 76 73;      /* #3E4C49 */
+  --c-fg: 231 237 235;            /* #E7EDEB */
+  --c-muted: 152 166 162;         /* #98A6A2 */
+  --c-accent: 0 201 167;          /* #00C9A7 */
+  --c-accent-hover: 38 217 185;   /* #26D9B9 */
+  --c-accent-soft: 14 48 43;      /* #0E302B */
+  --c-on-accent: 3 36 30;         /* #03241E */
+
+  --c-success: 86 196 130;        /* #56C482 */
+  --c-success-soft: 18 46 31;
+  --c-warning: 226 168 68;        /* #E2A844 */
+  --c-warning-soft: 52 39 14;
+  --c-danger: 240 120 120;        /* #F07878 */
+  --c-danger-soft: 58 24 24;
+  --c-info: 116 172 228;          /* #74ACE4 */
+  --c-info-soft: 19 38 58;
+
+  color-scheme: dark;
 }
 
-body {
-  color: var(--foreground);
-  background-color: var(--background);
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(0, 169, 192, 0.05) 0%, transparent 60%),
-    radial-gradient(circle at 90% 20%, rgba(36, 149, 255, 0.04) 0%, transparent 50%),
-    radial-gradient(circle at 10% 80%, rgba(41, 204, 95, 0.03) 0%, transparent 50%);
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-html.dark body {
-  background-color: #0F131A;
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(0, 169, 192, 0.08) 0%, transparent 60%),
-    radial-gradient(circle at 90% 20%, rgba(36, 149, 255, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 10% 80%, rgba(41, 204, 95, 0.04) 0%, transparent 50%);
-}
-
-/* Custom subtle scrollbars */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 169, 192, 0.6);
-}
-
-html.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-html.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 201, 167, 0.45);
-}
-
-/* Skywork Card Physics & Gradients */
-.skywork-glass {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-}
-
-.skywork-glass:hover {
-  border-color: rgba(0, 169, 192, 0.4);
-  box-shadow: 0 0 24px rgba(0, 169, 192, 0.1);
-}
-
-html.dark .skywork-glass {
-  background: rgba(24, 29, 36, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-html.dark .skywork-glass:hover {
-  border-color: rgba(0, 201, 167, 0.35);
-  box-shadow: 0 0 24px rgba(0, 201, 167, 0.12);
-}
-
-.skywork-gradient-text {
-  background: linear-gradient(135deg, #0F172A 20%, #009688 65%, #0284C7 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-html.dark .skywork-gradient-text {
-  background: linear-gradient(135deg, #FFFFFF 30%, #00c9a7 70%, #12c4ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.skywork-cyan-gradient {
-  background: linear-gradient(135deg, #00A9C0 0%, #00c9a7 50%, #29CC5F 100%);
-}
-
-.skywork-blue-gradient {
-  background: linear-gradient(135deg, #00A9C0 0%, #2495ff 100%);
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.6;
-    transform: scale(1);
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
   }
-  50% {
-    opacity: 1;
-    transform: scale(1.03);
+
+  body {
+    background-color: rgb(var(--c-bg));
+    color: rgb(var(--c-fg));
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'kern', 'liga', 'calt';
+  }
+
+  /* One visible focus style for every interactive element. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--c-accent));
+    outline-offset: 2px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::selection {
+    background-color: rgb(var(--c-accent) / 0.22);
+    color: rgb(var(--c-fg));
+  }
+
+  ::placeholder {
+    color: rgb(var(--c-muted));
+    opacity: 0.85;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  /* Thin, neutral scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--c-line-strong)) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--c-line-strong));
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--c-muted));
   }
 }
 
-.animate-pulse-glow {
-  animation: pulseGlow 4s infinite ease-in-out;
-}
-
-@keyframes fadeInScale {
-  0% {
-    opacity: 0;
-    transform: scale(0.98) translateY(6px);
+@layer base {
+  /* Comfortable touch targets on phones and tablets. */
+  @media (pointer: coarse) {
+    button,
+    [role='tab'],
+    select,
+    input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']) {
+      min-height: 36px;
+    }
   }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
+
+  input[type='checkbox'],
+  input[type='radio'],
+  input[type='range'] {
+    accent-color: rgb(var(--c-accent));
   }
 }
 
-.animate-apple-in {
-  animation: fadeInScale 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+@layer components {
+  /* Long-form reading text: paraphrased output, transcripts, AI answers. */
+  .prose-reading {
+    font-family: var(--font-serif), Georgia, 'Times New Roman', serif;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: rgb(var(--c-fg));
+  }
+
+  /* Small uppercase section label. */
+  .eyebrow {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgb(var(--c-muted));
+  }
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera while enabling smooth touch scrolling */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
 }
 
-/* Touch target helpers */
-.touch-manipulation {
-  touch-action: manipulation;
+/* Entry motion starts partly visible so content is never hidden if an
+   animation is paused (background tabs, power saving). */
+@keyframes enter {
+  from {
+    opacity: 0.4;
+    transform: translateY(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

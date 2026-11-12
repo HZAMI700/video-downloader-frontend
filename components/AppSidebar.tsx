@@ -1,42 +1,40 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Sparkles,
-  Play,
-  RefreshCw,
+  AudioLines,
   CheckCheck,
-  ShieldAlert,
-  FileSearch,
-  UserCheck,
-  MessageSquare,
-  Volume2,
-  Languages,
-  MoreHorizontal,
-  FileAudio,
-  FileVideo,
-  Youtube,
-  Music2,
-  DownloadCloud,
-  FolderOpen,
-  Sliders,
-  X,
-  ChevronRight,
   ChevronDown,
-  Search,
-  Plus,
-  Sun,
-  Moon,
-  FileText,
-  Headphones,
-  Wand2,
-  Radio,
   Disc,
+  DownloadCloud,
+  FileAudio,
+  FileSearch,
+  FileText,
+  FileVideo,
+  FolderOpen,
+  Headphones,
+  Home,
+  Languages,
+  Mail,
+  MessageSquare,
   Mic,
+  Music2,
+  Radio,
+  RefreshCw,
+  ScanSearch,
   Scissors,
+  Search,
+  ShieldAlert,
+  Sliders,
+  UserCheck,
+  Volume2,
+  Wand2,
+  X,
+  Youtube,
+  type LucideIcon,
 } from 'lucide-react';
-import { useTheme } from './ThemeContext';
 import { CategoryId } from '../lib/categories';
+import { cn } from './ui/cn';
 
 export type ToolId =
   | 'transcriber'
@@ -84,847 +82,382 @@ interface AppSidebarProps {
   activeTool: ToolId | null;
   onSelectCategory: (categoryId: CategoryId) => void;
   onSelectTool: (toolId: ToolId) => void;
-  isCollapsed: boolean;
-  onToggleCollapse: () => void;
+  onGoHome: () => void;
   isMobileOpen: boolean;
   onCloseMobile: () => void;
-  isMoreModalOpen?: boolean;
-  setIsMoreModalOpen?: (open: boolean) => void;
+  isMoreModalOpen: boolean;
+  setIsMoreModalOpen: (open: boolean) => void;
 }
 
-interface SidebarToolDef {
+interface NavTool {
   id: ToolId;
   name: string;
+  /** One-line description shown in the all-tools dialog. */
+  hint: string;
   category: CategoryId;
-  categoryName: string;
-  icon: React.ReactNode;
-  badge?: string;
-  highlight?: boolean;
+  icon: LucideIcon;
 }
 
-interface SidebarCategoryDef {
-  id: CategoryId;
+interface NavGroup {
+  id: string;
   name: string;
-  count: number;
-  icon: React.ReactNode;
-  colorClass: string;
-  tools: SidebarToolDef[];
+  tools: NavTool[];
 }
+
+/** Navigation model. Writing tools come first: they are what most people open Playzy for. */
+export const NAV_GROUPS: NavGroup[] = [
+  {
+    id: 'writing',
+    name: 'Writing',
+    tools: [
+      { id: 'paraphrasing-tool', name: 'Paraphraser', hint: 'Reword text in eight modes', category: 'ai-section', icon: RefreshCw },
+      { id: 'grammar-checker', name: 'Grammar Checker', hint: 'Fix grammar and spelling', category: 'ai-section', icon: CheckCheck },
+      { id: 'ai-detector', name: 'AI Detector', hint: 'Score text from 0 to 100%', category: 'ai-section', icon: ScanSearch },
+      { id: 'ai-humanizer', name: 'AI Humanizer', hint: 'Make AI drafts read naturally', category: 'ai-section', icon: UserCheck },
+      { id: 'summarizer', name: 'Summarizer', hint: 'Condense long text', category: 'ai-section', icon: FileText },
+      { id: 'translator', name: 'Translator', hint: 'Translate between languages', category: 'ai-section', icon: Languages },
+      { id: 'plagiarism-checker', name: 'Plagiarism Checker', hint: 'Check text for matches', category: 'ai-section', icon: FileSearch },
+      { id: 'ai-chat', name: 'AI Chat', hint: 'Ask questions and research', category: 'ai-section', icon: MessageSquare },
+    ],
+  },
+  {
+    id: 'transcribe',
+    name: 'Transcribe',
+    tools: [
+      { id: 'transcriber', name: 'MP3 to Text', hint: 'Audio to timestamped text', category: 'audio-tools', icon: FileAudio },
+      { id: 'mp4-to-text', name: 'MP4 to Text', hint: 'Video speech to text', category: 'audio-tools', icon: FileVideo },
+      { id: 'recorder-transcriber', name: 'Voice Recorder', hint: 'Record and transcribe live', category: 'audio-tools', icon: Mic },
+      { id: 'audio-translator', name: 'Audio Translator', hint: 'Translate spoken audio', category: 'audio-tools', icon: Languages },
+    ],
+  },
+  {
+    id: 'voice',
+    name: 'Voice & audio',
+    tools: [
+      { id: 'ai-voice-generator', name: 'Voice Generator', hint: 'Text to natural speech', category: 'ai-voice', icon: Volume2 },
+      { id: 'ai-voice-clone', name: 'Voice Clone', hint: 'Clone a voice from a sample', category: 'ai-voice', icon: AudioLines },
+      { id: 'podcast-generator', name: 'Podcast Studio', hint: 'Two-host audio from a script', category: 'audio-tools', icon: Radio },
+      { id: 'ai-voice-cleaner', name: 'Voice Cleaner', hint: 'Reduce noise in recordings', category: 'ai-voice', icon: Wand2 },
+      { id: 'background-noise-remover', name: 'Noise Remover', hint: 'Remove background noise', category: 'ai-voice', icon: Headphones },
+      { id: 'background-music-remover', name: 'Music Remover', hint: 'Keep speech, drop music', category: 'ai-voice', icon: Disc },
+      { id: 'ai-vocal-remover', name: 'Vocal Remover', hint: 'Split vocals from a track', category: 'ai-voice', icon: Music2 },
+      { id: 'ai-voice-changer', name: 'Voice Changer', hint: 'Change pitch and character', category: 'ai-voice', icon: Sliders },
+      { id: 'volume-booster', name: 'Volume Booster', hint: 'Make quiet audio louder', category: 'ai-voice', icon: Volume2 },
+    ],
+  },
+  {
+    id: 'download',
+    name: 'Download & convert',
+    tools: [
+      { id: 'video-downloader', name: 'Video Downloader', hint: 'Save video or audio from a link', category: 'video-downloader', icon: DownloadCloud },
+      { id: 'youtube-to-mp3', name: 'YouTube to MP3', hint: 'Audio from a YouTube link', category: 'audio-tools', icon: Youtube },
+      { id: 'youtube-to-mp4', name: 'YouTube to MP4', hint: 'Video from a YouTube link', category: 'audio-tools', icon: FileVideo },
+      { id: 'youtube-to-wav', name: 'YouTube to WAV', hint: 'Lossless audio from a link', category: 'audio-tools', icon: FileAudio },
+      { id: 'tiktok-to-mp3', name: 'TikTok to MP3', hint: 'Audio from a TikTok link', category: 'audio-tools', icon: Music2 },
+      { id: 'mp4-to-mp3', name: 'MP4 to MP3', hint: 'Convert a video file to audio', category: 'audio-tools', icon: Disc },
+      { id: 'extract-audio', name: 'Extract Audio', hint: 'Pull the audio track from a file', category: 'audio-tools', icon: Scissors },
+      { id: 'torrent-downloader', name: 'Torrent to Video', hint: 'Stream or save from a torrent', category: 'video-downloader', icon: DownloadCloud },
+    ],
+  },
+  {
+    id: 'research',
+    name: 'Research',
+    tools: [
+      { id: 'robin', name: 'Robin Threat Intel', hint: 'Security research and OSINT', category: 'ai-section', icon: ShieldAlert },
+      { id: 'email-checker', name: 'Email Lookup', hint: 'Find accounts tied to an email', category: 'ai-section', icon: Mail },
+    ],
+  },
+];
+
+const ALL_NAV_TOOLS = NAV_GROUPS.flatMap((g) => g.tools.map((t) => ({ ...t, group: g.name })));
+
+/** Several routes are variants of one sidebar entry. */
+const ALIASES: Partial<Record<ToolId, ToolId>> = {
+  'mp3-to-text': 'transcriber',
+  'voice-to-text': 'transcriber',
+  'speech-transcriber': 'transcriber',
+  'english-to-tamil': 'audio-translator',
+  'video-to-mp3': 'mp4-to-mp3',
+  'text-to-speech': 'ai-voice-generator',
+};
+
+const navItem =
+  'w-full h-9 px-2.5 rounded-ctl flex items-center gap-2.5 text-left text-sm transition-colors';
+const navIdle = 'text-muted hover:text-fg hover:bg-sunken';
+const navActive = 'bg-accent-soft text-accent font-medium';
 
 export function AppSidebar({
   activeCategory,
   activeTool,
   onSelectCategory,
   onSelectTool,
+  onGoHome,
   isMobileOpen,
   onCloseMobile,
-  isMoreModalOpen: controlledIsMoreOpen,
-  setIsMoreModalOpen: controlledSetIsMoreOpen,
+  isMoreModalOpen,
+  setIsMoreModalOpen,
 }: AppSidebarProps) {
-  const [internalIsMoreModalOpen, setInternalIsMoreModalOpen] = useState(false);
-  const isMoreModalOpen =
-    controlledIsMoreOpen !== undefined ? controlledIsMoreOpen : internalIsMoreModalOpen;
-  const setIsMoreModalOpen = controlledSetIsMoreOpen || setInternalIsMoreModalOpen;
-  const { theme, toggleTheme } = useTheme();
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
-  // Search filter inside sidebar
-  const [sidebarSearch, setSidebarSearch] = useState('');
+  const currentId: ToolId | null = useMemo(() => {
+    if (activeTool) return ALIASES[activeTool] ?? activeTool;
+    if (activeCategory === 'video-downloader') return 'video-downloader';
+    if (activeCategory === 'workspace') return 'workspace';
+    return null;
+  }, [activeTool, activeCategory]);
 
-  // Collapsible category state (all open by default so user sees every tool)
-  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({
-    'ai-section': false,
-    'audio-tools': false,
-    'ai-voice': false,
-  });
+  const isHome = currentId === null;
 
-  const toggleSection = (id: string) => {
-    setCollapsedSections((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-  // Top standalone tools
-  const PRIMARY_TOOLS: SidebarToolDef[] = [
-    {
-      id: 'torrent-downloader',
-      name: 'Torrent to Video (MP4)',
-      category: 'video-downloader',
-      categoryName: 'Video Downloader',
-      icon: <DownloadCloud className="w-4 h-4 text-emerald-400 shrink-0" />,
-      badge: 'TORRENT',
-      highlight: true,
-    },
-    {
-      id: 'video-downloader',
-      name: 'Media Downloader',
-      category: 'video-downloader',
-      categoryName: 'Video Downloader',
-      icon: <DownloadCloud className="w-4 h-4 text-sky-500 shrink-0" />,
-      badge: '4K & MP3',
-      highlight: false,
-    },
-    {
-      id: 'workspace',
-      name: 'Saved Workspace',
-      category: 'workspace',
-      categoryName: 'Workspace History',
-      icon: <FolderOpen className="w-4 h-4 text-amber-500 shrink-0" />,
-      badge: 'Files',
-    },
-  ];
-
-  // Complete categorized tool suites (all 26 category tools + 2 primary = 28 tools)
-  const TOOL_CATEGORIES: SidebarCategoryDef[] = useMemo(
-    () => [
-      {
-        id: 'ai-section',
-        name: 'AI Writing & Agents',
-        count: 10,
-        colorClass: 'text-emerald-500',
-        icon: <Sparkles className="w-3.5 h-3.5 text-emerald-500 shrink-0" />,
-        tools: [
-          {
-            id: 'ai-chat',
-            name: 'AI Chat (Research)',
-            category: 'ai-section',
-            categoryName: 'AI Section',
-            icon: <MessageSquare className="w-3.5 h-3.5 text-blue-500 shrink-0" />,
-            badge: 'Agent',
-            highlight: true,
-          },
-          {
-            id: 'robin',
-            name: 'Robin Threat Intel',
-            category: 'ai-section',
-            categoryName: 'AI Section',
-            icon: <ShieldAlert className="w-3.5 h-3.5 text-emerald-500 shrink-0" />,
-            badge: 'OSINT',
-            highlight: true,
-          },
-          {
-            id: 'email-checker',
-            name: 'Blackbird Email Lookup',
-            category: 'ai-section',
-            categoryName: 'AI Section',
-            icon: <UserCheck className="w-3.5 h-3.5 text-teal-500 shrink-0" />,
-            badge: 'Email OSINT',
-            highlight: true,
-          },
-          {
-            id: 'paraphrasing-tool',
-            name: 'Paraphrasing Tool',
-            category: 'ai-section',
-            categoryName: 'AI Section',
-            icon: <RefreshCw className="w-3.5 h-3.5 text-emerald-500 shrink-0" />,
-            badge: 'Fluency',
-          },
-          {
-            id: 'grammar-checker',
-            name: 'Grammar Checker',
-            category: 'ai-section',
-            categoryName: 'AI Section',
-            icon: <CheckCheck className="w-3.5 h-3.5 text-rose-500 shrink-0" />,
-            badge: '0 Errors',
-          },
-          {
-            id: 'ai-detector',
-            name: 'AI Detector',
-            category: 'ai-section',
-            categoryName: 'AI Section',
-            icon: <ShieldAlert className="w-3.5 h-3.5 text-amber-500 shrink-0" />,
-            badge: '0-100%',
-            highlight: true,
-          },
-          {
-            id: 'summarizer',
-            name: 'Summarizer',
-            category: 'ai-section',
-            categoryName: 'AI Section',
-            icon: <FileText className="w-3.5 h-3.5 text-purple-500 shrink-0" />,
-            badge: '-75%',
-          },
-          {
-            id: 'ai-humanizer',
-            name: 'AI Humanizer',
-            category: 'ai-section',
-            categoryName: 'AI Section',
-            icon: <UserCheck className="w-3.5 h-3.5 text-teal-500 shrink-0" />,
-            badge: '100% Human',
-            highlight: true,
-          },
-          {
-            id: 'translator',
-            name: 'Translator',
-            category: 'ai-section',
-            categoryName: 'AI Section',
-            icon: <Languages className="w-3.5 h-3.5 text-indigo-500 shrink-0" />,
-            badge: '30+ Lang',
-          },
-          {
-            id: 'plagiarism-checker',
-            name: 'Plagiarism Checker',
-            category: 'ai-section',
-            categoryName: 'AI Section',
-            icon: <FileSearch className="w-3.5 h-3.5 text-cyan-500 shrink-0" />,
-            badge: 'Deep Scan',
-          },
-        ],
-      },
-      {
-        id: 'audio-tools',
-        name: 'Audio & Transcription',
-        count: 10,
-        colorClass: 'text-teal-500',
-        icon: <Headphones className="w-3.5 h-3.5 text-teal-500 shrink-0" />,
-        tools: [
-          {
-            id: 'transcriber',
-            name: 'MP3 to Text',
-            category: 'audio-tools',
-            categoryName: 'Audio Tools',
-            icon: <Headphones className="w-3.5 h-3.5 text-teal-500 shrink-0" />,
-            badge: 'MP3 Only',
-            highlight: true,
-          },
-          {
-            id: 'mp4-to-text',
-            name: 'MP4 to Text',
-            category: 'audio-tools',
-            categoryName: 'Audio Tools',
-            icon: <FileVideo className="w-3.5 h-3.5 text-indigo-500 shrink-0" />,
-            badge: 'MP4 Only',
-            highlight: true,
-          },
-          {
-            id: 'youtube-to-mp3',
-            name: 'YouTube to MP3',
-            category: 'audio-tools',
-            categoryName: 'Audio Tools',
-            icon: <Youtube className="w-3.5 h-3.5 text-rose-500 shrink-0" />,
-            badge: 'Link Only',
-            highlight: true,
-          },
-          {
-            id: 'youtube-to-mp4',
-            name: 'YouTube to MP4',
-            category: 'audio-tools',
-            categoryName: 'Audio Tools',
-            icon: <FileVideo className="w-3.5 h-3.5 text-blue-500 shrink-0" />,
-            badge: '1080p HD',
-            highlight: true,
-          },
-          {
-            id: 'tiktok-to-mp3',
-            name: 'TikTok to MP3',
-            category: 'audio-tools',
-            categoryName: 'Audio Tools',
-            icon: <Music2 className="w-3.5 h-3.5 text-pink-500 shrink-0" />,
-            badge: 'Link Only',
-          },
-          {
-            id: 'podcast-generator',
-            name: 'AI Podcast Studio',
-            category: 'audio-tools',
-            categoryName: 'Audio Tools',
-            icon: <Radio className="w-3.5 h-3.5 text-purple-500 shrink-0" />,
-            badge: 'Dual Host',
-          },
-          {
-            id: 'audio-translator',
-            name: 'AI Audio Translator',
-            category: 'audio-tools',
-            categoryName: 'Audio Tools',
-            icon: <Languages className="w-3.5 h-3.5 text-emerald-500 shrink-0" />,
-            badge: '40+ Lang',
-          },
-          {
-            id: 'recorder-transcriber',
-            name: 'Voice Recorder',
-            category: 'audio-tools',
-            categoryName: 'Audio Tools',
-            icon: <Mic className="w-3.5 h-3.5 text-red-500 shrink-0" />,
-            badge: 'Live Mic',
-          },
-          {
-            id: 'mp4-to-mp3',
-            name: 'MP4 to MP3',
-            category: 'audio-tools',
-            categoryName: 'Audio Tools',
-            icon: <Disc className="w-3.5 h-3.5 text-amber-500 shrink-0" />,
-            badge: 'Convert',
-          },
-          {
-            id: 'youtube-to-wav',
-            name: 'YouTube to WAV',
-            category: 'audio-tools',
-            categoryName: 'Audio Tools',
-            icon: <FileAudio className="w-3.5 h-3.5 text-blue-500 shrink-0" />,
-            badge: '24-bit',
-          },
-          {
-            id: 'extract-audio',
-            name: 'Extract Audio',
-            category: 'audio-tools',
-            categoryName: 'Audio Tools',
-            icon: <Scissors className="w-3.5 h-3.5 text-cyan-500 shrink-0" />,
-            badge: 'Demux',
-          },
-        ],
-      },
-      {
-        id: 'ai-voice',
-        name: 'AI Voice & Audio DSP',
-        count: 8,
-        colorClass: 'text-purple-500',
-        icon: <Volume2 className="w-3.5 h-3.5 text-purple-500 shrink-0" />,
-        tools: [
-          {
-            id: 'ai-voice-generator',
-            name: 'AI Voice Generator',
-            category: 'ai-voice',
-            categoryName: 'AI Voice Studio',
-            icon: <Volume2 className="w-3.5 h-3.5 text-purple-500 shrink-0" />,
-            badge: '36+ Voices',
-            highlight: true,
-          },
-          {
-            id: 'ai-voice-clone',
-            name: 'AI Voice Clone',
-            category: 'ai-voice',
-            categoryName: 'AI Voice Studio',
-            icon: <Mic className="w-3.5 h-3.5 text-pink-500 shrink-0" />,
-            badge: 'Instant',
-          },
-          {
-            id: 'volume-booster',
-            name: 'Volume Booster',
-            category: 'ai-voice',
-            categoryName: 'AI Voice Studio',
-            icon: <Sliders className="w-3.5 h-3.5 text-amber-500 shrink-0" />,
-            badge: '400%',
-          },
-          {
-            id: 'ai-voice-cleaner',
-            name: 'AI Voice Cleaner',
-            category: 'ai-voice',
-            categoryName: 'AI Voice Studio',
-            icon: <Wand2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />,
-            badge: 'Denoise',
-          },
-          {
-            id: 'ai-vocal-remover',
-            name: 'AI Vocal Remover',
-            category: 'ai-voice',
-            categoryName: 'AI Voice Studio',
-            icon: <Music2 className="w-3.5 h-3.5 text-rose-500 shrink-0" />,
-            badge: 'Stems',
-          },
-          {
-            id: 'ai-voice-changer',
-            name: 'AI Voice Changer',
-            category: 'ai-voice',
-            categoryName: 'AI Voice Studio',
-            icon: <Sparkles className="w-3.5 h-3.5 text-cyan-500 shrink-0" />,
-            badge: 'Real-time',
-          },
-          {
-            id: 'background-noise-remover',
-            name: 'Noise Remover',
-            category: 'ai-voice',
-            categoryName: 'AI Voice Studio',
-            icon: <Headphones className="w-3.5 h-3.5 text-blue-500 shrink-0" />,
-            badge: 'Spectral',
-          },
-          {
-            id: 'background-music-remover',
-            name: 'Music Remover',
-            category: 'ai-voice',
-            categoryName: 'AI Voice Studio',
-            icon: <Disc className="w-3.5 h-3.5 text-orange-500 shrink-0" />,
-            badge: 'Speech',
-          },
-        ],
-      },
-    ],
-    []
-  );
-
-  // All tools flat array for fast real-time search
-  const ALL_FLAT_TOOLS = useMemo(() => {
-    return [...PRIMARY_TOOLS, ...TOOL_CATEGORIES.flatMap((c) => c.tools)];
-  }, [PRIMARY_TOOLS, TOOL_CATEGORIES]);
-
-  // Search filtered results
-  const searchResults = useMemo(() => {
-    const q = sidebarSearch.trim().toLowerCase();
-    if (!q) return null;
-    return ALL_FLAT_TOOLS.filter(
-      (tool) =>
-        tool.name.toLowerCase().includes(q) ||
-        tool.categoryName.toLowerCase().includes(q) ||
-        (tool.badge && tool.badge.toLowerCase().includes(q))
-    );
-  }, [sidebarSearch, ALL_FLAT_TOOLS]);
-
-  const handleToolClick = (toolId: ToolId, categoryId: CategoryId) => {
-    onSelectCategory(categoryId);
-    onSelectTool(toolId);
+  const openTool = (tool: { id: ToolId; category: CategoryId }) => {
+    onSelectCategory(tool.category);
+    onSelectTool(tool.id);
     onCloseMobile();
     setIsMoreModalOpen(false);
   };
 
-  const isToolActive = (toolId: ToolId) => {
-    if (activeTool === toolId) return true;
-    if (toolId === 'transcriber' && activeTool === 'mp3-to-text') return true;
-    if (toolId === 'mp3-to-text' && activeTool === 'transcriber') return true;
-    if (toolId === 'video-downloader' && activeCategory === 'video-downloader' && activeTool === null) return true;
-    if (toolId === 'workspace' && activeCategory === 'workspace' && activeTool === null) return true;
-    return false;
-  };
+  // Close the mobile drawer with Escape.
+  useEffect(() => {
+    if (!isMobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCloseMobile();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isMobileOpen, onCloseMobile]);
 
   return (
     <>
-      {/* Mobile Backdrop */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/60 dark:bg-black/75 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={onCloseMobile}
+          aria-hidden="true"
         />
       )}
 
-      {/* Skywork Pro Sidebar Rail - All Tools Visible */}
       <aside
-        className={`bg-[#F8FAFC] dark:bg-[#0F131A] border-r border-slate-200 dark:border-[#212932] w-[298px] shrink-0 flex flex-col justify-between text-xs text-slate-700 dark:text-slate-300 select-none z-30 transition-all ${
+        aria-label="Tools"
+        className={cn(
+          'bg-bg border-r border-line w-64 shrink-0 flex-col',
           isMobileOpen
-            ? 'fixed inset-y-0 left-0 z-50 shadow-2xl flex bg-[#F8FAFC] dark:bg-[#0F131A] h-full w-[298px] max-w-[88vw]'
+            ? 'fixed inset-y-0 left-0 z-50 flex max-w-[86vw] shadow-overlay'
             : 'hidden lg:flex sticky top-14 h-[calc(100vh-3.5rem)]'
-        }`}
+        )}
       >
-        {/* Top Fixed Area: Brand Logo + Primary Action + In-sidebar Search */}
-        <div className="p-3 pb-2 flex flex-col gap-2.5 shrink-0 border-b border-slate-200/80 dark:border-[#1E252F]">
-          {/* Brand Row */}
-          <div className="flex items-center justify-between px-1">
+        {isMobileOpen && (
+          <div className="h-14 px-4 flex items-center justify-between border-b border-line shrink-0 lg:hidden">
+            <span className="text-sm font-medium text-fg">Tools</span>
+            <button
+              type="button"
+              onClick={onCloseMobile}
+              aria-label="Close menu"
+              className="h-10 w-10 -mr-2 flex items-center justify-center rounded-ctl text-muted hover:text-fg hover:bg-sunken transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+          <div className="space-y-0.5">
             <button
               type="button"
               onClick={() => {
-                onSelectCategory('ai-section');
-                handleToolClick('robin', 'ai-section');
+                onGoHome();
+                onCloseMobile();
               }}
-              className="flex items-center gap-2 group cursor-pointer"
+              aria-current={isHome ? 'page' : undefined}
+              className={cn(navItem, isHome ? navActive : navIdle)}
             >
-              <div className="w-7 h-7 rounded-lg bg-black flex items-center justify-center p-1 shadow-sm">
-                <Play className="w-3.5 h-3.5 fill-[#00c9a7] text-[#00c9a7] translate-x-0.5" />
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[17px] font-black tracking-tight text-slate-900 dark:text-white font-sans">
-                  playzy
-                </span>
-                <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-[#d8f8ef] text-[#009688]">
-                  28 TOOLS
-                </span>
-              </div>
+              <Home className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span className="truncate">Home</span>
             </button>
-
-            {isMobileOpen && (
-              <button
-                type="button"
-                onClick={onCloseMobile}
-                aria-label="Close menu"
-                className="lg:hidden p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-[#1E252F] transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => openTool({ id: 'workspace', category: 'workspace' })}
+              aria-current={currentId === 'workspace' ? 'page' : undefined}
+              className={cn(navItem, currentId === 'workspace' ? navActive : navIdle)}
+            >
+              <FolderOpen className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span className="truncate">Saved work</span>
+            </button>
           </div>
 
-          {/* [+ New Chat / Project] Primary Action Button */}
-          <button
-            type="button"
-            onClick={() => {
-              onSelectCategory('ai-section');
-              handleToolClick('robin', 'ai-section');
-            }}
-            className="w-full py-2.5 px-3 rounded-2xl bg-white hover:bg-slate-50 dark:bg-[#181D24] dark:hover:bg-[#202732] border border-slate-200/90 dark:border-[#263241] text-slate-900 dark:text-slate-100 font-bold text-xs flex items-center justify-between transition-all shadow-2xs cursor-pointer group"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-[#00c9a7] font-black text-sm">+</span>
-              <span className="text-xs font-bold text-slate-900 dark:text-slate-100">New Chat / Project</span>
-            </div>
-            <span className="text-[10px] text-slate-400 font-mono">⌘K</span>
-          </button>
-
-          {/* In-sidebar Tool Filter Search Box */}
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={sidebarSearch}
-              onChange={(e) => setSidebarSearch(e.target.value)}
-              placeholder="Search 28 tools..."
-              className="w-full bg-[#f8fafc] dark:bg-[#141A22] border border-slate-200/90 dark:border-[#222B36] rounded-xl pl-8 pr-7 py-2 text-xs font-medium text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-[#00c9a7]/60 transition"
-            />
-            {sidebarSearch && (
-              <button
-                type="button"
-                onClick={() => setSidebarSearch('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Scrollable Tool Navigation Rail */}
-        <div className="flex-1 overflow-y-auto px-2 py-2.5 space-y-4 custom-scrollbar">
-          {/* SEARCH RESULTS VIEW */}
-          {searchResults !== null ? (
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between px-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                <span>Matching Tools ({searchResults.length})</span>
+          {NAV_GROUPS.map((group) => {
+            const isCollapsed = collapsed[group.id] ?? false;
+            const panelId = `nav-group-${group.id}`;
+            return (
+              <div key={group.id}>
                 <button
                   type="button"
-                  onClick={() => setSidebarSearch('')}
-                  className="text-[#009688] dark:text-[#00c9a7] hover:underline cursor-pointer"
+                  onClick={() => setCollapsed((prev) => ({ ...prev, [group.id]: !isCollapsed }))}
+                  aria-expanded={!isCollapsed}
+                  aria-controls={panelId}
+                  className="w-full h-8 px-2.5 flex items-center justify-between rounded-ctl eyebrow hover:text-fg transition-colors"
                 >
-                  Clear
+                  <span>{group.name}</span>
+                  <ChevronDown
+                    className={cn('w-3.5 h-3.5 transition-transform', isCollapsed && '-rotate-90')}
+                    aria-hidden="true"
+                  />
                 </button>
+                {!isCollapsed && (
+                  <ul id={panelId} className="mt-0.5 space-y-0.5">
+                    {group.tools.map((tool) => {
+                      const active = currentId === tool.id;
+                      const Icon = tool.icon;
+                      return (
+                        <li key={tool.id}>
+                          <button
+                            type="button"
+                            onClick={() => openTool(tool)}
+                            aria-current={active ? 'page' : undefined}
+                            className={cn(navItem, active ? navActive : navIdle)}
+                          >
+                            <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
+                            <span className="truncate">{tool.name}</span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </div>
+            );
+          })}
+        </nav>
 
-              {searchResults.length === 0 ? (
-                <div className="py-6 text-center text-xs text-slate-400">
-                  No tools found for &quot;{sidebarSearch}&quot;
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  {searchResults.map((tool) => {
-                    const active = isToolActive(tool.id);
-                    return (
-                      <button
-                        key={tool.id}
-                        type="button"
-                        onClick={() => handleToolClick(tool.id, tool.category)}
-                        className={`w-full px-3 py-2.5 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer font-medium relative group/item ${
-                          active
-                            ? 'bg-white dark:bg-[#1C232D] text-[#009688] dark:text-white border border-slate-300 dark:border-[#00c9a7]/40 shadow-xs font-bold before:absolute before:left-1 before:top-2 before:bottom-2 before:w-1 before:bg-[#00c9a7] before:rounded-full'
-                            : 'text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0 pl-1">
-                          <div className="shrink-0 group-hover/item:scale-105 transition-transform">{tool.icon}</div>
-                          <span className="truncate text-[13.5px] font-semibold">{tool.name}</span>
-                        </div>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-[#12171F] border border-slate-300/80 dark:border-[#263241] text-slate-600 dark:text-slate-400">
-                          {tool.categoryName}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          ) : (
-            /* DEFAULT CATEGORIZED ALL-TOOLS VIEW */
-            <>
-              {/* Standalone Quick Access (Downloader & Workspace) */}
-              <div className="space-y-1">
-                <p className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  Media &amp; Workspace
-                </p>
-                {PRIMARY_TOOLS.map((tool) => {
-                  const active = isToolActive(tool.id);
-                  return (
-                    <button
-                      key={tool.id}
-                      type="button"
-                      onClick={() => handleToolClick(tool.id, tool.category)}
-                      className={`w-full px-3 py-2.5 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer relative group/item ${
-                        active
-                          ? 'bg-white dark:bg-[#1C232D] text-[#009688] dark:text-white border border-slate-300 dark:border-[#00c9a7]/40 shadow-xs font-bold before:absolute before:left-1 before:top-2 before:bottom-2 before:w-1.5 before:bg-[#00c9a7] before:rounded-full'
-                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5 font-medium'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0 pl-1">
-                        <div className="shrink-0 group-hover/item:scale-110 transition-transform">
-                          {tool.icon}
-                        </div>
-                        <span className="truncate text-[13.5px] font-semibold text-slate-900 dark:text-slate-100">{tool.name}</span>
-                      </div>
-                      {tool.badge && (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-[#12171F] border border-slate-300/80 dark:border-[#263241] text-slate-700 dark:text-slate-300">
-                          {tool.badge}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Complete Categorized Sections */}
-              {TOOL_CATEGORIES.map((category) => {
-                const isCollapsed = collapsedSections[category.id] ?? false;
-                return (
-                  <div key={category.id} className="space-y-1">
-                    {/* Category Header with Accordion Toggle */}
-                    <button
-                      type="button"
-                      onClick={() => toggleSection(category.id)}
-                      className="w-full px-2.5 py-1.5 flex items-center justify-between text-left rounded-lg hover:bg-slate-200/40 dark:hover:bg-[#161C24] transition cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-2">
-                        {category.icon}
-                        <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">
-                          {category.name}
-                        </span>
-                        <span className="text-[10px] font-extrabold px-1.5 py-0.2 rounded-md bg-slate-200/70 dark:bg-[#161C24] text-slate-600 dark:text-slate-400">
-                          {category.count}
-                        </span>
-                      </div>
-                      <div className="text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">
-                        {isCollapsed ? (
-                          <ChevronRight className="w-4 h-4" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4" />
-                        )}
-                      </div>
-                    </button>
-
-                    {/* Tools in this category */}
-                    {!isCollapsed && (
-                      <div className="space-y-1 pl-1 border-l-2 border-slate-200/70 dark:border-[#1E252F] ml-2.5">
-                        {category.tools.map((tool) => {
-                          const active = isToolActive(tool.id);
-                          return (
-                            <button
-                              key={tool.id}
-                              type="button"
-                              onClick={() => handleToolClick(tool.id, tool.category)}
-                              className={`w-full px-2.5 py-2 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer relative group/item ${
-                                active
-                                  ? 'bg-white dark:bg-[#1C232D] text-[#00897B] dark:text-[#00c9a7] border border-slate-200/90 dark:border-[#263241] shadow-2xs font-extrabold before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1.5 before:bg-[#00c9a7] before:rounded-r'
-                                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#151B22] hover:text-slate-900 dark:hover:text-white font-medium'
-                              }`}
-                            >
-                              <div className="flex items-center gap-2.5 min-w-0 pl-1">
-                                <div className="shrink-0 group-hover/item:scale-110 transition-transform">
-                                  {tool.icon}
-                                </div>
-                                <span className="truncate text-[13.5px] font-semibold leading-normal">
-                                  {tool.name}
-                                </span>
-                              </div>
-
-                              {tool.badge && (
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-[#12171F] border border-slate-300/80 dark:border-[#263241] text-slate-600 dark:text-slate-400 shrink-0">
-                                  {tool.badge}
-                                </span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </>
-          )}
-        </div>
-
-        {/* Bottom Pinned Footer */}
-        <div className="p-3 space-y-2 shrink-0 border-t border-slate-200/80 dark:border-[#212932] bg-[#F8FAFC] dark:bg-[#0F131A]">
-          {/* Quick Theme Toggle Button */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="w-full px-2 py-1.5 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#151B22]"
-          >
-            <div className="flex items-center gap-2">
-              <Moon className="w-4 h-4 text-purple-600" />
-              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Dark Mode</span>
-            </div>
-            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-full bg-[#f1f5f9] dark:bg-[#161C24] uppercase">
-              {theme === 'dark' ? 'DARK' : 'LIGHT'}
-            </span>
-          </button>
-
-          {/* Access Status Card */}
-          <div className="p-2.5 rounded-2xl bg-white dark:bg-[#141A22] border border-[#d2f9ef] dark:border-[#263241] flex items-center justify-between shadow-2xs">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#00c9a7] shadow-[0_0_6px_#00c9a7]" />
-              <span className="text-xs font-black text-slate-900 dark:text-slate-100">
-                Free Pro Access
-              </span>
-            </div>
-            <span className="text-[9px] text-[#00897B] dark:text-[#00c9a7] font-black px-2 py-0.5 rounded-full bg-[#d8f8ef] dark:bg-[#00c9a7]/15">
-              28 TOOLS ACTIVE
-            </span>
-          </div>
+        <div className="px-5 py-3 border-t border-line shrink-0">
+          <p className="text-xs text-muted">Free to use. No account needed.</p>
         </div>
       </aside>
 
-      {/* "More Tools" Full Modal (kept as quick search modal shortcut) */}
       {isMoreModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 dark:bg-black/75 backdrop-blur-md animate-apple-in">
-          <div className="bg-white dark:bg-[#181D24] rounded-3xl border border-slate-200 dark:border-[#263241] shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto p-5 sm:p-7 space-y-6 text-slate-800 dark:text-slate-200">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#263241]">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-2xl bg-[#00c9a7]/20 text-[#009688] dark:text-[#00c9a7] flex items-center justify-center font-black">
-                  ✦
-                </div>
-                <div>
-                  <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
-                    Playzy All 28 Tools Suite
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Pick any audio, video, or AI writing agent to begin
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsMoreModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-[#202732] dark:hover:bg-[#2A3442] text-slate-600 dark:text-slate-300 flex items-center justify-center transition cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Audio & Video Extraction Suite */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                <DownloadCloud className="w-4 h-4 text-sky-500" />
-                <span>Media Download &amp; Conversion</span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('video-downloader', 'video-downloader')}
-                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-sky-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
-                >
-                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
-                    Playzy Video Downloader
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    YouTube, TikTok, 4K &amp; MP3
-                  </p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('youtube-to-mp3', 'audio-tools')}
-                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-sky-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
-                >
-                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
-                    YouTube to MP3
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    320kbps high quality audio
-                  </p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('tiktok-to-mp3', 'audio-tools')}
-                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-sky-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
-                >
-                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
-                    TikTok to MP3
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Audio &amp; watermark-free video
-                  </p>
-                </button>
-              </div>
-            </div>
-
-            {/* Transcription & Speech */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                <FileAudio className="w-4 h-4 text-emerald-500" />
-                <span>Transcription &amp; Voice Studio</span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('transcriber', 'audio-tools')}
-                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-emerald-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
-                >
-                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">MP3 to Text</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Speech-to-text with timestamps
-                  </p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('mp4-to-text', 'audio-tools')}
-                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-emerald-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
-                >
-                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">MP4 to Text</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Extract dialogue from video
-                  </p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('ai-voice-generator', 'ai-voice')}
-                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-purple-500/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
-                >
-                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
-                    AI Voice Generator
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    ElevenLabs-quality 36+ voices
-                  </p>
-                </button>
-              </div>
-            </div>
-
-            {/* AI Writing & Detection */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                <Sparkles className="w-4 h-4 text-[#009688] dark:text-[#00c9a7]" />
-                <span>AI Writing &amp; Content Detection</span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('ai-detector', 'ai-section')}
-                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
-                >
-                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
-                    AI Content Detector
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    0-100% Probability Score
-                  </p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('ai-humanizer', 'ai-section')}
-                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
-                >
-                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">
-                    AI Humanizer
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Bypass AI Detection
-                  </p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleToolClick('paraphrasing-tool', 'ai-section')}
-                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#12171F] border border-slate-200 dark:border-[#263241] hover:border-[#00c9a7]/50 hover:bg-slate-100 dark:hover:bg-[#1A222D] text-left transition"
-                >
-                  <p className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100">Paraphraser</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Fluent, Creative, Academic
-                  </p>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AllToolsDialog onClose={() => setIsMoreModalOpen(false)} onPick={openTool} />
       )}
     </>
   );
 }
+
+/** Searchable list of every tool. Opened from the header search and with Ctrl/Cmd+K. */
+function AllToolsDialog({
+  onClose,
+  onPick,
+}: {
+  onClose: () => void;
+  onPick: (tool: { id: ToolId; category: CategoryId }) => void;
+}) {
+  const [query, setQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [onClose]);
+
+  const q = query.trim().toLowerCase();
+  const groups = useMemo(() => {
+    if (!q) return NAV_GROUPS;
+    return NAV_GROUPS.map((g) => ({
+      ...g,
+      tools: g.tools.filter(
+        (t) =>
+          t.name.toLowerCase().includes(q) ||
+          t.hint.toLowerCase().includes(q) ||
+          g.name.toLowerCase().includes(q)
+      ),
+    })).filter((g) => g.tools.length > 0);
+  }, [q]);
+
+  const firstMatch = groups[0]?.tools[0];
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-6 sm:pt-[10vh] bg-black/50 animate-enter"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="All tools"
+        className="bg-surface border border-line rounded-card shadow-overlay w-full max-w-2xl max-h-[80vh] flex flex-col"
+      >
+        <form
+          className="flex items-center gap-3 px-4 h-14 border-b border-line shrink-0"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (firstMatch) onPick(firstMatch);
+          }}
+        >
+          <Search className="w-4 h-4 text-muted shrink-0" aria-hidden="true" />
+          <input
+            ref={inputRef}
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search tools"
+            aria-label="Search tools"
+            className="flex-1 min-w-0 h-10 bg-transparent text-base text-fg placeholder:text-muted outline-none focus-visible:outline-none"
+          />
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="h-9 w-9 -mr-1.5 flex items-center justify-center rounded-ctl text-muted hover:text-fg hover:bg-sunken transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </form>
+
+        <div className="overflow-y-auto p-4 space-y-5">
+          {groups.length === 0 ? (
+            <p className="py-10 text-center text-sm text-muted">
+              No tools match &ldquo;{query}&rdquo;.
+            </p>
+          ) : (
+            groups.map((group) => (
+              <section key={group.id} aria-label={group.name}>
+                <h3 className="eyebrow px-2 mb-1.5">{group.name}</h3>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                  {group.tools.map((tool) => {
+                    const Icon = tool.icon;
+                    return (
+                      <li key={tool.id}>
+                        <button
+                          type="button"
+                          onClick={() => onPick(tool)}
+                          className="w-full px-2 py-2 rounded-ctl flex items-center gap-3 text-left hover:bg-sunken transition-colors"
+                        >
+                          <span className="h-9 w-9 rounded-ctl bg-sunken text-muted flex items-center justify-center shrink-0">
+                            <Icon className="w-4 h-4" aria-hidden="true" />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block text-sm font-medium text-fg truncate">{tool.name}</span>
+                            <span className="block text-xs text-muted truncate">{tool.hint}</span>
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export { ALL_NAV_TOOLS };

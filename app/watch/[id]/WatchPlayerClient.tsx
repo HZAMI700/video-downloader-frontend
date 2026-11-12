@@ -59,17 +59,17 @@ export function WatchPlayerClient({ id }: WatchPlayerClientProps) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col justify-between" dir="rtl">
+    <div className="min-h-screen bg-bg text-fg flex flex-col justify-between" dir="rtl">
       <Script
         src="https://cdn.jsdelivr.net/npm/@webtor/embed-sdk-js/dist/index.min.js"
         strategy="lazyOnload"
       />
 
       {/* Top Bar */}
-      <header className="px-4 py-3 border-b border-slate-800 bg-slate-900/60 backdrop-blur flex items-center justify-between">
+      <header className="px-4 py-3 border-b border-line bg-surface/60 flex items-center justify-between">
         <Link
           href="/tools/torrent-downloader"
-          className="flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-xs font-medium text-fg hover:text-fg transition-colors"
         >
           <ArrowRight className="w-4 h-4" />
           <span>العودة إلى محول التورنت</span>
@@ -80,7 +80,7 @@ export function WatchPlayerClient({ id }: WatchPlayerClientProps) {
             href={`/api/torrent/${id}/download`}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-all shadow-md shadow-emerald-600/20"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent hover:bg-accent text-xs font-medium text-on-accent transition-all"
           >
             <DownloadCloud className="w-3.5 h-3.5" />
             <span>تحميل MP4 الكامل</span>
@@ -90,13 +90,13 @@ export function WatchPlayerClient({ id }: WatchPlayerClientProps) {
 
       {/* Player Container */}
       <main className="flex-1 flex flex-col items-center justify-center p-2 sm:p-6">
-        <div className="w-full max-w-5xl aspect-video bg-black rounded-3xl overflow-hidden border border-slate-800 shadow-2xl relative flex items-center justify-center">
+        <div className="w-full max-w-5xl aspect-video bg-black rounded-3xl overflow-hidden border border-line relative flex items-center justify-center">
           {error ? (
             <div className="p-6 text-center space-y-3">
-              <p className="text-rose-400 text-sm font-semibold">{error}</p>
+              <p className="text-danger text-sm font-medium">{error}</p>
               <a
                 href={`/api/torrent/${id}/download`}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-xs font-bold text-white hover:bg-slate-700"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface text-xs font-medium text-fg hover:bg-sunken"
               >
                 <DownloadCloud className="w-4 h-4" />
                 <span>تحميل الفيديو مباشرة كملف MP4</span>
@@ -105,9 +105,9 @@ export function WatchPlayerClient({ id }: WatchPlayerClientProps) {
           ) : (
             <div id="watch-webtor-mount" className="w-full h-full">
               {isLoading && (
-                <div className="w-full h-full flex flex-col items-center justify-center space-y-3 bg-slate-950">
-                  <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-                  <p className="text-xs text-slate-400">جاري الاتصال بسرب BitTorrent وبدء البث...</p>
+                <div className="w-full h-full flex flex-col items-center justify-center space-y-3 bg-bg">
+                  <div className="w-8 h-8 border-2 border-line border-t-transparent rounded-full animate-spin" />
+                  <p className="text-xs text-muted">جاري الاتصال بسرب BitTorrent وبدء البث...</p>
                 </div>
               )}
             </div>
@@ -115,15 +115,15 @@ export function WatchPlayerClient({ id }: WatchPlayerClientProps) {
         </div>
 
         {streamData?.filename && (
-          <div className="w-full max-w-5xl mt-4 px-2 flex items-center justify-between text-xs text-slate-400">
+          <div className="w-full max-w-5xl mt-4 px-2 flex items-center justify-between text-xs text-muted">
             <span className="font-mono truncate">{streamData.filename}</span>
-            <span className="shrink-0 text-emerald-400 font-bold">Webtor Swarm Engine</span>
+            <span className="shrink-0 text-accent font-medium">Webtor Swarm Engine</span>
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="p-4 border-t border-slate-900 text-center text-[11px] text-slate-500">
+      <footer className="p-4 border-t border-line text-center text-xs text-muted">
         مشغل Webtor المفتوح المصدر (MIT License) • متوافق مع تطبيقات الهواتف الذكية (iOS/Android WebView)
       </footer>
     </div>

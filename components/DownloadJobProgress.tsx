@@ -39,24 +39,24 @@ export const DownloadJobProgress: React.FC<DownloadJobProgressProps> = ({
   const downloadFileUrl = buildFileDownloadUrl(job.job_id);
 
   return (
-    <div className="w-full max-w-2xl mx-auto rounded-3xl p-6 md:p-8 bg-slate-900/90 backdrop-blur-2xl border border-slate-800 shadow-2xl space-y-6 animate-fadeIn">
+    <div className="w-full max-w-2xl mx-auto rounded-3xl p-6 md:p-8 bg-surface/90 border border-line space-y-6 animate-enter">
       {/* PROCESSING OR QUEUED STATE */}
       {(job.status === 'queued' || job.status === 'processing') && (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+              <div className="w-10 h-10 rounded-xl bg-sunken border border-line flex items-center justify-center text-muted">
                 <Loader2 className="w-5 h-5 animate-spin" />
               </div>
               <div>
-                <h3 className="font-bold text-base text-white">
+                <h3 className="font-medium text-base text-fg">
                   {job.status === 'queued'
                     ? 'Queued in Server Queue...'
                     : job.progress_percent >= 99
                     ? 'Muxing & Finalizing Media...'
                     : 'Downloading Media Content...'}
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-muted">
                   {job.status === 'queued'
                     ? 'Waiting for available download worker'
                     : job.progress_percent >= 99
@@ -65,37 +65,37 @@ export const DownloadJobProgress: React.FC<DownloadJobProgressProps> = ({
                 </p>
               </div>
             </div>
-            <span className="text-xl font-extrabold text-indigo-400 font-mono">
+            <span className="text-xl font-semibold text-muted font-mono">
               {job.progress_percent.toFixed(0)}%
             </span>
           </div>
 
           {/* Progress Bar */}
           <div className="space-y-2">
-            <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden border border-slate-800 p-0.5">
+            <div className="w-full h-3 bg-bg rounded-full overflow-hidden border border-line p-0.5">
               <div
-                className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full transition-all duration-300 relative"
+                className="h-full bg-accent rounded-full transition-all duration-300 relative"
                 style={{ width: `${Math.max(5, job.progress_percent)}%` }}
               >
-                <div className="absolute inset-0 bg-white/20 animate-pulse rounded-full" />
+                <div className="absolute inset-0 bg-sunken animate-pulse rounded-full" />
               </div>
             </div>
 
             {/* Diagnostic Stats */}
-            <div className="grid grid-cols-3 gap-2 pt-2 text-xs text-slate-400">
-              <div className="flex items-center gap-1.5 bg-slate-950/60 p-2 rounded-lg border border-slate-800/80">
-                <HardDrive className="w-3.5 h-3.5 text-slate-500" />
+            <div className="grid grid-cols-3 gap-2 pt-2 text-xs text-muted">
+              <div className="flex items-center gap-1.5 bg-bg/60 p-2 rounded-lg border border-line">
+                <HardDrive className="w-3.5 h-3.5 text-muted" />
                 <span>
                   {formatBytes(job.downloaded_bytes)}
                   {job.total_bytes ? ` / ${formatBytes(job.total_bytes)}` : ''}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5 bg-slate-950/60 p-2 rounded-lg border border-slate-800/80">
-                <Gauge className="w-3.5 h-3.5 text-slate-500" />
+              <div className="flex items-center gap-1.5 bg-bg/60 p-2 rounded-lg border border-line">
+                <Gauge className="w-3.5 h-3.5 text-muted" />
                 <span>{formatSpeed(job.speed_bytes_sec) || 'Calculating...'}</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-slate-950/60 p-2 rounded-lg border border-slate-800/80">
-                <Clock className="w-3.5 h-3.5 text-slate-500" />
+              <div className="flex items-center gap-1.5 bg-bg/60 p-2 rounded-lg border border-line">
+                <Clock className="w-3.5 h-3.5 text-muted" />
                 <span>ETA: {formatEta(job.eta_seconds) || 'Measuring...'}</span>
               </div>
             </div>
@@ -106,28 +106,28 @@ export const DownloadJobProgress: React.FC<DownloadJobProgressProps> = ({
       {/* COMPLETED SUCCESS STATE */}
       {job.status === 'completed' && (
         <div className="space-y-6 text-center">
-          <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto shadow-lg shadow-emerald-500/10">
+          <div className="w-16 h-16 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center text-accent mx-auto">
             <CheckCircle className="w-8 h-8" />
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-xl font-extrabold text-white">Media Ready for Download!</h3>
-            <p className="text-xs text-slate-400">
+            <h3 className="text-xl font-semibold text-fg">Media Ready for Download!</h3>
+            <p className="text-xs text-muted">
               Your file was processed and packaged successfully on the backend.
             </p>
           </div>
 
           {/* File details card */}
-          <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between text-left">
+          <div className="bg-bg/80 border border-line rounded-2xl p-4 flex items-center justify-between text-left">
             <div className="flex items-center gap-3 overflow-hidden">
-              <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 shrink-0">
+              <div className="p-2.5 rounded-xl bg-sunken text-muted shrink-0">
                 <FileVideo className="w-5 h-5" />
               </div>
               <div className="truncate">
-                <p className="text-sm font-semibold text-white truncate">
+                <p className="text-sm font-medium text-fg truncate">
                   {job.filename || 'downloaded_media'}
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-muted">
                   {formatBytes(job.file_size)} • {job.content_type || 'Media File'}
                 </p>
               </div>
@@ -139,7 +139,7 @@ export const DownloadJobProgress: React.FC<DownloadJobProgressProps> = ({
             <a
               href={downloadFileUrl}
               download={job.filename || 'media_download'}
-              className="w-full sm:flex-1 py-4 px-6 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition"
+              className="w-full sm:flex-1 py-4 px-6 rounded-xl font-medium text-sm text-on-accent bg-accent hover:bg-accent flex items-center justify-center gap-2 transition"
             >
               <Download className="w-4 h-4" />
               <span>Save File to Device</span>
@@ -147,7 +147,7 @@ export const DownloadJobProgress: React.FC<DownloadJobProgressProps> = ({
 
             <button
               onClick={onReset}
-              className="w-full sm:w-auto px-6 py-4 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white border border-slate-700 transition"
+              className="w-full sm:w-auto px-6 py-4 rounded-xl text-xs font-medium text-fg bg-surface hover:bg-sunken hover:text-fg border border-line transition"
             >
               Download Another
             </button>
@@ -158,13 +158,13 @@ export const DownloadJobProgress: React.FC<DownloadJobProgressProps> = ({
       {/* FAILED ERROR STATE */}
       {job.status === 'failed' && (
         <div className="space-y-6 text-center">
-          <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 mx-auto shadow-lg shadow-red-500/10">
+          <div className="w-16 h-16 rounded-full bg-danger/10 border border-danger/30 flex items-center justify-center text-danger mx-auto">
             <AlertTriangle className="w-8 h-8" />
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-xl font-extrabold text-white">Download Processing Failed</h3>
-            <p className="text-xs text-red-300 max-w-md mx-auto">
+            <h3 className="text-xl font-semibold text-fg">Download Processing Failed</h3>
+            <p className="text-xs text-danger max-w-md mx-auto">
               {job.error_message || 'An unexpected error occurred during processing.'}
             </p>
           </div>
@@ -172,14 +172,14 @@ export const DownloadJobProgress: React.FC<DownloadJobProgressProps> = ({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <button
               onClick={onRetry}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-semibold text-xs text-white bg-indigo-600 hover:bg-indigo-500 flex items-center justify-center gap-2 transition"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-medium text-xs text-on-accent bg-accent hover:bg-accent flex items-center justify-center gap-2 transition"
             >
               <RefreshCw className="w-4 h-4" />
               <span>Retry Download</span>
             </button>
             <button
               onClick={onReset}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white border border-slate-700 transition"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl text-xs font-medium text-fg bg-surface hover:bg-sunken hover:text-fg border border-line transition"
             >
               New Search
             </button>
